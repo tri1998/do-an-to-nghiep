@@ -1,38 +1,260 @@
-.App {
-  text-align: center;
+
+.App{
+    font-size: 14px;
+    line-height: 1.42857143;
+    font-family: Arial !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.nguoidung{
+    background-image: url("/img/wrap-bg-body.png");
+    background-repeat: repeat;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.wrapper{
+    box-shadow: 1px 1px 5px rgba(0,0,0,.1);
+    background:white;
+}
+
+.center{
+    text-align: center;
+}
+
+a{
+    padding-top:0 !important;
+}
+
+.logo img{
+    width: 218px;
+    height: 150px;
+}
+
+
+hr{
+    color: #DDDDDD;
+    border-style: solid;
+
+}
+
+.cart {
+    text-align: right;
+}
+
+/*----CAROUSEL HERE*/
+.ant-carousel .slick-slide {
+    text-align: center;
+    height: 550px;
+    line-height: 160px;
+    overflow: hidden;
+}
+  
+
+.ant-carousel img{
+    width:100%;
+    height:550px;
+}
+
+.category img{
+    width:100%;
+    height:400px;
+}
+/*FOOTER HERE*/
+.footer{
+    color:white;
+    width:100%;
+    height:400px;
+    background-image: url("/img/bg_footer.png");
+    background-size:cover;
+    margin-left:0px !important;
+    margin-right:0px !important;
+    padding: 45px 15px 0 15px;
+}
+
+
+ul{
+    padding-left:38px;
+}
+
+ul li{
+    line-height: 35px;
+    letter-spacing: 0.5px;
+}
+
+ul li a{
+    text-decoration: none;
+    color:white;
+    
+}
+
+ul li a:hover{
+    color:red;
+}
+
+.right{
+    text-align: right;
+}
+
+.pdt12{
+    padding-top:12px;
+    padding-left:0px !important;
+}
+/*CAROUSEL FOR ITEMS*/
+.ant-carousel .items .slick-slide {
+    text-align: center;
+    height: 350px;
+    line-height: 160px;
+    background: white;
+    overflow: hidden;
+    padding-left: 35px;
+}
+
+
+
+.ant-carousel .items img{
+    width:100%;
+    height:200px;
+}
+.ant-carousel .slick-slide h3:hover {
+    color: #6FBE96;
+}
+
+.ant-carousel .slick-slide img{
+    position: relative;
+}
+
+.wrapprice{
+    width: 130px;
+    height: 70px;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    border-bottom: 0;
+    background: #56bc9a;
+    box-sizing: border-box;
+    opacity: 0.85;
+    position: absolute;
+    top: 132px;
+    left: 62px;
+    
+}
+
+.wrapprice span{
+    color:white;
+    position: relative;
+    top: 30px;
+    
+}
+
+.gia{
+    font-weight: bold;
+    font-size: 30px;
+    color:#FE5252;
+}
+
+.half-circle {
+    width: 130px;
+    height: 70px;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    border-bottom: 0;
+    background: #56bc9a;
+    box-sizing: border-box;
+}
+
+.dangky,.dangnhap{
+    height:400px;
+}
+
+
+.ant-back-top{
+    right:40px;
+}
+
+.fs16{
+    font-size:16px !important;
+}
+
+.thongtinsanpham{
+    line-height: 60px;
+}
+
+.tensanpham{
+    font-weight: bold;
+}
+
+.btnAddCart{
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    height: 50px !important;
+}
+
+.ant-carousel .sanphamlienquan .slick-slide {
+    text-align: center;
+    height: 350px;
+    line-height: 160px;
+    background: white;
+    overflow: hidden;
+    padding-left:35px;
+}
+
+
+.ant-carousel .sanphamlienquan img{
+    width:100%;
+    height:200px;
+}
+
+.anhctsp{
+    width:100%;
+    height:300px;
+    border:solid 1px lightgray;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.ant-carousel .carouselchitiet .slick-slide {
+    height:280px;
+}
+
+.carouselchitiet img{
+    width: 350px;
+    height: 280px;
+    margin:10px;
+}
+
+.prevAnh{
+    position: absolute;
+    top: 125px;
+    left: 15px;
+}
+
+.nextAnh{
+    position: absolute;
+    top: 125px;
+    right: 15px;
+}
+
+
+.wrapanhctsp{
+    padding:10px;
+}
+
+.anhctspduoi{
+    width:90px;
+}
+
+#components-layout-demo-side .logo {
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px;
   }
+  
+.site-layout .site-layout-background {
+    background: #fff;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+
+
+
+
+
