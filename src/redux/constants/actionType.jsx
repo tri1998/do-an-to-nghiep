@@ -1,0 +1,10 @@
+export const XEM_CHI_TIET='XEM_CHI_TIET';
+export const DANG_KY='DANG_KY';
+export const LUU_MANGSP='LUU_MANGSP';
+export const LUU_TAIKHOAN='LUU_TAIKHOAN'
+export const KIEM_TRA_DANG_KY='KIEM_TRA_DANG_KY'
+export const THEM_TAI_KHOAN='THEM_TAI_KHOAN'
+export const ADMIN_LOGIN= 'ADMIN_LOGIN'
+export const ADMIN_LOGOUT= 'ADMIN_LOGOUT'
+export const USER_LOGIN='USER_LOGIN'
+export const IS_USER_LOGIN='IS_USER_LOGIN'
