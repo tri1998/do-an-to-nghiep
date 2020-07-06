@@ -3,22 +3,27 @@ import { Row, Col } from 'antd';
 import { Button, Tooltip } from 'antd';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { Carousel } from 'antd';
-import Slider from 'react-slick'
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+import { createRef } from 'react';
 import { connect } from 'react-redux';
 import SanPham from './sanpham';
 import axios from 'axios'
 import { actLuuMangSP } from '../redux/actions/sanpham';
 
 class newproducts extends Component {
+    constructor(props) {
+        super(props);
+        this.carouselRef=createRef();
+    }
+
+    handlePrev =()=> this.carouselRef.current.prev();
+    handleNext =()=> this.carouselRef.current.next();
 
 
     loadDSSP = () => {
         console.log('ok', this.props.DSSP)
         return this.props.DSSP.map((sp, index) => {
             console.log(sp, index)
-            return (<div><SanPham key={index} sanPham={sp}></SanPham></div>)
+            return (<SanPham key={index} sanPham={sp}></SanPham>)
         })
     }
 
@@ -28,7 +33,7 @@ class newproducts extends Component {
         console.log(this.props.DSSP);
         axios({
             method: "GET",
-            url: 'http://localhost:5000/api/sanpham'
+            url: 'http://localhost:5005/api/sanpham'
         }).then(res => {
             this.props.onSaveDSSanPham(res.data);
         })
@@ -36,16 +41,13 @@ class newproducts extends Component {
     }
 
     render() {
-        const settings = {
-            dots: true,
-            infinite: true,
-            speed: 500,
-            slidesToShow: 1,
-            slidesToScroll: 1
-          };
+        
         return (
-                <div className="newproduct">
-                    <Row>
+            <div>
+                {this.props.DSSP.length!==0?
+                (<div className="newproduct">
+                    
+                    (<Row>
                         <Col span={4} className="right">
                             <Button onClick={() => console.log(this.laySPChon)} shape="round" size="large">
                                 HÀNG MỚI VỀ <RightOutlined />
@@ -54,22 +56,23 @@ class newproducts extends Component {
                         <Col span={18} className="pdt12"><hr /></Col>
                         <Col span={1} className="right">
                             <Tooltip title="Prev" >
-                                <Button shape="circle" size="medium" icon={<LeftOutlined />}></Button>
+                                <Button onClick={this.handlePrev} shape="circle" size="medium" icon={<LeftOutlined />}></Button>
                             </Tooltip>
                         </Col>
                         <Col span={1}>
                             <Tooltip title="Next">
-                                <Button shape="circle" size="medium" icon={<RightOutlined />}></Button>
+                                <Button onClick={this.handleNext} shape="circle" size="medium" icon={<RightOutlined />}></Button>
                             </Tooltip>
                         </Col>
                     </Row>
                     <br />
-                     <Carousel dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
+                     <Carousel ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
                         {
-                            this.loadDSSP()
+                             this.loadDSSP()
                         }
                     </Carousel>
-                </div>
+                </div>):null}
+            </div>
         )
     }
     

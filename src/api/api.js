@@ -32,6 +32,7 @@ app.get('/api/taikhoan',(req,res)=>{
     })
 })
 
+//API tai khoan
 app.get('/api/sanpham',(req,res)=>{
     var sql = "SELECT * FROM sanpham";
     connection.query(sql,(err,results)=>{
@@ -40,23 +41,45 @@ app.get('/api/sanpham',(req,res)=>{
     })
 })
 
+//API them tai khoan nguoi dung
 app.post('/api/themtaikhoan',(req,res)=>{
     var sql = "INSERT "
-            + "INTO taikhoan(HoTen,Email,SDT,MatKhau,isAdmin)"
+            + "INTO taikhoan(MaTK,HoTen,Email,SDT,MatKhau,isAdmin,TrangThai)"
             + "VALUES('"
+            + req.body.MaTK + "','"
             + req.body.HoTen + "','"
             + req.body.Email + "','"
             + req.body.SDT +"','"
             + req.body.MatKhau + "','"
-            + 0 + "')";
+            + 0 + "','"
+            + 1 + "')";
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);
     })
 })
 
-app.listen(5000,()=>console.log('App listening on port 5000'));
+//API xoa tai khoan nguoidung
+app.delete('/api/:id',(req,res)=>{
+    var sql = "DELETE FROM taikhoan WHERE MaTK='"+req.params.id+"'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API xoa tai khoan nguoidung nhung thuc chat la update trang thai
+
+app.put('/api/taikhoan/:id',(req,res)=>{
+    var sql = "UPDATE taikhoan SET TrangThai='"
+            + 0 +"'"
+            + "WHERE MaTK='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
 
 
-
-
+app.listen(5005,()=>console.log('App listening on port 5005'));

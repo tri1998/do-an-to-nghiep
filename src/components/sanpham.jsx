@@ -7,14 +7,14 @@ import {actXemChiTiet} from '../redux/actions/sanpham';
 class sanpham extends PureComponent {
 
     render() {
-        let {MaSP,TenSP,AnhSP,Gia} = this.props.sanPham;
+        let {MaSP,TenSP,Hinh,Gia} = this.props.sanPham;
 
         return (
             
                     <Card
                     hoverable
                     style={{ width: 240 }}
-                    cover={<img alt="example" src={AnhSP} />}
+                    cover={<img alt="example" src={Hinh} />}
                     >
                         <div className="wrapprice">
                             <span>{Gia}Đ</span>

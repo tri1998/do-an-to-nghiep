@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { Layout, Menu, Breadcrumb, Button } from 'antd';
+import { Layout, Menu, Breadcrumb } from 'antd';
 import {
     DesktopOutlined,
     PieChartOutlined,
@@ -55,6 +55,7 @@ class Admin extends Component {
     };
 
     adminLogOut=()=>{
+        localStorage.removeItem('loginAdmin');
         this.props.adminLogOut();
         this.props.history.push('/');
     }

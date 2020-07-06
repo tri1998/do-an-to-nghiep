@@ -12,7 +12,7 @@ export default class carosel extends Component {
                                 <img src="./img/aocter.png" alt="ao"/>
                             </div>
                             <div>
-                                <img src="./img/balocter.png" alt="balo" />
+                                <img src="./img/balocter.jpeg" alt="balo" />
                             </div>
                             <div>
                                 <img src="./img/mohinhcter.png" alt="mohinh" />

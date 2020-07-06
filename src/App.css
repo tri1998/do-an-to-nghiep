@@ -24,7 +24,7 @@ a{
 }
 
 .logo img{
-    width: 218px;
+    width: 210px;
     height: 150px;
 }
 
@@ -159,10 +159,17 @@ ul li a:hover{
     
 }
 
-.gia{
+.Gia{
     font-weight: bold;
     font-size: 30px;
     color:#FE5252;
+}
+
+.disableRow{
+    color: gainsboro;
+}
+.disableRow1{
+    color: red;
 }
 
 .half-circle {

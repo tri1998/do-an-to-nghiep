@@ -1,4 +1,4 @@
-import {IS_USER_LOGIN,USER_LOGIN,DANG_KY,LUU_TAIKHOAN,THEM_TAI_KHOAN,ADMIN_LOGIN,ADMIN_LOGOUT} from '../constants/actionType';
+import {USER_UPDATE_TRANGTHAI,XOA_USER,IS_USER_LOGIN,USER_LOGIN,DANG_KY,LUU_TAIKHOAN,THEM_TAI_KHOAN,ADMIN_LOGIN,ADMIN_LOGOUT} from '../constants/actionType';
 const nguoiDungDefalut = {
     DSND:[],
     adminLogin:false,
@@ -28,6 +28,21 @@ const nguoiDungReducer=(state=nguoiDungDefalut,action)=>{
         case IS_USER_LOGIN:{
             state.isUserLogin=!state.isUserLogin;
             return{...state}
+        }
+        case XOA_USER:{
+            console.log(action.maUser);
+            let mangNguoiDungCapNhat=[...state.DSND];
+            let index = mangNguoiDungCapNhat.findIndex(nguoidung=>nguoidung.MaTK===action.maUser);
+            mangNguoiDungCapNhat.splice(index,1);
+            state.DSND=mangNguoiDungCapNhat;
+            return {...state}
+        }
+        case USER_UPDATE_TRANGTHAI:{
+            let mangNguoiDungCapNhat=[...state.DSND];
+            let index = mangNguoiDungCapNhat.findIndex(nguoidung=>nguoidung.MaTK===action.MaTK);
+            mangNguoiDungCapNhat[index].TrangThai=0;
+            state.DSND=mangNguoiDungCapNhat;
+            return {...state}
         }
         case DANG_KY:{
             let mangNguoiDungCapNhat = [...state.DSND];

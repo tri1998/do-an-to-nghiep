@@ -22,6 +22,7 @@ class dangnhap extends Component {
         super(props);
     }
 
+
     kiemTraDangNhap=(email,matkhau)=>{
         let index = this.props.DanhSachNguoiDung.findIndex(
             nguoidung=>nguoidung.Email===email&&nguoidung.MatKhau===matkhau
@@ -49,22 +50,21 @@ class dangnhap extends Component {
         {
             if(this.isAdmin(user.Email)===1)
             {
+                localStorage.setItem('loginAdmin',user.Email);
                 console.log('day la tai khoan admin');
                 this.props.isAdminLogin();
-
-                localStorage.setItem('email',user.Email);
                 setTimeout(()=>Swal.fire(
                     '',
                     'Đăng Nhập Thành Công !',
                     'success'
                 ),1)
-                setTimeout(()=>this.props.history.push('/admin'),1);
+                this.props.history.push('/admin');
             }
             if(this.isAdmin(user.Email)===0)
             {
                 let userLogIn=this.props.DanhSachNguoiDung.find(nd=>nd.Email===user.Email);
                 this.props.userLogin(userLogIn);
-                localStorage.setItem('user',true);
+                localStorage.setItem('userLogin',true);
                 this.props.setUserLogin();
                 console.log(userLogIn);
                 console.log('day la tai khoan user');
@@ -90,7 +90,7 @@ class dangnhap extends Component {
 
     
     render() {
-        
+        console.log(localStorage.getItem('loginAdmin'));
         return (
             <Row>
                 <Col span={8}></Col>
