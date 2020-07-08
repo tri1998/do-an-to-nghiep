@@ -1,57 +1,73 @@
-import {USER_UPDATE_TRANGTHAI,XOA_USER,IS_USER_LOGIN,USER_LOGIN,DANG_KY,LUU_TAIKHOAN,THEM_TAI_KHOAN,ADMIN_LOGIN,ADMIN_LOGOUT} from '../constants/actionType';
-const nguoiDungDefalut = {
+import * as types from '../constants/actionType';
+const nguoiDungDefault = {
     DSND:[],
     adminLogin:false,
     userLogin:{},
-    isUserLogin:false
+    isUserLogin:false,
+    userDuocChon:{}
 }
 
-const nguoiDungReducer=(state=nguoiDungDefalut,action)=>{
+const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
     switch(action.type){
-        case LUU_TAIKHOAN:{
+        case types.LUU_TAIKHOAN:{
             state.DSND=action.tk;
             return {...state};
         }
-        case ADMIN_LOGIN:{
+        case types.ADMIN_LOGIN:{
             state.adminLogin=!state.adminLogin;
             return{...state}
         }
-        case ADMIN_LOGOUT:{
+        case types.ADMIN_LOGOUT:{
             state.adminLogin=!state.adminLogin;
             return{...state}
         }
-        case USER_LOGIN:{
+        case  types.USER_LOGIN:{
             state.userLogin=action.user;
             console.log(state.userLogin);
             return{...state}
         }
-        case IS_USER_LOGIN:{
+        case  types.IS_USER_LOGIN:{
             state.isUserLogin=!state.isUserLogin;
             return{...state}
         }
-        case XOA_USER:{
-            console.log(action.maUser);
-            let mangNguoiDungCapNhat=[...state.DSND];
-            let index = mangNguoiDungCapNhat.findIndex(nguoidung=>nguoidung.MaTK===action.maUser);
-            mangNguoiDungCapNhat.splice(index,1);
-            state.DSND=mangNguoiDungCapNhat;
-            return {...state}
-        }
-        case USER_UPDATE_TRANGTHAI:{
+        case  types.USER_UPDATE_TRANGTHAI:{
             let mangNguoiDungCapNhat=[...state.DSND];
             let index = mangNguoiDungCapNhat.findIndex(nguoidung=>nguoidung.MaTK===action.MaTK);
             mangNguoiDungCapNhat[index].TrangThai=0;
             state.DSND=mangNguoiDungCapNhat;
             return {...state}
         }
-        case DANG_KY:{
+        case  types.USER_RECOVER_TRANGTHAI:{
+            let mangNguoiDungCapNhat=[...state.DSND];
+            let index = mangNguoiDungCapNhat.findIndex(nguoidung=>nguoidung.MaTK===action.MaTK);
+            mangNguoiDungCapNhat[index].TrangThai=1;
+            state.DSND=mangNguoiDungCapNhat;
+            return {...state}
+        }
+        case types.UPDATE_USER:{
+            let mangNguoiDungCapNhat=[...state.DSND];
+            let user = action.user;
+            let viTri=mangNguoiDungCapNhat.findIndex(nguoidung=>nguoidung.MaTK===user.MaTK)
+            mangNguoiDungCapNhat[viTri].HoTen=user.HoTen;
+            mangNguoiDungCapNhat[viTri].DiaChi=user.DiaChi;
+            mangNguoiDungCapNhat[viTri].SDT=user.SoDienThoai;
+            mangNguoiDungCapNhat[viTri].MatKhau=user.MatKhau;
+            state.DSND=mangNguoiDungCapNhat;
+            return {...state}
+        }
+        case types.USER_DUOCCHON:{
+            state.userDuocChon=action.user;
+            console.log(state.userDuocChon);
+            return {...state}
+        }
+        case  types.DANG_KY:{
             let mangNguoiDungCapNhat = [...state.DSND];
             mangNguoiDungCapNhat.push(action.info);
             state.DSND=mangNguoiDungCapNhat;
             console.log(state.DSND)
             return {...state}
         }
-        case THEM_TAI_KHOAN:{
+        case  types.THEM_TAI_KHOAN:{
             let mangNguoiDungCapNhat =state.DSND;
             mangNguoiDungCapNhat.push(action.tk);
             state.DSND=mangNguoiDungCapNhat;

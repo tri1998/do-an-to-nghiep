@@ -33,19 +33,15 @@ class dangky extends Component {
             MatKhau: md5(values.password)
         }
         let index = this.props.MangNguoiDung.findIndex(nguoidung => nguoidung.Email === newUser.Email);
-        console.log(newUser);
-        console.log('index= ' + index);
-        console.log(this.props.MangNguoiDung);
         if (index === -1) {
             this.props.themTaiKhoan(newUser);
-            axios.post('http://localhost:5005/api/themtaikhoan', newUser)
+            axios.post('http://localhost:1234/api/themtaikhoan', newUser)
                 .then(res => {
                     setTimeout(() => Swal.fire(
                         'Chúc Mừng!',
                         'Bạn đã đăng ký thành công !',
                         'success'
                     ), 1000);
-                    this.setState({ render: 1 })
                 })
                 .catch(error => console.log(error));
             setTimeout(() => this.props.history.push('/dangnhap'), 2000);
@@ -121,7 +117,7 @@ class dangky extends Component {
                                 <Form.Item>
                                     <Button type="danger" htmlType="submit" className="login-form-button">
                                         Đăng ký
-                        </Button>
+                                    </Button>
                                     <Link to='/dangnhap'>Quay lại</Link>
                                 </Form.Item>
                             </Form>

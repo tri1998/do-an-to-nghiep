@@ -25,7 +25,7 @@ class dangnhap extends Component {
 
     kiemTraDangNhap=(email,matkhau)=>{
         let index = this.props.DanhSachNguoiDung.findIndex(
-            nguoidung=>nguoidung.Email===email&&nguoidung.MatKhau===matkhau
+            nguoidung=>nguoidung.Email===email&&nguoidung.MatKhau===matkhau&&nguoidung.TrangThai===1
         )
         if(index!==-1){
             return true;
@@ -81,13 +81,8 @@ class dangnhap extends Component {
             'Bạn đã nhập sai tên tài khoản hoặc mật khẩu',
             'error'
         ),1000)
-        
-        
-
-        
+                
     }
-    
-
     
     render() {
         console.log(localStorage.getItem('loginAdmin'));

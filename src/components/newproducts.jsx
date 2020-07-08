@@ -33,7 +33,7 @@ class newproducts extends Component {
         console.log(this.props.DSSP);
         axios({
             method: "GET",
-            url: 'http://localhost:5005/api/sanpham'
+            url: 'http://localhost:1234/api/sanpham'
         }).then(res => {
             this.props.onSaveDSSanPham(res.data);
         })
@@ -45,9 +45,9 @@ class newproducts extends Component {
         return (
             <div>
                 {this.props.DSSP.length!==0?
-                (<div className="newproduct">
+                <div className="newproduct">
                     
-                    (<Row>
+                    <Row>
                         <Col span={4} className="right">
                             <Button onClick={() => console.log(this.laySPChon)} shape="round" size="large">
                                 HÀNG MỚI VỀ <RightOutlined />
@@ -71,7 +71,7 @@ class newproducts extends Component {
                              this.loadDSSP()
                         }
                     </Carousel>
-                </div>):null}
+                </div>:null}
             </div>
         )
     }

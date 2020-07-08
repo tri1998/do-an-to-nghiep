@@ -3,6 +3,7 @@ const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const bodyParser = require('body-parser');
+const port = 5678;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -68,9 +69,9 @@ app.delete('/api/:id',(req,res)=>{
     })
 })
 
-//API xoa tai khoan nguoidung nhung thuc chat la update trang thai
+//API set lai TrangThai nguoi dung = 0
 
-app.put('/api/taikhoan/:id',(req,res)=>{
+app.put('/api/taikhoan/xoaTK/:id',(req,res)=>{
     var sql = "UPDATE taikhoan SET TrangThai='"
             + 0 +"'"
             + "WHERE MaTK='"
@@ -81,5 +82,32 @@ app.put('/api/taikhoan/:id',(req,res)=>{
     })
 })
 
+//API set lai TrangThai nguoi dung = 0
 
-app.listen(5005,()=>console.log('App listening on port 5005'));
+app.put('/api/taikhoan/khoiphucTK/:id',(req,res)=>{
+    var sql = "UPDATE taikhoan SET TrangThai='"
+            + 1 +"'"
+            + "WHERE MaTK='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//API cap nhat thong tin nguoi dung
+app.put('/api/taikhoan/capnhatTK/:id',(req,res)=>{
+    var sql = "UPDATE taikhoan SET "
+            + "HoTen='"      +   req.body.HoTen  + "',"
+            + "DiaChi='"     +   req.body.DiaChi  + "',"
+            + "SDT='"        +   req.body.SoDienThoai  + "',"
+            + "MatKhau='"    +   req.body.MatKhau   + "'"
+            + "WHERE MaTK='" +   req.params.id  + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+
+
+app.listen(port,()=>console.log(`App listening on port ${port}`));

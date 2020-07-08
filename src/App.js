@@ -30,7 +30,7 @@ class App extends Component {
   componentDidMount() {
     axios({
       method: "GET",
-      url: 'http://localhost:5005/api/taikhoan'
+      url: 'http://localhost:5678/api/taikhoan'
     }).then(res => {
       this.props.onSaveDSNguoiDung(res.data);
     })

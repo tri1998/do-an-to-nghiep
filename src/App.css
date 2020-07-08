@@ -3,9 +3,6 @@
     font-size: 14px;
     line-height: 1.42857143;
     font-family: Arial !important;
-}
-
-.nguoidung{
     background-image: url("/img/wrap-bg-body.png");
     background-repeat: repeat;
 }
@@ -272,6 +269,11 @@ ul li a:hover{
   
 .site-layout .site-layout-background {
     background: #fff;
+}
+
+/*CUSTOM MODAL ANTD*/
+.ant-modal-header {
+    text-align: center;
 }
 
 

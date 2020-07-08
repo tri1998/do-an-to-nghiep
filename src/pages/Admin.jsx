@@ -3,7 +3,7 @@ import { Layout, Menu, Breadcrumb } from 'antd';
 import {
     DesktopOutlined,
     PieChartOutlined,
-    ExportOutlined,
+    LogoutOutlined,
     AppstoreOutlined,
     UserOutlined,
     FileAddOutlined,
@@ -86,7 +86,7 @@ class Admin extends Component {
                                     <Menu.Item icon={<FileAddOutlined />}>
                                         Quản Lý Hóa Đơn
                                     </Menu.Item>
-                                    <Menu.Item key="9" icon={<ExportOutlined />} onClick={this.adminLogOut}>Đăng Xuất</Menu.Item>
+                                    <Menu.Item key="9" icon={<LogoutOutlined />} onClick={this.adminLogOut}>Đăng Xuất</Menu.Item>
                                 </Menu>
                             </Sider>
                             <Layout className="site-layout">

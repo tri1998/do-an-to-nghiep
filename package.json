@@ -25,6 +25,7 @@
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
+    "reverse-md5": "0.0.4",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^9.15.2"
   },
