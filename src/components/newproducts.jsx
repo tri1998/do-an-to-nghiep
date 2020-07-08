@@ -33,7 +33,7 @@ class newproducts extends Component {
         console.log(this.props.DSSP);
         axios({
             method: "GET",
-            url: 'http://localhost:1234/api/sanpham'
+            url: 'http://localhost:5678/api/sanpham'
         }).then(res => {
             this.props.onSaveDSSanPham(res.data);
         })

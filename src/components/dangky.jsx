@@ -35,7 +35,7 @@ class dangky extends Component {
         let index = this.props.MangNguoiDung.findIndex(nguoidung => nguoidung.Email === newUser.Email);
         if (index === -1) {
             this.props.themTaiKhoan(newUser);
-            axios.post('http://localhost:1234/api/themtaikhoan', newUser)
+            axios.post('http://localhost:5678/api/themtaikhoan', newUser)
                 .then(res => {
                     setTimeout(() => Swal.fire(
                         'Chúc Mừng!',

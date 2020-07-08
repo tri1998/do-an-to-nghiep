@@ -55,7 +55,7 @@ class App extends Component {
                   <Route path='/trangchu' component={Home}></Route>
                   <Route path='/gaming-gear' component={GamingGear}></Route>
                   <Route path='/aottg' component={AoTTG}></Route>
-                  <Auth path='/admin' Component={Admin}></Auth>
+                  <Auth  path='/admin' Component={Admin}></Auth>
                   <Route path='/dangnhap' component={DangNhap}></Route>
                   <Route path='/dangky' component={DangKy}></Route>
                   <Route path='/:MaSP' component={ChiTiet}></Route>

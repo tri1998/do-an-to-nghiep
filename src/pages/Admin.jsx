@@ -62,8 +62,7 @@ class Admin extends Component {
     render() {
         return (
             <div>
-                <BrowserRouter>
-                    <Fragment>
+                
                         <Layout style={{ minHeight: '100vh' }}>
                             <Sider width={230} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                                 <div className="logo" />
@@ -76,12 +75,12 @@ class Admin extends Component {
                                     </Menu.Item>
                                     <SubMenu key="sub1" icon={<UserOutlined />} title="Quản Lý Người Dùng">
                                         <Menu.Item key="3">Nhân Viên</Menu.Item>
-                                        <Menu.Item key="4"><Link to="/quanlykhachhang">Khách Hàng</Link></Menu.Item>
+                                        <Menu.Item key="4"><Link to={`${this.props.match.url}/quanlykhachhang`}>Khách Hàng</Link></Menu.Item>
                                         <Menu.Item key="5">Quản Trị</Menu.Item>
                                     </SubMenu>
                                     <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Quản Lý Sản Phẩm">
-                                        <Menu.Item key="6"><Link to="/quanlysanpham">Sản Phẩm</Link></Menu.Item>
-                                        <Menu.Item key="8"><Link to="/quanlyloaisanpham">Loại Sản Phẩm</Link></Menu.Item>
+                                        <Menu.Item key="6"><Link to={`${this.props.match.url}/quanlysanpham`}>Sản Phẩm</Link></Menu.Item>
+                                        <Menu.Item key="8"><Link to={`${this.props.match.url}/quanlyloaisanpham`}>Loại Sản Phẩm</Link></Menu.Item>
                                     </SubMenu>
                                     <Menu.Item icon={<FileAddOutlined />}>
                                         Quản Lý Hóa Đơn
@@ -97,19 +96,20 @@ class Admin extends Component {
                                         <Breadcrumb.Item>Bill</Breadcrumb.Item>
                                     </Breadcrumb>
                                     <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                                        <Switch>
-                                            <Route path="/quanlysanpham" component={QuanLySanPham}></Route>
-                                            <Route path="/quanlyloaisanpham" component={QuanLyLoaiSanPham}></Route>
-                                            <Route path="/quanlykhachhang" component={DanhSachKhachHang}></Route>
-                                            <Route exact path="/" component={Admin}></Route>
-                                        </Switch>
+                                      <Fragment>
+                                      <Switch>
+                                        <Route path={`${this.props.match.url}/quanlykhachhang`} component={DanhSachKhachHang}></Route>
+                                        <Route path={`${this.props.match.url}/quanlysanpham`} component={QuanLySanPham}></Route>
+                                        <Route path={`${this.props.match.url}/quanlyloaisanpham`} component={QuanLyLoaiSanPham}></Route>
+                                        <Route exact path={`${this.props.match.url}/`} render={()=><h3>Xin Chào !</h3>}></Route>
+                                      </Switch>
+                                      </Fragment>
                                     </div>
                                 </Content>
                                 <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
                             </Layout>
                         </Layout>
-                    </Fragment>
-                </BrowserRouter>
+                    
             </div>
         )
     }

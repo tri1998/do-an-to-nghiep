@@ -17,19 +17,27 @@ import {
   LockOutlined,
   HomeOutlined,
   PhoneOutlined,
-  MailOutlined
+  MailOutlined,
+  SearchOutlined
 } from '@ant-design/icons';
-import { actUpdateTrangThaiUser, actRecoverUser, actSaveSelectedUser,actUpdateUserInfo } from '../../redux/actions/nguoidung'
+import { 
+  actUpdateTrangThaiUser,
+  actRecoverUser,
+  actSaveSelectedUser,
+  actUpdateUserInfo } from '../../redux/actions/nguoidung'
 import axios from 'axios';
+import Highlighter from 'react-highlight-words';
 import Swal from 'sweetalert2';
 let md5 = require('md5');
+
 class DanhSachKhachHang extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ModalText: 'Content of the modal',
       visible: false,
       confirmLoading: false,
+      searchText: '',
+      searchedColumn: ''
     };
 
   }
@@ -153,27 +161,96 @@ class DanhSachKhachHang extends Component {
     })
   }
 
+  //Tim kiem 
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text =>
+      this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[this.state.searchText]}
+          autoEscape
+          textToHighlight={text.toString()}
+        />
+      ) : (
+        text
+      ),
+  });
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+  
+
   columns = [
     {
       title: 'Mã KH',
       dataIndex: 'MaTK',
       key: 'MaTK',
       render: text => <a>{text}</a>,
+      ...this.getColumnSearchProps('MaTK')
     },
     {
       title: 'Họ Tên',
       dataIndex: 'HoTen',
       key: 'HoTen',
+      ...this.getColumnSearchProps('HoTen')
     },
     {
       title: 'Số Điện Thoại',
       dataIndex: 'SDT',
       key: 'SDT',
+      ...this.getColumnSearchProps('SDT')
     },
     {
       title: 'Email',
       dataIndex: 'Email',
       key: 'Email',
+      ...this.getColumnSearchProps('Email')
     },
 
     {
@@ -195,12 +272,16 @@ class DanhSachKhachHang extends Component {
               onClick={() => record.isAdmin === 1
                 ? alert('Không thể xóa tai khoan admin')
                 : this.deleteUser(record.MaTK)}
-              type="primary"><CloseOutlined style={{ fontSize: '20px' }} />
+              type="primary">
+              <CloseOutlined style={{ fontSize: '20px' }} />
             </Button>
           </Tooltip>
           {record.TrangThai === 0
             ? <Tooltip title="Phục hồi">
-              <Button onClick={() => this.recoverUser(record.MaTK)} danger><RedoOutlined style={{ fontSize: '20px' }} /></Button>
+              <Button 
+                onClick={() => this.recoverUser(record.MaTK)} danger>
+                <RedoOutlined style={{ fontSize: '20px' }} />
+              </Button>
             </Tooltip>
             : null}
         </Space>
@@ -239,7 +320,13 @@ class DanhSachKhachHang extends Component {
               rules={[{ required: true, message: 'Please input your Username!' }]}
               initialValue={userDuocChon.MaTK}
             >
-              <Input disabled={true} size="large" prefix={<FormOutlined className="site-form-item-icon" />} placeholder="Mã Tài Khoản" />
+              <Input 
+                disabled={true} 
+                size="large" 
+                prefix={<FormOutlined 
+                className="site-form-item-icon" />} 
+                placeholder="Mã Tài Khoản" 
+              />
             </Form.Item>
 
             <Form.Item
@@ -247,7 +334,11 @@ class DanhSachKhachHang extends Component {
               rules={[{ required: true, message: 'Please input your Username!' }]}
               initialValue={userDuocChon.HoTen}
             >
-              <Input size="large" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Họ Tên" />
+              <Input 
+                size="large" 
+                prefix={<UserOutlined className="site-form-item-icon" />} 
+                placeholder="Họ Tên" 
+              />
             </Form.Item>
 
             <Form.Item
@@ -255,23 +346,36 @@ class DanhSachKhachHang extends Component {
               rules={[{ required: true, message: 'Please input your Username!' }]}
               initialValue={userDuocChon.Email}
             >
-              <Input  disabled={true} size="large" prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
+              <Input  
+                disabled={true} 
+                size="large" 
+                prefix={<MailOutlined className="site-form-item-icon" />} 
+                placeholder="Email" 
+              />
             </Form.Item>
-
+            
             <Form.Item
               name="DiaChi"
               rules={[{ required: true, message: 'Please input your Username!' }]}
               initialValue={userDuocChon.DiaChi}
             >
-              <Input size="large" prefix={<HomeOutlined className="site-form-item-icon" />} placeholder="Địa Chỉ" />
+              <Input 
+                size="large" 
+                prefix={<HomeOutlined className="site-form-item-icon" />} 
+                placeholder="Địa Chỉ" 
+              />
             </Form.Item>
 
             <Form.Item
               name="SoDienThoai"
-              rules={[{ required: true, message: 'Please input your Username!' }]}
+              rules={[{ required: true, message: 'Please input your Username!',pattern:'[0-9]{10,11}' }]}
               initialValue={userDuocChon.SDT}
             >
-              <Input size="large" prefix={<PhoneOutlined className="site-form-item-icon" />} placeholder="Địa Chỉ" />
+              <Input 
+                size="large" 
+                prefix={<PhoneOutlined className="site-form-item-icon" />} 
+                placeholder="Địa Chỉ" 
+              />
             </Form.Item>
 
             <Form.Item

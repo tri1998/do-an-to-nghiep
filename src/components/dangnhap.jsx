@@ -95,6 +95,7 @@ class dangnhap extends Component {
                     size="large"
                     name="normal_login"
                     className="login-form"
+                    validateMessages={validateMessages}
                     initialValues={{ remember: true }}
                     onFinish={this.onFinish}
                     >
