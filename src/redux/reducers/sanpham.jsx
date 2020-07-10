@@ -1,4 +1,4 @@
-import {LUU_MANGSP,XEM_CHI_TIET}from '../constants/actionType'
+import * as types from '../constants/actionType'
 const stateDefault = {
     
     DanhSachSanPham:[],
@@ -8,17 +8,37 @@ const stateDefault = {
 
 const sanPhamReducer = (state=stateDefault,action)=>{
     switch(action.type){
-        case XEM_CHI_TIET:
+        case types.XEM_CHI_TIET:
         {
                 state.sanPhamDuocChon=action.sp;
                 console.log(state.sanPhamDuocChon);
                 return {...state};
        }
-       case LUU_MANGSP:
+       case types.LUU_MANGSP:
        {
             state.DanhSachSanPham=action.mangSP;
             return {...state}
        }
+       case types.UPDATE_SANPHAM_TRANGTHAI:{
+           let mangSanPhamCapNhat = [...state.DanhSachSanPham];
+           let viTri = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===action.MaSP);
+           mangSanPhamCapNhat[viTri].TrangThai=0;
+           state.DanhSachSanPham=mangSanPhamCapNhat;
+           return {...state}
+       }
+       case types.RECOVER_SANPHAM_TRANGTHAI:{
+            let mangSanPhamCapNhat = [...state.DanhSachSanPham];
+            let viTri = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===action.MaSP);
+            mangSanPhamCapNhat[viTri].TrangThai=1;
+            state.DanhSachSanPham=mangSanPhamCapNhat;
+            return {...state}
+        }
+        case types.THEM_SAN_PHAM:{
+            let mangSanPhamCapNhat = [...state.DanhSachSanPham];
+            mangSanPhamCapNhat.push(action.sanPham);
+            state.DanhSachSanPham=mangSanPhamCapNhat;
+            return {...state}
+        }
        default:return{...state}
     }
 }

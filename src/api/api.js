@@ -3,7 +3,7 @@ const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 5678;
+const port = 9999;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -16,7 +16,7 @@ const connection = mysql.createConnection({
     host:'localhost',
     user:'root',
     password:'',
-    database:'ttgshop'
+    database:'doan'
 });
 
 connection.connect(function(err){
@@ -106,6 +106,56 @@ app.put('/api/taikhoan/capnhatTK/:id',(req,res)=>{
         if(err) throw err;
         res.json(results);
     })
+})
+
+//SANPHAM
+
+//API cap nhat trang thai cho san pham 
+app.put('/api/sanpham/capnhatSP/:id',(req,res)=>{
+    var sql = "UPDATE sanpham SET TrangThai='"
+            + 0 +"'"
+            + "WHERE MaSP='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API khoi phuc san pham 
+app.put('/api/sanpham/khoiphucSP/:id',(req,res)=>{
+    var sql ="UPDATE sanpham SET TrangThai='"
+            + 1 +"'"
+            + "WHERE MaSP='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API Them San Pham 
+
+app.post('/api/sanpham/themSP',(req,res)=>{
+    var sql = "INSERT "
+            + "INTO sanpham(MaSP,MaDM,MaHang,TenSP,LuotBan,LuotXem,Gia,SanPham_Moi,TrangThai,Hinh)"
+            + "VALUES('"
+            + req.body.MaSP + "','"
+            + req.body.LoaiSP + "','"
+            + req.body.HangSX + "','"
+            + req.body.TenSP + "','"
+            + req.body.LuotBan + "','"
+            + req.body.LuotXem +"','"
+            + req.body.Gia + "','"
+            + req.body.SPMoi + "','"
+            + 1 + "','"
+            + req.body.Hinh + "')";
+  
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+
 })
 
 

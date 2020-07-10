@@ -165,9 +165,7 @@ ul li a:hover{
 .disableRow{
     color: gainsboro;
 }
-.disableRow1{
-    color: red;
-}
+
 
 .half-circle {
     width: 130px;
@@ -274,6 +272,16 @@ ul li a:hover{
 /*CUSTOM MODAL ANTD*/
 .ant-modal-header {
     text-align: center;
+}
+
+/*ADMIN CSS*/
+
+.admin{
+    background:lavender;
+}
+
+.hinh{
+    width:110px;
 }
 
 

@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 const Auth=({path,Component})=>{
     return(
         <Route path={path} render={(routeProps)=>{
-            if(localStorage.getItem('loginAdmin')!=null)
+            if(sessionStorage.getItem('loginAdmin')!=null)
             {
                 return <Component {...routeProps}/>
             }

@@ -50,7 +50,8 @@ class dangnhap extends Component {
         {
             if(this.isAdmin(user.Email)===1)
             {
-                localStorage.setItem('loginAdmin',user.Email);
+                console.log(sessionStorage.getItem('loginAdmin'));
+                sessionStorage.setItem('loginAdmin',user.Email);
                 console.log('day la tai khoan admin');
                 this.props.isAdminLogin();
                 setTimeout(()=>Swal.fire(
@@ -85,7 +86,6 @@ class dangnhap extends Component {
     }
     
     render() {
-        console.log(localStorage.getItem('loginAdmin'));
         return (
             <Row>
                 <Col span={8}></Col>

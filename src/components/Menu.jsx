@@ -3,7 +3,10 @@ import { Menu } from 'antd';
 import { HomeOutlined,CustomerServiceOutlined,SkinOutlined,RedditOutlined,ShoppingOutlined } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 export default class Menu1 extends Component {
-    state = {
+    constructor(props){
+      super(props);
+    }
+      state = {
         current: 'trangchu',
       };
     

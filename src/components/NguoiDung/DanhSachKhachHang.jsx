@@ -83,7 +83,7 @@ class DanhSachKhachHang extends Component {
     }
     axios({
       method:'PUT',
-      url:`http://localhost:5678/api/taikhoan/capnhatTK/${capNhatUser.MaTK}`,
+      url:`http://localhost:9999/api/taikhoan/capnhatTK/${capNhatUser.MaTK}`,
       data:capNhatUser
     })
     .then(res=>
@@ -121,7 +121,7 @@ class DanhSachKhachHang extends Component {
       if (result.value) {
         axios({
           method: 'PUT',
-          url: `http://localhost:5678/api/taikhoan/xoaTK/${maUser}`,
+          url: `http://localhost:9999/api/taikhoan/xoaTK/${maUser}`,
         })
           .then(res => this.props.updateTrangThaiUser(maUser))
           .catch(error => console.log(error));
@@ -148,7 +148,7 @@ class DanhSachKhachHang extends Component {
       if (result.value) {
         axios({
           method: 'PUT',
-          url: `http://localhost:5678/api/taikhoan/khoiphucTK/${maUser}`,
+          url: `http://localhost:9999/api/taikhoan/khoiphucTK/${maUser}`,
         })
           .then(res => this.props.recoverTrangThaiUser(maUser))
           .catch(error => console.log(error));
@@ -260,6 +260,7 @@ class DanhSachKhachHang extends Component {
         <Space size="middle">
           <Tooltip title="Sửa">
             <Button
+              type="primary"
               danger
               disabled={record.TrangThai === 0 ? true : false}
               onClick={() => this.showModal(record)}>
@@ -299,7 +300,8 @@ class DanhSachKhachHang extends Component {
           columns={this.columns}
           dataSource={data}
           rowKey={record => record.MaTK}
-          rowClassName={record => record.TrangThai === 0 ? "disableRow" : ""}
+          rowClassName={record =>record.TrangThai === 0 ? "disableRow" : (record.isAdmin===1?"admin":"")}
+          
         />
         <Modal
           title="CẬP NHẬT THÔNG TIN NGƯỜI DÙNG"

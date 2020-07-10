@@ -6,8 +6,6 @@ import { Carousel } from 'antd';
 import { createRef } from 'react';
 import { connect } from 'react-redux';
 import SanPham from './sanpham';
-import axios from 'axios'
-import { actLuuMangSP } from '../redux/actions/sanpham';
 
 class newproducts extends Component {
     constructor(props) {
@@ -22,23 +20,14 @@ class newproducts extends Component {
     loadDSSP = () => {
         console.log('ok', this.props.DSSP)
         return this.props.DSSP.map((sp, index) => {
-            console.log(sp, index)
-            return (<SanPham key={index} sanPham={sp}></SanPham>)
+           if(sp.TrangThai===1)
+           {
+                return (<SanPham key={index} sanPham={sp}></SanPham>)
+           }
         })
     }
 
 
-
-    componentDidMount() {
-        console.log(this.props.DSSP);
-        axios({
-            method: "GET",
-            url: 'http://localhost:5678/api/sanpham'
-        }).then(res => {
-            this.props.onSaveDSSanPham(res.data);
-        })
-            .catch(error => console.log(error));
-    }
 
     render() {
         
@@ -78,14 +67,6 @@ class newproducts extends Component {
     
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onSaveDSSanPham: (danhsachsanpham) => {
-            dispatch(actLuuMangSP(danhsachsanpham))
-        }
-
-    }
-}
 
 const mapStateToProp = (state) => {
     return {
@@ -94,4 +75,4 @@ const mapStateToProp = (state) => {
 }
 
 
-export default connect(mapStateToProp, mapDispatchToProps)(newproducts);
+export default connect(mapStateToProp,null)(newproducts);

@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import "antd/dist/antd.css";
-import Admin from './pages/Admin';
+import Admin from './template/Admin';
 import Home from './components/trangchu';
 import Header from './components/header';
 import AoTTG from './components/aottg';
@@ -15,6 +15,7 @@ import { UpCircleTwoTone } from '@ant-design/icons';
 import { BackTop, Button } from 'antd';
 import { BrowserRouter, Route, Switch} from 'react-router-dom'
 import { actLuuTaiKhoan } from './redux/actions/nguoidung';
+import { actLuuMangSP } from './redux/actions/sanpham'
 import axios from 'axios';
 import { connect } from 'react-redux';
 import './App.css';
@@ -30,11 +31,19 @@ class App extends Component {
   componentDidMount() {
     axios({
       method: "GET",
-      url: 'http://localhost:5678/api/taikhoan'
+      url: 'http://localhost:9999/api/taikhoan'
     }).then(res => {
       this.props.onSaveDSNguoiDung(res.data);
     })
-      .catch(error => console.log(error));
+    .catch(error => console.log(error));
+
+    axios({
+      method: "GET",
+      url: 'http://localhost:9999/api/sanpham'
+    }).then(res => {
+            this.props.onSaveDSSanPham(res.data);
+    })
+    .catch(error => console.log(error));
 
   }
 
@@ -47,9 +56,9 @@ class App extends Component {
           <div className="App">
 
             <Row>
-              {localStorage.getItem('loginAdmin') === null ? <Col span={2}></Col> : null}
-              <Col className="wrapper" span={localStorage.getItem('loginAdmin') === null ? 20 : 24}>
-                {localStorage.getItem('loginAdmin') === null ? <Header></Header> : null}
+              {sessionStorage.getItem('loginAdmin') === null ? <Col span={2}></Col> : null}
+              <Col className="wrapper" span={sessionStorage.getItem('loginAdmin') === null ? 20 : 24}>
+                {sessionStorage.getItem('loginAdmin') === null ? <Header></Header> : null}
 
                 <Switch>
                   <Route path='/trangchu' component={Home}></Route>
@@ -63,11 +72,11 @@ class App extends Component {
 
                 </Switch>
 
-                {localStorage.getItem('loginAdmin') === null ? <Footer></Footer> : null}
+                {sessionStorage.getItem('loginAdmin') === null ? <Footer></Footer> : null}
 
               </Col>
 
-              {localStorage.getItem('loginAdmin') === null ? <Col span={2}></Col> : null}
+              {sessionStorage.getItem('loginAdmin') === null ? <Col span={2}></Col> : null}
             </Row>
             <BackTop>
               <Button type="primary" shape="circle" icon={<UpCircleTwoTone />} size="large"></Button>
@@ -93,6 +102,9 @@ const mapDispatchToProps = (dispatch) => {
     onSaveDSNguoiDung: (danhsachnguoidung) => {
       dispatch(actLuuTaiKhoan(danhsachnguoidung))
     },
+    onSaveDSSanPham: (danhsachsanpham) => {
+      dispatch(actLuuMangSP(danhsachsanpham))
+  }
   }
 }
 

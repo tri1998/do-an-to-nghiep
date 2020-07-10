@@ -10,9 +10,9 @@ import {
     
 } from '@ant-design/icons';
 import { Link} from 'react-router-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import QuanLySanPham from '../components/SanPham/QuanLySanPham'
-import QuanLyLoaiSanPham from '../components/SanPham/QuanLyLoanSanPham'
+import {Route, Switch } from 'react-router-dom'
+import QuanLySanPham from '../pages/QuanLySanPham';
+import QuanLyLoaiSanPham from '../pages/QuanLyLoaiSanPham'
 import DanhSachKhachHang from '../components/NguoiDung/DanhSachKhachHang';
 import {actAdminLogOut} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
@@ -55,7 +55,7 @@ class Admin extends Component {
     };
 
     adminLogOut=()=>{
-        localStorage.removeItem('loginAdmin');
+        sessionStorage.removeItem('loginAdmin');
         this.props.adminLogOut();
         this.props.history.push('/');
     }
