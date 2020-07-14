@@ -4,7 +4,9 @@ const nguoiDungDefault = {
     adminLogin:false,
     userLogin:{},
     isUserLogin:false,
-    userDuocChon:{}
+    userDuocChon:{},
+    userUpdatePassword:[]
+    
 }
 
 const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
@@ -71,6 +73,27 @@ const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
             let mangNguoiDungCapNhat =state.DSND;
             mangNguoiDungCapNhat.push(action.tk);
             state.DSND=mangNguoiDungCapNhat;
+            return {...state}
+        }
+        case types.UPDATE_PASSWORD:{
+            let mangCapNhat = [...state.userUpdatePassword];
+            mangCapNhat.push(action.email);
+            state.userUpdatePassword=mangCapNhat;
+            return {...state};
+        }
+        case types.UPDATE_OTP:{
+            let mangCapNhat = [...state.userUpdatePassword];
+            let index = mangCapNhat.findIndex(user=>user.STT===action.STT);
+            mangCapNhat[index].OTP=action.OTP;
+            state.userUpdatePassword=mangCapNhat;
+            console.log(state.userUpdatePassword);
+            return {...state}
+        }
+        case types.UPDATE_PASSWORD_USER:{
+            let mangCapNhat = [...state.DSND];
+            let index = mangCapNhat.findIndex(user=>user.Email===action.USER.Email)
+            mangCapNhat[index].MatKhau=action.USER.password1;
+            state.DSND=mangCapNhat;
             return {...state}
         }
         default: return {...state};

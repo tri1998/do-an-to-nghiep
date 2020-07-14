@@ -28,7 +28,7 @@ class header extends Component {
                 <Col span={4}>
                   <Link to="/trangchu">
                     <div className="logo">
-                      <img src="./img/logo.png" />
+                      <img src="../img/logo.png" />
                     </div>
                   </Link>
 

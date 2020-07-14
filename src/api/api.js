@@ -3,7 +3,7 @@ const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 9999;
+const port = 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -156,6 +156,24 @@ app.post('/api/sanpham/themSP',(req,res)=>{
         res.json(results);
     })
 
+})
+
+//API cap nhat thong tin san pham 
+app.put('/api/sanpham/capNhatThongTin/:sp',(req,res)=>{
+    var sql = "UPDATE sanpham SET "
+            + "MaDM='"      +   req.body.MaDM  + "',"
+            + "MaHang='"     +   req.body.MaHang  + "',"
+            + "TenSP='"        +   req.body.TenSP  + "',"
+            + "Gia='"    +   req.body.Gia + "'"
+            + "SanPham_Moi='"    +   req.body.SanPham_Moi + "'"
+            + "ThongTinSP='"    +   req.body.ThongTinSP + "'"
+            + "TrangThai='"    +   req.body.TrangThai + "'"
+            + "Hinh='"    +   req.body.Hinh + "'"
+            + "WHERE MaSP='" +   req.params.sp  + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results)
+    })
 })
 
 

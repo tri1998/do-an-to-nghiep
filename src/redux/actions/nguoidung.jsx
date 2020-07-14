@@ -86,3 +86,25 @@ export const actUpdateUserInfo=(user)=>{
         user
     }
 }
+
+export const actUpdateUserPassword=(email)=>{
+    return{
+        type:types.UPDATE_PASSWORD,
+        email
+    }
+}
+
+export const actTranferSTTOTP=(STT,OTP)=>{
+    return{
+        type:types.UPDATE_OTP,
+        STT,
+        OTP
+    }
+}
+
+export const actUpdatePassWordUser=(USER)=>{
+    return{
+        type:types.UPDATE_PASSWORD_USER,
+        USER
+    }
+}

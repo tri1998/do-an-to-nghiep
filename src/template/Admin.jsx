@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu, Breadcrumb,Badge } from 'antd';
 import {
     DesktopOutlined,
     PieChartOutlined,
@@ -7,13 +7,15 @@ import {
     AppstoreOutlined,
     UserOutlined,
     FileAddOutlined,
+    NotificationOutlined
     
 } from '@ant-design/icons';
 import { Link} from 'react-router-dom';
 import {Route, Switch } from 'react-router-dom'
 import QuanLySanPham from '../pages/QuanLySanPham';
 import QuanLyLoaiSanPham from '../pages/QuanLyLoaiSanPham'
-import DanhSachKhachHang from '../components/NguoiDung/DanhSachKhachHang';
+import QuanLyKhachHang from '../pages/QuanLyKhachHang';
+import ThongBao from '../components/thongbao';
 import {actAdminLogOut} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
 const { Header, Content, Footer, Sider } = Layout;
@@ -85,6 +87,13 @@ class Admin extends Component {
                                     <Menu.Item icon={<FileAddOutlined />}>
                                         Quản Lý Hóa Đơn
                                     </Menu.Item>
+                                    <Menu.Item icon={<NotificationOutlined />}>
+                                        <Link to={`${this.props.match.url}/quanlythongbao`}>
+                                            <Badge dot>
+                                                Thông Báo
+                                            </Badge>
+                                        </Link>
+                                    </Menu.Item>
                                     <Menu.Item key="9" icon={<LogoutOutlined />} onClick={this.adminLogOut}>Đăng Xuất</Menu.Item>
                                 </Menu>
                             </Sider>
@@ -98,9 +107,10 @@ class Admin extends Component {
                                     <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                                       <Fragment>
                                       <Switch>
-                                        <Route path={`${this.props.match.url}/quanlykhachhang`} component={DanhSachKhachHang}></Route>
+                                        <Route path={`${this.props.match.url}/quanlykhachhang`} component={QuanLyKhachHang}></Route>
                                         <Route path={`${this.props.match.url}/quanlysanpham`} component={QuanLySanPham}></Route>
                                         <Route path={`${this.props.match.url}/quanlyloaisanpham`} component={QuanLyLoaiSanPham}></Route>
+                                        <Route path={`${this.props.match.url}/quanlythongbao`} component={ThongBao}></Route>
                                         <Route exact path={`${this.props.match.url}/`} render={()=><h3>Xin Chào !</h3>}></Route>
                                       </Switch>
                                       </Fragment>

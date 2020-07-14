@@ -2,8 +2,9 @@ import * as types from '../constants/actionType'
 const stateDefault = {
     
     DanhSachSanPham:[],
-
-    sanPhamDuocChon:{}
+    sanPhamDuocChon:{},
+    sanPhamChonAdmin:{},
+    sanPhamVuaXem:localStorage.getItem('sanphamvuaxem')
 }
 
 const sanPhamReducer = (state=stateDefault,action)=>{
@@ -37,6 +38,15 @@ const sanPhamReducer = (state=stateDefault,action)=>{
             let mangSanPhamCapNhat = [...state.DanhSachSanPham];
             mangSanPhamCapNhat.push(action.sanPham);
             state.DanhSachSanPham=mangSanPhamCapNhat;
+            return {...state}
+        }
+        case types.SAN_PHAM_DUOC_CHON:{
+            state.sanPhamChonAdmin = action.sanPham;
+            console.log(state.sanPhamChonAdmin);
+            return {...state}
+        }
+        case types.SAN_PHAM_VUA_XEM:{
+            state.sanPhamVuaXem=action.sanPham;
             return {...state}
         }
        default:return{...state}

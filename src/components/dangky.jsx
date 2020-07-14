@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { actThemTaiKhoan } from '../redux/actions/nguoidung'
 import { connect } from 'react-redux'
 import axios from 'axios'
+import {port} from '../config/configAPI';
 let md5 = require('md5');
 const validateMessages = {
     types: {
@@ -35,7 +36,7 @@ class dangky extends Component {
         let index = this.props.MangNguoiDung.findIndex(nguoidung => nguoidung.Email === newUser.Email);
         if (index === -1) {
             this.props.themTaiKhoan(newUser);
-            axios.post('http://localhost:9999/api/themtaikhoan', newUser)
+            axios.post(`http://localhost:${port}/api/themtaikhoan`, newUser)
                 .then(res => {
                     setTimeout(() => Swal.fire(
                         'Chúc Mừng!',

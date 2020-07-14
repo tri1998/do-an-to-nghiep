@@ -17,6 +17,7 @@ class chitietsanpham extends Component {
     
     render() {
         let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
+        Gia = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'});
         return (
             <div>
               <Row>
@@ -69,7 +70,7 @@ class chitietsanpham extends Component {
                                         </Col>
 
                                     </Row>
-                                    <span className="Gia">{Gia}₫</span>
+                                    <span className="Gia">{Gia}</span>
                                 </Col>
 
                                 <Col span={12} className="right">

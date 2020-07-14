@@ -140,6 +140,7 @@ ul li a:hover{
     border-top-left-radius: 100px;
     border-top-right-radius: 100px;
     border-bottom: 0;
+    text-align: center;
     background: #56bc9a;
     box-sizing: border-box;
     opacity: 0.85;
@@ -284,6 +285,38 @@ ul li a:hover{
     width:110px;
 }
 
+.ant-drawer-header{
+    text-align: center;
+}
+
+.ant-drawer-footer{
+    display: none;
+}
+
+/* GIO HANG  */
+
+.tieude{
+    text-align: center;
+}
+
+/*CHUC NANG SAP XEP */
+.sapxep{
+    font-size: 16px;
+}
+/*HET CHUC NANG SAP XEP*/
+
+/*CUSTOME HINH SP*/
+.hinhSP{
+    height:202px;
+}
+.tenSP{
+    height:50px;
+    width:100%;
+}
+.btn_sp{
+    width:100%;
+    text-align: center;
+}
 
 
 

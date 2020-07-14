@@ -35,10 +35,10 @@ class dangnhap extends Component {
 
     isAdmin=(email)=>{
         let index = this.props.DanhSachNguoiDung.findIndex(nguoidung=>nguoidung.Email===email&&nguoidung.isAdmin===1)
-        if(index===-1)
+        if(index!==-1)
         {
-            return 0;
-        }else return 1;
+            return 1;
+        }else return 0;
     }
     
     onFinish = (values) =>{
@@ -121,9 +121,7 @@ class dangnhap extends Component {
                         <Checkbox>Lưu đăng nhập</Checkbox>
                         </Form.Item>
 
-                        <a className="login-form-forgot" href="">
-                        Quên mật khẩu ?
-                        </a>
+                        <Link to='/quenmatkhau'>Quên mật khẩu ?</Link>
                     </Form.Item>
 
                     <Form.Item>

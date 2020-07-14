@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Menu } from 'antd';
 import { HomeOutlined,CustomerServiceOutlined,SkinOutlined,RedditOutlined,ShoppingOutlined } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
+const { SubMenu } = Menu;
 export default class Menu1 extends Component {
     constructor(props){
       super(props);
@@ -24,12 +25,13 @@ export default class Menu1 extends Component {
             TRANG CHỦ
           </Link>
         </Menu.Item>
+
         <Menu.Item key="sanpham"  icon={<ShoppingOutlined />}>
           SẢN PHẨM
         </Menu.Item>
         <Menu.Item key="gear"  icon={<CustomerServiceOutlined />}>
-          <Link to="/gaming-gear">
-              GAMING GEAR
+          <Link to="/loaisanpham">
+              LOẠI SẢN PHẨM
           </Link>
         </Menu.Item>
         <Menu.Item key="gundam"  icon={<RedditOutlined />}>

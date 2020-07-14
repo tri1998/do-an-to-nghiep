@@ -7,7 +7,7 @@ import {
   Tooltip,
   Modal,
   Form,
-  Input
+  Input,
 } from 'antd';
 import {
   FormOutlined,
@@ -24,10 +24,11 @@ import {
   actUpdateTrangThaiUser,
   actRecoverUser,
   actSaveSelectedUser,
-  actUpdateUserInfo } from '../../redux/actions/nguoidung'
+  actUpdateUserInfo } from '../redux/actions/nguoidung';
 import axios from 'axios';
 import Highlighter from 'react-highlight-words';
 import Swal from 'sweetalert2';
+import {port} from '../config/configAPI';
 let md5 = require('md5');
 
 class DanhSachKhachHang extends Component {
@@ -83,7 +84,7 @@ class DanhSachKhachHang extends Component {
     }
     axios({
       method:'PUT',
-      url:`http://localhost:9999/api/taikhoan/capnhatTK/${capNhatUser.MaTK}`,
+      url:`http://localhost:${port}/api/taikhoan/capnhatTK/${capNhatUser.MaTK}`,
       data:capNhatUser
     })
     .then(res=>
@@ -121,7 +122,7 @@ class DanhSachKhachHang extends Component {
       if (result.value) {
         axios({
           method: 'PUT',
-          url: `http://localhost:9999/api/taikhoan/xoaTK/${maUser}`,
+          url: `http://localhost:${port}/api/taikhoan/xoaTK/${maUser}`,
         })
           .then(res => this.props.updateTrangThaiUser(maUser))
           .catch(error => console.log(error));
@@ -148,7 +149,7 @@ class DanhSachKhachHang extends Component {
       if (result.value) {
         axios({
           method: 'PUT',
-          url: `http://localhost:9999/api/taikhoan/khoiphucTK/${maUser}`,
+          url: `http://localhost:${port}/api/taikhoan/khoiphucTK/${maUser}`,
         })
           .then(res => this.props.recoverTrangThaiUser(maUser))
           .catch(error => console.log(error));

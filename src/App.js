@@ -3,13 +3,15 @@ import "antd/dist/antd.css";
 import Admin from './template/Admin';
 import Home from './components/trangchu';
 import Header from './components/header';
-import AoTTG from './components/aottg';
-import GamingGear from './components/gaminggear';
 import DangNhap from './components/dangnhap';
 import DangKy from './components/dangky';
+import GioHang from './pages/GioHang';
 import ChiTiet from './components/chitietsanpham';
 import Footer from './components/footer';
 import Auth from './components/Auth';
+import QuenMatKhau from './pages/QuenMatKhau';
+import CapNhatMatKhau from './pages/CapNhatMatKhau';
+import LoaiSanPham from './components/LoaiSanPham';
 import { Row, Col } from 'antd';
 import { UpCircleTwoTone } from '@ant-design/icons';
 import { BackTop, Button } from 'antd';
@@ -31,7 +33,7 @@ class App extends Component {
   componentDidMount() {
     axios({
       method: "GET",
-      url: 'http://localhost:9999/api/taikhoan'
+      url: 'http://localhost:5000/api/taikhoan'
     }).then(res => {
       this.props.onSaveDSNguoiDung(res.data);
     })
@@ -39,7 +41,7 @@ class App extends Component {
 
     axios({
       method: "GET",
-      url: 'http://localhost:9999/api/sanpham'
+      url: 'http://localhost:5000/api/sanpham'
     }).then(res => {
             this.props.onSaveDSSanPham(res.data);
     })
@@ -62,11 +64,13 @@ class App extends Component {
 
                 <Switch>
                   <Route path='/trangchu' component={Home}></Route>
-                  <Route path='/gaming-gear' component={GamingGear}></Route>
-                  <Route path='/aottg' component={AoTTG}></Route>
                   <Auth  path='/admin' Component={Admin}></Auth>
                   <Route path='/dangnhap' component={DangNhap}></Route>
+                  <Route path='/quenmatkhau' component={QuenMatKhau}></Route>
                   <Route path='/dangky' component={DangKy}></Route>
+                  <Route path='/loaisanpham' component={LoaiSanPham}></Route>
+                  <Route path='/giohang' component={GioHang}></Route>
+                  <Route path='/capnhatmatkhau/:email' component={CapNhatMatKhau}></Route>
                   <Route path='/:MaSP' component={ChiTiet}></Route>
                   <Route exact path='/' component={Home}></Route>
 

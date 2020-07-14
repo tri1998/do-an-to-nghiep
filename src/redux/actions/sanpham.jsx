@@ -34,3 +34,17 @@ export const actThemSanPham = (sanPham)=>{
         sanPham
     }
 }
+
+export const actChonSanPhamCapNhat = (sanPham)=>{
+    return {
+        type:types.SAN_PHAM_DUOC_CHON,
+        sanPham
+    }
+}
+
+export const actLuuSanPhamVuaXem = (sanPham)=>{
+    return {
+        type:types.SAN_PHAM_VUA_XEM,
+        sanPham
+    }
+}

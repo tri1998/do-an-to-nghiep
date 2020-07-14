@@ -25,8 +25,14 @@ import {
 } from '@ant-design/icons';
 import {connect} from 'react-redux';
 import axios from 'axios';
-import {actUpdateTrangThai,actRecoverTrangThai,actThemSanPham} from '../redux/actions/sanpham'
+import {
+  actUpdateTrangThai,
+  actRecoverTrangThai,
+  actThemSanPham,
+  actChonSanPhamCapNhat
+} from '../redux/actions/sanpham'
 import Highlighter from 'react-highlight-words';
+import {port} from '../config/configAPI';
 const { Option } = Select;
 function getBase64(img, callback) {
     const reader = new FileReader();
@@ -59,7 +65,8 @@ class QuanLySanPham extends Component {
     
       }
 
-      showDrawer = () => {
+      showDrawer = (sanPham) => {
+        this.props.chonSanPham(sanPham);
         this.setState({
           visibleDrawer: true,
         });
@@ -138,7 +145,7 @@ class QuanLySanPham extends Component {
         console.log(sanPham);
         axios({
           method:'POST',
-          url:`http://localhost:9999/api/sanpham/themSP`,
+          url:`http://localhost:${port}/api/sanpham/themSP`,
           data: sanPham
         })
         .then(res=>this.props.themSanPham(sanPham))
@@ -151,7 +158,7 @@ class QuanLySanPham extends Component {
         console.log(MaSP);
         axios({
             method:'PUT',
-            url:`http://localhost:9999/api/sanpham/capnhatSP/${MaSP}`
+            url:`http://localhost:${port}/api/sanpham/capnhatSP/${MaSP}`
         })
         .then(res=>this.props.updateTrangThai(MaSP))
         .catch(err=>console.log(err));
@@ -160,7 +167,7 @@ class QuanLySanPham extends Component {
     khoiPhucSanPham=(MaSP)=>{
         axios({
             method: 'PUT',
-            url: `http://localhost:9999/api/sanpham/khoiphucSP/${MaSP}`,
+            url: `http://localhost:${port}/api/sanpham/khoiphucSP/${MaSP}`,
           })
           .then(res => this.props.recoverTrangThai(MaSP))
           .catch(error => console.log(error));
@@ -229,6 +236,18 @@ class QuanLySanPham extends Component {
         this.setState({ searchText: '' });
       };
 
+      //Cap nhat thong tin san pham 
+      onUpdate = (values)=>{
+        console.log(values);
+        const sanPhamCapNhat = {
+
+        }
+
+        this.setState({
+          visibleDrawer:false
+        })
+      }
+
 
      columns = [
         
@@ -258,8 +277,7 @@ class QuanLySanPham extends Component {
                 <Space>
                     <Button
                         disabled={record.TrangThai === 0 ? true : false}
-                        onClick={this.showDrawer} 
-                        danger 
+                        onClick={()=>this.showDrawer(record)} 
                         type="primary"><FormOutlined style={{ fontSize: '20px' }} />
 
                     </Button>
@@ -284,6 +302,8 @@ class QuanLySanPham extends Component {
       
     render() {
         let data = this.props.DanhSachSanPham;
+        let dataChonCapNhat = this.props.SanPhamDuocChon;
+        console.log(dataChonCapNhat);
         const { visible, confirmLoading,imageUrl } = this.state;
         const uploadButton = (
             <div>
@@ -410,7 +430,7 @@ class QuanLySanPham extends Component {
                                 listType="picture-card"
                                 className="avatar-uploader"
                                 showUploadList={false}
-                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                action="https://http://localhost:3000/img"
                                 beforeUpload={beforeUpload}
                                 onChange={this.handleChange}
                             >
@@ -432,6 +452,7 @@ class QuanLySanPham extends Component {
                       onClose={this.onClose}
                       visible={this.state.visibleDrawer}
                       bodyStyle={{ paddingBottom: 80 }}
+                      destroyOnClose={true}
                       footer={
                         <div
                           style={{
@@ -447,13 +468,18 @@ class QuanLySanPham extends Component {
                         </div>
                       }
                     >
-                      <Form layout="vertical" hideRequiredMark>
+                      <Form 
+                         layout="vertical" 
+                         hideRequiredMark
+                         onFinish={this.onUpdate}
+                      >
                         <Row gutter={16}>
                           <Col span={12}>
                             <Form.Item
                               name="MaSP"
                               label="Mã Sản Phẩm"
                               rules={[{ required: true, message: 'Please enter user name' }]}
+                              initialValue={dataChonCapNhat.MaSP}
                             >
                               <Input disabled placeholder="Mã Sản Phẩm" />
                             </Form.Item>
@@ -462,6 +488,7 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="TenSP"
                               label="Tên Sản Phẩm"
+                              initialValue={dataChonCapNhat.TenSP}
                               rules={[{ required: true, message: 'Please enter url' }]}
                             >
                               <Input placeholder="Tên Sản Phẩm" />
@@ -473,11 +500,13 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="LoaiSP"
                               label="Loại Sản Phẩm"
+                              initialValue={dataChonCapNhat.MaDM}
                               rules={[{ required: true, message: 'Please select an owner' }]}
                             >
                               <Select placeholder="Please select an owner">
-                                <Option value="xiao">Xiaoxiao Fu</Option>
-                                <Option value="mao">Maomao Zhou</Option>
+                                <Option value={1}>Gameming Gear</Option>
+                                <Option value={2}>GunDam</Option>
+                                <Option value={3}>Áo in</Option>
                               </Select>
                             </Form.Item>
                           </Col>
@@ -485,11 +514,13 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="HangSX"
                               label="Hãng Sản Xuất"
+                              initialValue={dataChonCapNhat.MaHang}
                               rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                               <Select placeholder="Please choose the type">
-                                <Option value="private">Private</Option>
-                                <Option value="public">Public</Option>
+                                <Option value={1}>Dare-U</Option>
+                                <Option value={2}>Logitech</Option>
+                                <Option value={3}>Steelserie</Option>
                               </Select>
                             </Form.Item>
                           </Col>
@@ -497,25 +528,57 @@ class QuanLySanPham extends Component {
                         <Row gutter={16}>
                           <Col span={12}>
                             <Form.Item
-                              name="approver"
-                              label="Approver"
+                              name="Gia"
+                              label="Giá : "
+                              initialValue={dataChonCapNhat.Gia}
                               rules={[{ required: true, message: 'Please choose the approver' }]}
                             >
-                              <Select placeholder="Please choose the approver">
-                                <Option value="jack">Jack Ma</Option>
-                                <Option value="tom">Tom Liu</Option>
+                              <Input type="number" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item
+                              name="TinhTrang"
+                              label="Tình Trạng : "
+                              initialValue={dataChonCapNhat.SanPham_Moi}
+                            >
+                              <Select  placeholder="Please choose the type">
+                                <Option value={0}>Sản Phẩm Cũ</Option>
+                                <Option value={1}>Sản Phẩm Mới</Option>
+
+                              </Select>
+
+                            </Form.Item>
+                          </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                          <Col span={12}>
+                            <Form.Item
+                              name="TrangThai"
+                              label="Trạng Thái : "
+                              initialValue={dataChonCapNhat.TrangThai}
+                              rules={[{ required: true, message: 'Please choose the approver' }]}
+                            >
+                              <Select placeholder="Please choose the type">
+                                <Option value={0}>Ngừng Bán</Option>
+                                <Option value={1}>Đang Bán</Option>
+
                               </Select>
                             </Form.Item>
                           </Col>
                           <Col span={12}>
                             <Form.Item
-                              name="dateTime"
-                              label="DateTime"
-                              rules={[{ required: true, message: 'Please choose the dateTime' }]}
+                              name="Hinh"
+                              label="Hình Ảnh : "
+                            
                             >
+                              
+
                             </Form.Item>
                           </Col>
                         </Row>
+
                         <Row gutter={16}>
                           <Col span={24}>
                             <Form.Item
@@ -532,7 +595,15 @@ class QuanLySanPham extends Component {
                             </Form.Item>
                           </Col>
                         </Row>
+
+                        <Row gutter={16}>
+                          <Col span={24}>
+                            <Button block type="danger" htmlType="submit">Cập Nhật</Button>
+                          </Col>
+                        </Row>
                       </Form>
+
+                      
                     </Drawer>
             </div>
         )
@@ -541,7 +612,8 @@ class QuanLySanPham extends Component {
 
 const mapStateToProps = (state)=>{
     return{
-        DanhSachSanPham:state.DSSP.DanhSachSanPham
+        DanhSachSanPham:state.DSSP.DanhSachSanPham,
+        SanPhamDuocChon:state.DSSP.sanPhamChonAdmin
     }
 }
 
@@ -555,6 +627,9 @@ const mapDispatchToProps = (dispatch)=>{
         },
         themSanPham:(sanPham)=>{
           dispatch(actThemSanPham(sanPham))
+        },
+        chonSanPham:(sanPham)=>{
+          dispatch(actChonSanPhamCapNhat(sanPham))
         },
     }
 }

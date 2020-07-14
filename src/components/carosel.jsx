@@ -9,7 +9,7 @@ export default class carosel extends Component {
                     <Col span={24}>
                         <Carousel dots={false} autoplay effect="fade">
                             <div>
-                                <img src="./img/aocter.png" alt="ao"/>
+                                <img src="../img/aocter.png" alt="ao"/>
                             </div>
                             <div>
                                 <img src="./img/balocter.jpeg" alt="balo" />
