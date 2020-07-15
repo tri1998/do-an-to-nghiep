@@ -3,7 +3,7 @@ const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 5000;
+const port = 1812;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -39,6 +39,45 @@ app.get('/api/sanpham',(req,res)=>{
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results)
+    })
+})
+
+//API lay danh muc san pham
+app.get('/api/danhmucsanpham',(req,res)=>{
+    var sql = "SELECT * FROM danhmucsp";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results)
+    })
+})
+//API them danh muc moi
+app.post('/api/danhmucsanpham/themdanhmuc',(req,res)=>{
+    var sql = "INSERT INTO danhmucsp(LoaiSP,TrangThai)"
+            + "VALUES('"
+            + req.body.LoaiSP + "','"
+            + req.body.TrangThai + "')";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API xoa danh muc san pham
+app.put('/api/danhmucsanpham/xoadanhmuc/:madm',(req,res)=>{
+    var sql = "UPDATE danhmucsp SET TrangThai='" + 0 + "'"
+            + "WHERE MaDM='" + req.params.madm + "'";
+    connection.query(sql,(err,results)=>{
+        if (err) throw err;
+        res.json(results);
+    })
+})
+//API phuc hoi danh muc san pham
+app.put('/api/danhmucsanpham/phuchoidanhmuc/:madm',(req,res)=>{
+    var sql = "UPDATE danhmucsp SET TrangThai='" + 1 + "'"
+            + "WHERE MaDM='" + req.params.madm + "'";
+    connection.query(sql,(err,results)=>{
+        if (err) throw err;
+        res.json(results);
     })
 })
 

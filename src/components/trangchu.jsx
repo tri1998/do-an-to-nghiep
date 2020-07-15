@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import Carolsel1 from './carosel';
 import Category from './category';
 import Newproducts from './newproducts';
+import AoCarousel from './aocarousel';
+import GearCarousel from './gearcarousel';
+import GundamCarousel from './gundamcarousel';
 export default class trangchu extends Component {
 
     render() {
@@ -12,6 +15,9 @@ export default class trangchu extends Component {
                 <Category></Category>
                 <br />
                 <Newproducts></Newproducts>
+                <AoCarousel></AoCarousel>
+                <GearCarousel></GearCarousel>
+                <GundamCarousel></GundamCarousel>
                 <br />
             </div>
         )

@@ -16,6 +16,7 @@ class chitietsanpham extends Component {
     handleNext =()=> this.carouselRef.current.next();
     
     render() {
+        console.log(1);
         let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
         Gia = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'});
         return (

@@ -6,8 +6,9 @@ import Gear from './gaminggear';
 import Gundam from './gundam';
 import All from './tatcasp';
 import {Switch,Route,Link} from 'react-router-dom'
+import {connect} from 'react-redux';
 const {Option} = Select;
-export default class LoaiSanPham extends Component {
+class LoaiSanPham extends Component {
     render() {
         return (
             <div>
@@ -68,6 +69,7 @@ export default class LoaiSanPham extends Component {
                                 <Route  path={`${this.props.match.url}/gaminggear`} component={Gear}></Route>
                                 <Route  path={`${this.props.match.url}/gundam`} component={Gundam}></Route>
                                 <Route  path={`${this.props.match.url}/aottg`} component={AoTTG}></Route>
+                                <Route  path={`${this.props.match.url}/banhmi`} render={()=><h1>Xin chào ạ</h1>} ></Route>
                                 <Route exact path={`${this.props.match.url}/`} component={All}></Route>
                             </Switch>
                         
@@ -77,3 +79,11 @@ export default class LoaiSanPham extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) =>{
+    return {
+        DanhSachLoai:state.DSSP.DanhSachLoaiSanPham
+    }
+}
+
+export default connect(mapStateToProps,null)(LoaiSanPham);

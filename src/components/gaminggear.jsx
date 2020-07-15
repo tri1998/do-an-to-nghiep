@@ -11,10 +11,11 @@ class GammingGear extends Component {
     }
 
     render() {
+        let checkGear=this.props.DanhSachLoaiSanPham.findIndex(Gear=>Gear.MaDM===1&&Gear.TrangThai===1);
         return (
             <div>
                 <Row gutter={[0,16]}>
-                        {this.loadDanhSachGear()}
+                        {checkGear!==-1?this.loadDanhSachGear():<div>Sản phẩm này đã ngừng kinh doanh</div>}
                 </Row>
             </div>
         )
@@ -23,7 +24,8 @@ class GammingGear extends Component {
 
 const mapStateToProps = (state) =>{
     return {
-        DanhSachGear:state.DSSP.DanhSachSanPham
+        DanhSachGear:state.DSSP.DanhSachSanPham,
+        DanhSachLoaiSanPham:state.DSSP.DanhSachLoaiSanPham
     }
 }
 

@@ -48,3 +48,32 @@ export const actLuuSanPhamVuaXem = (sanPham)=>{
         sanPham
     }
 }
+//act luu mang danh muc san pham
+export const actLuuMangDanhMucSanPham=(sanPham)=>{
+    return {
+        type:types.LUU_MANG_DANH_MUC_SAN_PHAM,
+        sanPham
+    }
+}
+
+//act xoa danh muc san pham 
+export const actXoaDanhMucSanPham=(maDanhMuc)=>{
+    return {
+        type:types.XOA_DANH_MUC_SAN_PHAM,
+        maDanhMuc
+    }
+}
+//act khoi phuc danh muc san pham 
+export const actPhucHoiDanhMucSP=(maDanhMuc)=>{
+    return {
+        type:types.PHUC_HOI_DANH_MUC_SAN_PHAM,
+        maDanhMuc
+    }
+}
+//act them danh muc san pham moi
+export const actThemDanhMucSP=(danhMuc)=>{
+    return{
+        type:types.THEM_DANH_MUC_SAN_PHAM,
+        danhMuc
+    }
+}

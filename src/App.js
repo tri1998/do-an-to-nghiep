@@ -17,7 +17,8 @@ import { UpCircleTwoTone } from '@ant-design/icons';
 import { BackTop, Button } from 'antd';
 import { BrowserRouter, Route, Switch} from 'react-router-dom'
 import { actLuuTaiKhoan } from './redux/actions/nguoidung';
-import { actLuuMangSP } from './redux/actions/sanpham'
+import { actLuuMangSP,actLuuMangDanhMucSanPham } from './redux/actions/sanpham';
+import {port} from './config/configAPI';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import './App.css';
@@ -33,7 +34,7 @@ class App extends Component {
   componentDidMount() {
     axios({
       method: "GET",
-      url: 'http://localhost:5000/api/taikhoan'
+      url: `http://localhost:${port}/api/taikhoan`
     }).then(res => {
       this.props.onSaveDSNguoiDung(res.data);
     })
@@ -41,11 +42,19 @@ class App extends Component {
 
     axios({
       method: "GET",
-      url: 'http://localhost:5000/api/sanpham'
+      url: `http://localhost:${port}/api/sanpham`
     }).then(res => {
             this.props.onSaveDSSanPham(res.data);
     })
     .catch(error => console.log(error));
+
+    axios({
+      method:'GET',
+      url: `http://localhost:${port}/api/danhmucsanpham`
+    }).then(res=>{
+      this.props.onSaveDSLoaiSanPham(res.data);
+    })
+    .catch(error=>console.log(error));
 
   }
 
@@ -108,7 +117,10 @@ const mapDispatchToProps = (dispatch) => {
     },
     onSaveDSSanPham: (danhsachsanpham) => {
       dispatch(actLuuMangSP(danhsachsanpham))
-  }
+    },
+    onSaveDSLoaiSanPham:(danhsachloaisanpham)=>{
+      dispatch(actLuuMangDanhMucSanPham(danhsachloaisanpham))
+    }
   }
 }
 

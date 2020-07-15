@@ -12,10 +12,11 @@ class aottg extends Component {
 
     render() {
         console.log(this.props.DanhSachAo);
+        let checkAo=this.props.DanhSachLoaiSanPham.findIndex(ao=>ao.MaDM===3&&ao.TrangThai===1);
         return (
             <div>
                 <Row gutter={[0,16]}>
-                        {this.loadDanhSachAo()}
+                        { checkAo!==-1?this.loadDanhSachAo():<div>Sản phẩm này đã ngừng kinh doanh</div>}
                 </Row>
             </div>
         )
@@ -24,7 +25,8 @@ class aottg extends Component {
 
 const mapStateToProps = (state) =>{
     return {
-        DanhSachAo:state.DSSP.DanhSachSanPham
+        DanhSachAo:state.DSSP.DanhSachSanPham,
+        DanhSachLoaiSanPham:state.DSSP.DanhSachLoaiSanPham
     }
 }
 

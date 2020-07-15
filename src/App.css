@@ -293,10 +293,21 @@ ul li a:hover{
     display: none;
 }
 
+.ant-modal-footer{
+    display: none;
+}
+
 /* GIO HANG  */
 
 .tieude{
     text-align: center;
+}
+
+.trangthaitrue{
+    color:cornflowerblue;
+}
+.trangthaifalse{
+    color:red;
 }
 
 /*CHUC NANG SAP XEP */

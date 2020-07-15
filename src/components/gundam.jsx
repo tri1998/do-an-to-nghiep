@@ -11,10 +11,11 @@ class Gundam extends Component {
     }
 
     render() {
+        let checkGundam=this.props.DanhSachLoaiSanPham.findIndex(Gundam=>Gundam.MaDM===2&&Gundam.TrangThai===1);
         return (
             <div>
                 <Row gutter={[0,16]}>
-                        {this.loadDanhSachGundam()}
+                        {checkGundam!==-1?this.loadDanhSachGundam():<div>Sản phẩm này đã ngừng kinh doanh</div>}
                 </Row>
             </div>
         )
@@ -23,7 +24,8 @@ class Gundam extends Component {
 
 const mapStateToProps = (state) =>{
     return {
-        DanhSachGundam:state.DSSP.DanhSachSanPham
+        DanhSachGundam:state.DSSP.DanhSachSanPham,
+        DanhSachLoaiSanPham:state.DSSP.DanhSachLoaiSanPham
     }
 }
 
