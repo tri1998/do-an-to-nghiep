@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import {Row} from 'antd'
+import {Row,Col} from 'antd'
 import {connect} from 'react-redux'
 import SanPham from './sanpham'
 class Gundam extends Component {
 
     loadDanhSachGundam=()=>{
         return this.props.DanhSachGundam.map((gundam,index)=>{
-            return gundam.MaDM===2? <SanPham key={index} sanPham={gundam}></SanPham>:null
+            return gundam.MaDM===2?<Col key={index} span={8}><SanPham sanPham={gundam}></SanPham></Col>:null
         })
     }
 

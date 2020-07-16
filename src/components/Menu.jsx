@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Menu } from 'antd';
-import { HomeOutlined,CustomerServiceOutlined,SkinOutlined,RedditOutlined,ShoppingOutlined } from '@ant-design/icons';
+import { HomeOutlined,CustomerServiceOutlined,SettingOutlined,RedditOutlined,ShoppingOutlined } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 const { SubMenu } = Menu;
 export default class Menu1 extends Component {
@@ -29,17 +29,17 @@ export default class Menu1 extends Component {
         <Menu.Item key="sanpham"  icon={<ShoppingOutlined />}>
           SẢN PHẨM
         </Menu.Item>
-        <Menu.Item key="gear"  icon={<CustomerServiceOutlined />}>
+        <Menu.Item key="loaisanpham"  icon={<CustomerServiceOutlined />}>
           <Link to="/loaisanpham">
-              LOẠI SẢN PHẨM
+           LOẠI SẢN PHẨM
           </Link>
         </Menu.Item>
         <Menu.Item key="gundam"  icon={<RedditOutlined />}>
-          GUNDAM
+          TIN TỨC
         </Menu.Item>
-        <Menu.Item key="ao"  icon={<SkinOutlined />}>
+        <Menu.Item key="ao"  icon={<SettingOutlined />}>
           <Link to="/aottg">
-            ÁO TTG
+            HỖ TRỢ
           </Link>
         </Menu.Item>
         

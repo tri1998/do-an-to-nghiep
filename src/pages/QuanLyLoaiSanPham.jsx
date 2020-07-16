@@ -95,6 +95,7 @@ class QuanLyLoanSanPham extends Component {
         const danhMucMoi={
             MaDM:MaDM,
             LoaiSP:values.TenDanhMuc,
+            LoaiSPurl:values.urlDanhMuc,
             TrangThai:values.TrangThai
         }
         axios({

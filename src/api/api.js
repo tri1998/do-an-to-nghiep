@@ -3,7 +3,7 @@ const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 1812;
+const port = 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -52,9 +52,11 @@ app.get('/api/danhmucsanpham',(req,res)=>{
 })
 //API them danh muc moi
 app.post('/api/danhmucsanpham/themdanhmuc',(req,res)=>{
-    var sql = "INSERT INTO danhmucsp(LoaiSP,TrangThai)"
+    var sql = "INSERT INTO danhmucsp(MaDM,LoaiSP,LoaiSPurl,TrangThai)"
             + "VALUES('"
+            + req.body.MaDM + "','"
             + req.body.LoaiSP + "','"
+            + req.body.LoaiSPurl + "','"
             + req.body.TrangThai + "')";
     connection.query(sql,(err,results)=>{
         if(err) throw err;

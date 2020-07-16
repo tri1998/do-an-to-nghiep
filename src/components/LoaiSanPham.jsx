@@ -26,15 +26,18 @@ class LoaiSanPham extends Component {
                             <Menu.Item>
                                 <Link to={`${this.props.match.url}/all`}>Tất cả sản phẩm</Link>
                             </Menu.Item>
-                            <Menu.Item>
-                                <Link to={`${this.props.match.url}/gaminggear`}>Gaming Gear</Link>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Link to={`${this.props.match.url}/gundam`}>Gundam</Link>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <Link to={`${this.props.match.url}/aottg`}>Áo TTG</Link>
-                            </Menu.Item>
+                            {
+                                this.props.DanhSachLoai.map((loai,index)=>{
+                                    return <Menu.Item key={index}>
+                                        <Link 
+                                            to={`${this.props.match.url}/${loai.LoaiSPurl}`}
+                                        >
+                                            {loai.LoaiSP}
+                                        </Link>
+                                    </Menu.Item>
+                                })
+                            }
+        
 
                         </Menu>
                     </Col>

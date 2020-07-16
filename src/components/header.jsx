@@ -1,26 +1,39 @@
 import React, { Component } from 'react'
-import { Button, Tooltip} from 'antd';
+import { Button, Tooltip,Form} from 'antd';
 import { Row, Col } from 'antd';
 import { UserOutlined, RightSquareOutlined, SearchOutlined, ShoppingCartOutlined, CloseOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
 import {Link} from 'react-router-dom';
 import Menu1 from './Menu.jsx';
 import {connect} from 'react-redux'
-import {actSetUserLogIn} from '../redux/actions/nguoidung'
-const { Search } = Input;
-
+import {actSetUserLogIn} from '../redux/actions/nguoidung';
+import {actTimKiemSP} from '../redux/actions/sanpham';
 class header extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             status:false,
-            userStatus:localStorage.getItem('user')
+            userStatus:localStorage.getItem('user'),
+            tensp:''
+            
     
         }
         console.log(this.state.userStatus);
     }
+
+    timKiem=(value)=>{
+      this.props.timKiemSP(value);
+    }
+
+    handleOnChange=(evt)=>{
+      this.setState({
+        [evt.target.name]:evt.target.value
+      })
+    }
+
+
+
 
     render() {
         return (
@@ -84,18 +97,33 @@ class header extends Component {
                     </Col>
                   </Row>
                   <Row>
+                      
                     <Col span={18}></Col>
-                    <Col span={6}>
+                    <Col span={4}>
                       {
                         this.state.status === false ?
                           '' :
-                          <Search
-                            placeholder="Tìm kiếm"
-                            onSearch={value => console.log(value)}
-                            enterButton
+                          
+                          <Input
+                            name="tensp"
+                            placeholder="Tìm kiếm..."
+                            onChange={this.handleOnChange}
+                            
                           />
+                          
 
                       }
+                    </Col>
+                    <Col span={2}>
+                      { this.state.status === false ?
+                          '' :
+                      <Button
+                        type="primary"
+                        onClick={()=>this.timKiem(this.state.tensp)}
+                      >
+                       <Link to="/timkiem"><SearchOutlined/></Link>
+                      </Button>
+                      }   
                     </Col>
                   </Row>
 
@@ -116,6 +144,9 @@ const mapDispatchToProps=(dispatch)=>{
   return{
     userLogOut:()=>{
       dispatch(actSetUserLogIn())
+    },
+    timKiemSP:(sp)=>{
+      dispatch(actTimKiemSP(sp))
     }
   }
 }

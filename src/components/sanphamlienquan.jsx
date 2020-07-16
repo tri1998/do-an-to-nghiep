@@ -1,6 +1,6 @@
 import React, { Component, createRef } from 'react'
 import { Carousel } from 'antd';
-import {Button,Card} from 'antd'
+import {Button} from 'antd'
 import { LeftOutlined,RightOutlined } from '@ant-design/icons';
 import SanPham from './sanpham'
 import {connect} from 'react-redux'

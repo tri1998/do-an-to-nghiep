@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import {Row} from 'antd'
+import {Row,Col} from 'antd'
 import {connect} from 'react-redux'
 import SanPham from './sanpham'
 class aottg extends Component {
 
     loadDanhSachAo=()=>{
         return this.props.DanhSachAo.map((ao,index)=>{
-            return ao.MaDM===3? <SanPham key={index} sanPham={ao}></SanPham>:null
+            return ao.MaDM===3?<Col key={index} span={8}><SanPham sanPham={ao}></SanPham></Col>:null
         })
     }
 

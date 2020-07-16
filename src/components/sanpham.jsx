@@ -16,7 +16,6 @@ class sanpham extends PureComponent {
         Gia = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'});
 
         return (
-                <Col span={8}>
                     <Card
                     hoverable
                     style={{ width: 260 }}
@@ -39,7 +38,6 @@ class sanpham extends PureComponent {
                         
                         
                     </Card>
-                </Col>
                 
         )
     }

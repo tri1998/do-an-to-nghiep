@@ -77,3 +77,10 @@ export const actThemDanhMucSP=(danhMuc)=>{
         danhMuc
     }
 }
+//act tim kiem san pham
+export const actTimKiemSP=(infoSP)=>{
+    return{
+        type:types.TIM_KIEM_SAN_PHAM,
+        infoSP
+    }
+}

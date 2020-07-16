@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react'
 import { Layout, Menu, Breadcrumb,Badge } from 'antd';
 import {
     DesktopOutlined,
-    PieChartOutlined,
     LogoutOutlined,
     AppstoreOutlined,
     UserOutlined,
@@ -58,7 +57,6 @@ class Admin extends Component {
 
     adminLogOut=()=>{
         sessionStorage.removeItem('loginAdmin');
-        this.props.adminLogOut();
         this.props.history.push('/');
     }
     render() {
@@ -69,9 +67,6 @@ class Admin extends Component {
                             <Sider width={230} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                                 <div className="logo" />
                                 <Menu theme="dark" mode="inline">
-                                    <Menu.Item key="1" icon={<PieChartOutlined />}>
-                                        Option 1
-                                    </Menu.Item>
                                     <Menu.Item key="2" icon={<DesktopOutlined />}>
                                         Quản Lý Khuyến Mãi
                                     </Menu.Item>

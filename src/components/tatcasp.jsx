@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Row,Pagination} from 'antd'
+import {Row,Pagination,Col} from 'antd'
 import {connect} from 'react-redux'
 import SanPham from './sanpham'
 class all extends Component {
@@ -20,7 +20,7 @@ class all extends Component {
 
     loadSanPhamAll=()=>{
         return this.props.DanhSachSanPham.map((sp,index)=>{
-            return <SanPham key={index} sanPham={sp}></SanPham>
+            return <Col span={8} key={index}><SanPham sanPham={sp}></SanPham></Col>
         })
     }
 

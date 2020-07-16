@@ -5,7 +5,8 @@ const stateDefault = {
     DanhSachLoaiSanPham:[],
     sanPhamDuocChon:{},
     sanPhamChonAdmin:{},
-    sanPhamVuaXem:localStorage.getItem('sanphamvuaxem')
+    sanPhamVuaXem:localStorage.getItem('sanphamvuaxem'),
+    sanPhamTimKiem:[]
 }
 
 const sanPhamReducer = (state=stateDefault,action)=>{
@@ -73,6 +74,17 @@ const sanPhamReducer = (state=stateDefault,action)=>{
             let mangDanhMucCapNhat=[...state.DanhSachLoaiSanPham];
             mangDanhMucCapNhat.push(action.danhMuc);
             state.DanhSachLoaiSanPham=mangDanhMucCapNhat;
+            return {...state}
+        }
+        case types.TIM_KIEM_SAN_PHAM:{
+            state.sanPhamTimKiem=[];
+            let sanPhamTimKiem = action.infoSP;
+            let mangSanPham = [...state.DanhSachSanPham];
+            sanPhamTimKiem= parseInt(sanPhamTimKiem);
+            mangSanPham.map((sp,index)=>{
+                return sp.Gia>=sanPhamTimKiem?state.sanPhamTimKiem.push(sp):sp
+            })
+            console.log(state.sanPhamTimKiem);
             return {...state}
         }
        default:return{...state}
