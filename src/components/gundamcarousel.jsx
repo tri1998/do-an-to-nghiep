@@ -20,10 +20,7 @@ class gundamcarousel extends Component {
 
     loadDSGundam = () => {
         return this.props.DSSP.map((sp, index) => {
-           if(sp.TrangThai===1&&sp.MaDM===2)
-           {
-                return (<SanPham key={index} sanPham={sp}></SanPham>)
-           }
+            return sp.TrangThai===1&&sp.MaDM===2?<SanPham key={index} sanPham={sp}></SanPham>:null
         })
     }
 

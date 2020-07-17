@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Spin,Table,Button } from 'antd';
+import {Table,Button } from 'antd';
 import {actTranferSTTOTP} from '../redux/actions/nguoidung'
 import {connect} from 'react-redux'
 var randomString = require('randomstring');

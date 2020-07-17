@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Tooltip,Form} from 'antd';
+import { Button, Tooltip} from 'antd';
 import { Row, Col } from 'antd';
 import { UserOutlined, RightSquareOutlined, SearchOutlined, ShoppingCartOutlined, CloseOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
@@ -7,7 +7,14 @@ import {Link} from 'react-router-dom';
 import Menu1 from './Menu.jsx';
 import {connect} from 'react-redux'
 import {actSetUserLogIn} from '../redux/actions/nguoidung';
-import {actTimKiemSP} from '../redux/actions/sanpham';
+import {actLuuMangSanPhamCanTim} from '../redux/actions/sanpham';
+import {port} from '../config/configAPI'
+import axios from 'axios';
+
+//Hàm kiểm tra chuỗi người dùng nhập vào là chuỗi hay là số
+function kiemTraChuoi(n) {
+   return !isNaN(parseFloat(n)) && !isNaN(n - 0) 
+}
 class header extends Component {
 
     constructor(props) {
@@ -16,14 +23,32 @@ class header extends Component {
             status:false,
             userStatus:localStorage.getItem('user'),
             tensp:''
-            
-    
         }
         console.log(this.state.userStatus);
     }
 
     timKiem=(value)=>{
-      this.props.timKiemSP(value);
+      //Tao 1 bien de kiem tra gia tri nhap vao cua nguoi dung la chuoi hay so
+      let check = kiemTraChuoi(value);
+      console.log(check);
+      if(check===false)//truong hop la chuoi thi goi axios tim san pham theo ten
+      {
+        axios({
+          method:"GET",
+          url:`http://localhost:${port}/api/sanpham/timKiemSPTheoTen/${value}`
+        })
+        .then(res=>this.props.luuMangSPCanTim(res.data))
+        .catch(err=>console.log(err))
+      }
+      if(check===true)//truong hop la so thi goi axios tim san pham theo gia
+      {
+        axios({
+          method:"GET",
+          url:`http://localhost:${port}/api/sanpham/timKiemSPTheoGia/${value}`
+        })
+        .then(res=>this.props.luuMangSPCanTim(res.data))
+        .catch(err=>console.log(err))
+      }
     }
 
     handleOnChange=(evt)=>{
@@ -31,9 +56,6 @@ class header extends Component {
         [evt.target.name]:evt.target.value
       })
     }
-
-
-
 
     render() {
         return (
@@ -145,8 +167,8 @@ const mapDispatchToProps=(dispatch)=>{
     userLogOut:()=>{
       dispatch(actSetUserLogIn())
     },
-    timKiemSP:(sp)=>{
-      dispatch(actTimKiemSP(sp))
+    luuMangSPCanTim:(mangSP)=>{
+      dispatch(actLuuMangSanPhamCanTim(mangSP))
     }
   }
 }

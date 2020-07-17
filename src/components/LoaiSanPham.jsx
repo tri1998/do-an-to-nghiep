@@ -1,14 +1,36 @@
 import React, { Component } from 'react'
 import {Row,Col,Menu,Button,Select} from 'antd'
 import SanPhamVuaXem from './sanphamvuaxem'
-import AoTTG from './aottg';
-import Gear from './gaminggear';
-import Gundam from './gundam';
 import All from './tatcasp';
+import SanPham from './sanpham';
 import {Switch,Route,Link} from 'react-router-dom'
 import {connect} from 'react-redux';
 const {Option} = Select;
 class LoaiSanPham extends Component {
+
+    loadSanPhamTheoLoai=()=>{
+       return this.props.DanhSachLoai.map((loaiSP,index)=>{
+            return <Route 
+                        key={index} 
+                        path={`${this.props.match.url}/${loaiSP.LoaiSPurl}`} 
+                        render={()=>
+                            <Row gutter={[0,16]}>
+                                {
+                                    loaiSP.TrangThai===1?
+                                    this.props.DanhSachSanPham.map((sp,index)=>{
+                                        return sp.MaDM===loaiSP.MaDM&&sp.TrangThai===1
+                                        ?<Col key={index} span={8}><SanPham sanPham={sp}></SanPham></Col>
+                                        :null
+                                    }):<h2>Loại sản phẩm này đã ngừng kinh doanh !</h2>
+                                }
+                            </Row>
+                        }
+                    >
+                    </Route>
+        })
+    }
+
+
     render() {
         return (
             <div>
@@ -69,10 +91,9 @@ class LoaiSanPham extends Component {
                             <br/><br/>
                             <Switch>
                                 <Route  path={`${this.props.match.url}/all`} component={All}></Route>
-                                <Route  path={`${this.props.match.url}/gaminggear`} component={Gear}></Route>
-                                <Route  path={`${this.props.match.url}/gundam`} component={Gundam}></Route>
-                                <Route  path={`${this.props.match.url}/aottg`} component={AoTTG}></Route>
-                                <Route  path={`${this.props.match.url}/banhmi`} render={()=><h1>Xin chào ạ</h1>} ></Route>
+                                {
+                                    this.loadSanPhamTheoLoai()
+                                }
                                 <Route exact path={`${this.props.match.url}/`} component={All}></Route>
                             </Switch>
                         
@@ -85,7 +106,8 @@ class LoaiSanPham extends Component {
 
 const mapStateToProps = (state) =>{
     return {
-        DanhSachLoai:state.DSSP.DanhSachLoaiSanPham
+        DanhSachLoai:state.DSSP.DanhSachLoaiSanPham,
+        DanhSachSanPham:state.DSSP.DanhSachSanPham
     }
 }
 

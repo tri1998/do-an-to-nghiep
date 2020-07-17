@@ -20,10 +20,6 @@ const validateMessages = {
 
 class dangky extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     onFinish = (values) => {
 
         const newUser = {

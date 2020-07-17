@@ -130,6 +130,7 @@ class QuanLySanPham extends Component {
         });
     };
 
+    //Them san pham
     onFinish=(values)=>{
         const sanPham = {
             MaSP:values.MaSP,
@@ -163,7 +164,7 @@ class QuanLySanPham extends Component {
         .then(res=>this.props.updateTrangThai(MaSP))
         .catch(err=>console.log(err));
     }
-
+    //Phuc hoi san pham
     khoiPhucSanPham=(MaSP)=>{
         axios({
             method: 'PUT',
@@ -239,10 +240,6 @@ class QuanLySanPham extends Component {
       //Cap nhat thong tin san pham 
       onUpdate = (values)=>{
         console.log(values);
-        const sanPhamCapNhat = {
-
-        }
-
         this.setState({
           visibleDrawer:false
         })
@@ -255,7 +252,7 @@ class QuanLySanPham extends Component {
             title: 'Hình Ảnh',
             dataIndex: 'Hinh',
             key: 'Hinh',
-            render:(text,record)=>(<img className="hinh" src={`${record.Hinh}`}/>)
+            render:(text,record)=>(<img alt={record.TenSP} className="hinh" src={`${record.Hinh}`}/>)
         },
         { 
             title: 'Tên Sản Phẩm',
@@ -270,7 +267,7 @@ class QuanLySanPham extends Component {
             ...this.getColumnSearchProps('Gia')
         },
         {
-          title: 'Action',
+          title: 'Thao Tác',
           dataIndex: '',
           key: 'x',
           render: (record) => (
@@ -348,95 +345,133 @@ class QuanLySanPham extends Component {
                         initialValues={{ remember: true }}
                         onFinish={this.onFinish}
                     >
-                        <Form.Item
-                          name="MaSP"
-                          initialValue={data.length+1}
-                          rules={[{ required: true, message: 'Please input your Username!' }]}
-                          >
-                          <Input
-                              disabled={true}
-                              size="large" 
-                              prefix={<RadarChartOutlined className="site-form-item-icon" />} 
-                              placeholder="Tên Sản Phẩm" 
-                          />
-                        </Form.Item>
-
-                        <Form.Item
-                        name="TenSP"
-                        rules={[{ required: true, message: 'Please input your Username!' }]}
-                        >
-                        <Input 
-                            size="large" 
-                            prefix={<RadarChartOutlined className="site-form-item-icon" />} 
-                            placeholder="Tên Sản Phẩm" 
-                        />
-                        </Form.Item>
-
-                        
-                        <Form.Item
-                        name="Gia"
-                        rules={[{ required: true, message: 'Please input your Username!' }]}
-                        >
-                        <Input
-                            type="number"
-                            size="large" 
-                            prefix={<DollarOutlined className="site-form-item-icon" />} 
-                            placeholder="Giá" 
-                        />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="SPMoi"
-                            hasFeedback
-                            rules={[{ required: true, message: 'Mời chọn !' }]}
-                        >
-                            <Select placeholder="Tình Trạng">
-                                <Option value={0}>Sản Phẩm Cũ</Option>
-                                <Option value={1}>Sản Phẩm Mới</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="LoaiSP"
-                            hasFeedback
-                            rules={[{ required: true, message: 'Mời chọn !' }]}
-                        >
-                            <Select placeholder="Chọn Hãng Sản Xuất !">
-                                <Option value={1}>Dare-U</Option>
-                                <Option value={2}>Logitech</Option>
-                                <Option value={3}>Steelseries</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="HangSX"
-                            hasFeedback
-                            rules={[{ required: true, message: 'Mời chọn !' }]}
-                        >
-                            <Select placeholder="Chọn Loại Sản Phẩm !">
-                                <Option value={1}>Gaming Gear</Option>
-                                <Option value={2}>GunDam</Option>
-                                <Option value={3}>Áo In</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="Hinh"
-                            valuePropName="fileList"
-                            getValueFromEvent={this.normFile}
-                        >
-                            <Upload
-                                name="Anh"
-                                listType="picture-card"
-                                className="avatar-uploader"
-                                showUploadList={false}
-                                action="https://http://localhost:3000/img"
-                                beforeUpload={beforeUpload}
-                                onChange={this.handleChange}
+                        <Row>
+                          <Col span={4}><h4>MÃ SP :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                            name="MaSP"
+                            initialValue={data.length+1}
+                            rules={[{ required: true, message: 'Please input your Username!' }]}
                             >
-                                {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                            </Upload>
-                        </Form.Item>
+                            <Input
+                                disabled={true}
+                                size="large" 
+                                prefix={<RadarChartOutlined className="site-form-item-icon" />} 
+                                placeholder="Tên Sản Phẩm" 
+                            />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        
+                        <Row>
+                          <Col span={4}><h4>TÊN SP :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                            name="TenSP"
+                            rules={[{ required: true, message: 'Please input your Username!' }]}
+                            >
+                            <Input 
+                                size="large" 
+                                prefix={<RadarChartOutlined className="site-form-item-icon" />} 
+                                placeholder="Tên Sản Phẩm" 
+                            />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        
+
+                        <Row>
+                          <Col span={4}><h4>GIÁ :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                            name="Gia"
+                            rules={[{ required: true, message: 'Please input your Username!' }]}
+                            >
+                            <Input
+                                type="number"
+                                size="large" 
+                                prefix={<DollarOutlined className="site-form-item-icon" />} 
+                                placeholder="Giá" 
+                            />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        
+                        <Row>
+                          <Col span={4}><h4>SP MỚI :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="SPMoi"
+                              hasFeedback
+                              rules={[{ required: true, message: 'Mời chọn !' }]}
+                            >
+                                <Select placeholder="Tình Trạng">
+                                    <Option value={0}>Sản Phẩm Cũ</Option>
+                                    <Option value={1}>Sản Phẩm Mới</Option>
+                                </Select>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        
+                        <Row>
+                          <Col span={4}><h4>HÃNG SX :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="HangSX"
+                              hasFeedback
+                              rules={[{ required: true, message: 'Mời chọn !' }]}
+                            >
+                                <Select placeholder="Chọn Hãng Sản Xuất !">
+                                    <Option value={1}>Dare-U</Option>
+                                    <Option value={2}>Logitech</Option>
+                                    <Option value={3}>Steelseries</Option>
+                                </Select>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col span={4}><h4>LOẠI SP :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="LoaiSP"
+                              hasFeedback
+                              rules={[{ required: true, message: 'Mời chọn !' }]}
+                            >
+                                <Select placeholder="Chọn Loại Sản Phẩm !">
+                                    {
+                                      this.props.DanhSachLoaiSanPham.map((loaiSP,index)=>{
+                                      return <Option value={loaiSP.MaDM} key={index}>{loaiSP.LoaiSP}</Option>
+                                      })
+                                    }
+                                </Select>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        
+                        <Row>
+                          <Col span={4}><h4>ẢNH SP :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="Hinh"
+                              valuePropName="fileList"
+                              getValueFromEvent={this.normFile}
+                            >
+                                <Upload
+                                    name="Anh"
+                                    listType="picture-card"
+                                    className="avatar-uploader"
+                                    showUploadList={false}
+                                    action="https://http://localhost:3000/img"
+                                    beforeUpload={beforeUpload}
+                                    onChange={this.handleChange}
+                                >
+                                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                </Upload>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+
 
                         <Form.Item>
                             <Button block type="danger" htmlType="submit" className="login-form-button">
@@ -613,7 +648,8 @@ class QuanLySanPham extends Component {
 const mapStateToProps = (state)=>{
     return{
         DanhSachSanPham:state.DSSP.DanhSachSanPham,
-        SanPhamDuocChon:state.DSSP.sanPhamChonAdmin
+        SanPhamDuocChon:state.DSSP.sanPhamChonAdmin,
+        DanhSachLoaiSanPham:state.DSSP.DanhSachLoaiSanPham,
     }
 }
 

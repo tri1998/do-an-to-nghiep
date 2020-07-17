@@ -19,10 +19,7 @@ class aocarousel extends Component {
 
     loadDSAo = () => {
         return this.props.DSSP.map((sp, index) => {
-           if(sp.TrangThai===1&&sp.MaDM===3)
-           {
-                return (<SanPham key={index} sanPham={sp}></SanPham>)
-           }
+                return sp.TrangThai===1&&sp.MaDM===3?<SanPham key={index} sanPham={sp}></SanPham>:null
         })
     }
 

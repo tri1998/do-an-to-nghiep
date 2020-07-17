@@ -76,16 +76,19 @@ const sanPhamReducer = (state=stateDefault,action)=>{
             state.DanhSachLoaiSanPham=mangDanhMucCapNhat;
             return {...state}
         }
-        case types.TIM_KIEM_SAN_PHAM:{
-            state.sanPhamTimKiem=[];
-            let sanPhamTimKiem = action.infoSP;
-            let mangSanPham = [...state.DanhSachSanPham];
-            sanPhamTimKiem= parseInt(sanPhamTimKiem);
-            mangSanPham.map((sp,index)=>{
-                return sp.Gia>=sanPhamTimKiem?state.sanPhamTimKiem.push(sp):sp
-            })
+        case types.LUU_MANG_SAN_PHAM_CAN_TIM:{
+            state.sanPhamTimKiem=action.mangSP;
             console.log(state.sanPhamTimKiem);
             return {...state}
+        }
+        case types.SUA_DANH_MUC:{
+            let danhMuc = action.danhMuc;
+            let mangDanhMucCapNhat = [...state.DanhSachLoaiSanPham];
+            let viTriDM = mangDanhMucCapNhat.findIndex(dm=>dm.MaDM===action.maDM);
+            mangDanhMucCapNhat[viTriDM].LoaiSP=danhMuc.LoaiSP;
+            mangDanhMucCapNhat[viTriDM].LoaiSPurl=danhMuc.LoaiSPurl;
+            state.DanhSachLoaiSanPham=mangDanhMucCapNhat;
+            return{...state}
         }
        default:return{...state}
     }

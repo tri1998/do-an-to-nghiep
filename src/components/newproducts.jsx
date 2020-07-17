@@ -20,10 +20,7 @@ class newproducts extends Component {
     loadDSSP = () => {
         console.log('ok', this.props.DSSP)
         return this.props.DSSP.map((sp, index) => {
-           if(sp.TrangThai===1&&sp.SanPham_Moi===1)
-           {
-                return (<SanPham key={index} sanPham={sp}></SanPham>)
-           }
+             return sp.TrangThai===1&&sp.SanPham_Moi===1?<SanPham key={index} sanPham={sp}></SanPham>:null
         })
     }
 

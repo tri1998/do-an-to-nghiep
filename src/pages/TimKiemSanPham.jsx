@@ -6,7 +6,7 @@ class TimKiemSanPham extends Component {
     
     loadDSSP=()=>{
         return this.props.DSSP.map((sp,index)=>{
-            return <Col span={6}><SanPham key={index} sanPham={sp}></SanPham></Col>
+            return <Col key={index} span={6}><SanPham key={index} sanPham={sp}></SanPham></Col>
         })
     }
     

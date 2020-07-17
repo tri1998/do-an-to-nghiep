@@ -15,7 +15,7 @@ class CapNhatMatKhau extends Component {
             password2:md5(values.password2),
             OTP:values.OTP
         }
-        let index = this.props.userCapNhat.findIndex(user=>user.OTP===USER .OTP);
+        let index = this.props.userCapNhat.findIndex(user=>user.OTP===USER.OTP);
         if(index===-1)
         {
             Swal.fire(

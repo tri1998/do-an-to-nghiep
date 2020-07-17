@@ -77,10 +77,18 @@ export const actThemDanhMucSP=(danhMuc)=>{
         danhMuc
     }
 }
-//act tim kiem san pham
-export const actTimKiemSP=(infoSP)=>{
+
+export const actLuuMangSanPhamCanTim=(mangSP)=>{
     return{
-        type:types.TIM_KIEM_SAN_PHAM,
-        infoSP
+        type:types.LUU_MANG_SAN_PHAM_CAN_TIM,
+        mangSP
+    }
+}
+//act sua thong tin danh muc 
+export const actSuaDanhMuc=(maDM,danhMuc)=>{
+    return{
+        type:types.SUA_DANH_MUC,
+        maDM,
+        danhMuc
     }
 }

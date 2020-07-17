@@ -1,9 +1,10 @@
+
 const express = require('express');
 const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 5000;
+const port = 2411;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -63,6 +64,16 @@ app.post('/api/danhmucsanpham/themdanhmuc',(req,res)=>{
         res.json(results);
     })
 })
+//API sua danh muc cua san pham
+app.put('/api/danhmucsanpham/suadanhmuc/:madm',(req,res)=>{
+    var sql = "UPDATE danhmucsp SET "
+            + "LoaiSP='" + req.body.LoaiSP + "',"
+            + "LoaiSPurl='" + req.body.LoaiSPurl + "' WHERE MaDM='" + req.params.madm + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+ })
 
 //API xoa danh muc san pham
 app.put('/api/danhmucsanpham/xoadanhmuc/:madm',(req,res)=>{
@@ -157,6 +168,27 @@ app.put('/api/sanpham/capnhatSP/:id',(req,res)=>{
             + 0 +"'"
             + "WHERE MaSP='"
             + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API tim kiem san pham theo ten
+app.get('/api/sanpham/timKiemSPTheoTen/:sp',(req,res)=>{
+    var sql = "SELECT * FROM sanpham WHERE TenSP like '%"
+            + req.params.sp
+            + "%'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API tim kiem san pham theo gia
+app.get('/api/sanpham/timKiemSPTheoGia/:gia',(req,res)=>{
+    let Gia = parseInt(req.params.gia);
+    var sql = `SELECT * FROM sanpham WHERE Gia >= ${Gia}`
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);

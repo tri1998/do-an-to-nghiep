@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Button,Col } from 'antd';
+import { Button } from 'antd';
 import { Card } from 'antd';
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
