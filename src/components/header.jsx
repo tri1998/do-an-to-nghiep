@@ -114,7 +114,7 @@ class header extends Component {
                     <Col className="cart" span={2}>
                       <Tooltip title="Giỏ hàng">
                         <Button shape="circle" size="large" icon={<ShoppingCartOutlined />} />
-                        <span>(0)</span>
+                        <span className="soLuongSP">({this.props.soLuongSPCoTrongGio})</span>
                       </Tooltip>
                     </Col>
                   </Row>
@@ -158,7 +158,8 @@ class header extends Component {
 const mapStateToProps=(state)=>{
   return{
     userLogIn:state.DSND.userLogin,
-    isUserLogIn:state.DSND.isUserLogin
+    isUserLogIn:state.DSND.isUserLogin,
+    soLuongSPCoTrongGio:state.DSSPMua.soLuongSanPhamCoTrongGio
   }
 }
 

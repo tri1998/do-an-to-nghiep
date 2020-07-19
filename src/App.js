@@ -44,7 +44,6 @@ class App extends Component {
 
   render() {
     return (
-      
       <BrowserRouter >
         <Fragment>
           <div className="App">

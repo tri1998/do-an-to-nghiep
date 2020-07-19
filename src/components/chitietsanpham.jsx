@@ -5,20 +5,48 @@ import SPLienQuan from './sanphamlienquan'
 import { Carousel } from 'antd';
 import { createRef } from 'react';
 import {connect} from 'react-redux';
+import {actThemVaoGio,actThemSanPhamDaTonTai} from '../redux/actions/giohang';
 const { Option } = Select;
 class chitietsanpham extends Component {
     constructor(props) {
         super(props);
         this.carouselRef=createRef();
+        this.state={
+            soLuong:1
+        }
     }
 
     handlePrev =()=> this.carouselRef.current.prev();
     handleNext =()=> this.carouselRef.current.next();
+
+    handleOnChange=(e)=>{
+        this.setState({
+            [e.target.name]:parseInt(e.target.value)
+        })
+        console.log(this.state.soLuong);
+
+    }
+
+    themVaoGio=(sanPham)=>{
+        let viTriSanPham=this.props.danhSachSanPham.findIndex(sp=>sp.MaSP===sanPham.MaSP);
+        if(viTriSanPham===-1)
+        {
+            sanPham = {...sanPham,SoLuong:this.state.soLuong,GiaCu:sanPham.Gia}
+            sanPham.Gia *=sanPham.SoLuong;
+            this.props.themVaoGio(sanPham);
+        }
+        else
+        {
+            this.props.themVaoGioDaCoSanPham(sanPham.MaSP,this.state.soLuong);
+        }
+
+        this.props.history.push('/giohang');
+        
+    }
     
     render() {
-        console.log(1);
         let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
-        Gia = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'});
+        Gia = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})
         return (
             <div>
               <Row>
@@ -78,12 +106,18 @@ class chitietsanpham extends Component {
                                     <Row>
                                         <Col span={16} className="right"><span className="fs16">Số lượng: </span></Col>
                                         <Col span={6}>
-                                            <Input type="number" min={1} max={100} defaultValue={1}/>
+                                            <Input onChange={this.handleOnChange} name="soLuong" type="number" min={1} max={100} defaultValue={1}/>
                                         </Col>
                                         <Col span={2}></Col>
                                     </Row>
                                 <br/>
-                                    <Button className="btnAddCart" danger type="primary" shape="round" size="large"><ShoppingCartOutlined />Thêm Vào Giỏ Hàng</Button>
+                                    <Button 
+                                    onClick={()=>this.themVaoGio(this.props.SPDuocChon)} 
+                                    className="btnAddCart" danger type="primary" 
+                                    shape="round" size="large"
+                                    >
+                                        <ShoppingCartOutlined />Thêm Vào Giỏ Hàng
+                                    </Button>
 
                                 </Col>
                             </Row>
@@ -103,8 +137,20 @@ class chitietsanpham extends Component {
 }
 const mapStateToProp = (state)=>{
     return {
-        SPDuocChon:state.DSSP.sanPhamDuocChon
+        SPDuocChon:state.DSSP.sanPhamDuocChon,
+        danhSachSanPham:state.DSSPMua.mangSanPham,
     }
 }
 
-export default connect(mapStateToProp,null)(chitietsanpham);
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        themVaoGio:(sanPham)=>{
+            dispatch(actThemVaoGio(sanPham))
+        },
+        themVaoGioDaCoSanPham:(maSanPham,soLuong)=>{
+            dispatch(actThemSanPhamDaTonTai(maSanPham,soLuong))
+        },
+    }
+}
+
+export default connect(mapStateToProp,mapDispatchToProps)(chitietsanpham);
