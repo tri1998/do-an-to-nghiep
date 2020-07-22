@@ -24,7 +24,6 @@ class header extends Component {
             userStatus:localStorage.getItem('user'),
             tensp:''
         }
-        console.log(this.state.userStatus);
     }
 
     timKiem=(value)=>{

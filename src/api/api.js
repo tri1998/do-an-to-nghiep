@@ -3,8 +3,12 @@ const express = require('express');
 const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
+const jwt = require('jsonwebtoken');
+const config=require('./config');
+const tokenList={};
 const bodyParser = require('body-parser');
-const port = 2411;
+const { response } = require('express');
+const port = 5001;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -31,6 +35,38 @@ app.get('/api/taikhoan',(req,res)=>{
     connection.query(sql,function(err,results){
         if(err) throw err;
         res.json(results)
+    })
+})
+
+
+//api dang nhap
+app.post('/api/taikhoan/dangnhap',(req,res)=>{
+    const data = req.body;
+    const user = {
+        "email":data.email,
+        "password":data.password
+    }
+    var sql = `SELECT * FROM taikhoan WHERE Email='${user.email}' AND MatKhau='${user.password}'`;
+    connection.query(sql,function(err,results){
+        if(err){
+            throw err;
+        }
+        if(results)
+        {
+            const token = jwt.sign(user,config.secret,{
+                expiresIn: config.tokenLife,
+              });
+            
+              tokenList[refreshToken]=user;
+
+              const response = {
+                token,
+                results:results
+              }
+
+              res.json(response);
+        }
+        
     })
 })
 
@@ -168,6 +204,16 @@ app.put('/api/sanpham/capnhatSP/:id',(req,res)=>{
             + 0 +"'"
             + "WHERE MaSP='"
             + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API xem chi tiet san pham
+app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
+    let maSanPham = req.params.id;
+    var sql = `SELECT * FROM sanpham WHERE MaSP = '${maSanPham}'`;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);

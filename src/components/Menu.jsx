@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Menu } from 'antd';
 import { HomeOutlined,CustomerServiceOutlined,SettingOutlined,RedditOutlined,ShoppingOutlined } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
-const { SubMenu } = Menu;
 export default class Menu1 extends Component {
     constructor(props){
       super(props);

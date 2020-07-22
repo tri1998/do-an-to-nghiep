@@ -6,6 +6,8 @@ import {Link} from 'react-router-dom';
 import Swal from 'sweetalert2'
 import {actAdminDangNhap,actUserLogin,actSetUserLogIn} from '../redux/actions/nguoidung'
 import {connect} from 'react-redux'
+import axios from 'axios';
+import {port} from '../config/configAPI';
 let md5=require('md5');
 const validateMessages = {
     types: {
@@ -39,6 +41,19 @@ class dangnhap extends Component {
         {
             return 1;
         }else return 0;
+    }
+
+    onFinish2 = (values)=>{
+        const user = {
+            email:values.email,
+            password:md5(values.password)
+        };
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/api/taikhoan/dangnhap`,
+            data:user
+        }).then(res=>console.log(res.data))
+        .catch(err=>console.log(err));
     }
     
     onFinish = (values) =>{

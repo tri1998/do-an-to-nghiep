@@ -1,24 +1,76 @@
 import React, { Component } from 'react'
-import {Row,Col,Input,Select,Button} from 'antd'
-import { ShoppingCartOutlined,LeftOutlined,RightOutlined } from '@ant-design/icons';
+import {
+    Row,
+    Col,
+    Input,
+    Select,
+    Button,
+    Carousel,
+    notification
+} from 'antd'
+import { 
+    ShoppingCartOutlined,
+    LeftOutlined,
+    RightOutlined,
+    FrownOutlined, 
+} from '@ant-design/icons';
 import SPLienQuan from './sanphamlienquan'
-import { Carousel } from 'antd';
 import { createRef } from 'react';
 import {connect} from 'react-redux';
-import {actThemVaoGio,actThemSanPhamDaTonTai} from '../redux/actions/giohang';
+import {
+    actThemVaoGio,
+    actThemSanPhamDaTonTai
+} from '../redux/actions/giohang';
+import {port} from '../config/configAPI';
+import axios from 'axios';
+import {actXemChiTiet} from '../redux/actions/sanpham';
+//destructuring tu component Select cua antd de lay ra component Option
 const { Option } = Select;
 class chitietsanpham extends Component {
+
+
     constructor(props) {
         super(props);
         this.carouselRef=createRef();
         this.state={
-            soLuong:1
+            soLuong:1,
+            isLoading:false
         }
     }
 
+    UNSAFE_componentWillMount(){
+        console.log("tao chay truoc");
+    }
+
+    componentDidMount(){
+        let maSanPham = this.props.match.params.MaSP;
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/sanpham/xemChiTietSP/${maSanPham}`
+        })
+        .then(res=>{
+            this.props.xemChiTiet(res.data[0]);
+            this.setState({isLoading:!this.state.isLoading});
+        })
+        .catch(err=>console.log(err));
+    }
+
+    //Thong bao nay duoc show ra khi nguoi dung nhap so luon < 1
+    openNotification = () => {
+        notification.open({
+          message: 'Lỗi',
+          description:
+            'Số lượng sản phẩm phải lớn hơn 0 !',
+          icon: <FrownOutlined style={{ color: '#108ee9' }} />,
+        });
+    };
+
+    //Dom that toi method carousel cua antd
     handlePrev =()=> this.carouselRef.current.prev();
     handleNext =()=> this.carouselRef.current.next();
 
+
+    //ham nay duoc goi khi moi lan so luong thay doi thi setState lai
     handleOnChange=(e)=>{
         this.setState({
             [e.target.name]:parseInt(e.target.value)
@@ -27,6 +79,7 @@ class chitietsanpham extends Component {
 
     }
 
+    //Chuc nang them vao nhan vao la 1 object sanPham
     themVaoGio=(sanPham)=>{
         let viTriSanPham=this.props.danhSachSanPham.findIndex(sp=>sp.MaSP===sanPham.MaSP);
         if(viTriSanPham===-1)
@@ -43,12 +96,17 @@ class chitietsanpham extends Component {
         this.props.history.push('/giohang');
         
     }
+
+
     
+
     render() {
         let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
-        Gia = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})
+        console.log(this.props.SPDuocChon);
+
         return (
             <div>
+              {this.state.isLoading===false?<div>Loadding...</div>:
               <Row>
                 <Col span={18}>
                     <Row>
@@ -99,7 +157,7 @@ class chitietsanpham extends Component {
                                         </Col>
 
                                     </Row>
-                                    <span className="Gia">{Gia}</span>
+                                    <span className="Gia">{Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</span>
                                 </Col>
 
                                 <Col span={12} className="right">
@@ -112,7 +170,10 @@ class chitietsanpham extends Component {
                                     </Row>
                                 <br/>
                                     <Button 
-                                    onClick={()=>this.themVaoGio(this.props.SPDuocChon)} 
+                                    onClick={
+                                    ()=>this.state.soLuong>0
+                                    ?this.themVaoGio(this.props.SPDuocChon)
+                                    :this.openNotification()} 
                                     className="btnAddCart" danger type="primary" 
                                     shape="round" size="large"
                                     >
@@ -130,7 +191,7 @@ class chitietsanpham extends Component {
                 <Col span={6} className="center">
                     <SPLienQuan></SPLienQuan>
                 </Col>
-              </Row>
+              </Row>}
             </div>
         )
     }
@@ -150,6 +211,9 @@ const mapDispatchToProps = (dispatch)=>{
         themVaoGioDaCoSanPham:(maSanPham,soLuong)=>{
             dispatch(actThemSanPhamDaTonTai(maSanPham,soLuong))
         },
+        xemChiTiet:(sanPham)=>{
+            dispatch(actXemChiTiet(sanPham))
+        }
     }
 }
 

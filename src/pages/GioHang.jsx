@@ -6,13 +6,15 @@ import {
     Button,
     Space,
     Row,
-    Col
+    Col,
+    notification
 }from 'antd'
 
 import {
     DeleteOutlined,
     RightOutlined,
-    ArrowLeftOutlined
+    ArrowLeftOutlined,
+    FrownOutlined
   } from '@ant-design/icons';
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
@@ -28,21 +30,30 @@ class GioHang extends Component {
         }
     }
 
+    //Thong bao nay duoc show ra khi nguoi dung nhap so luon < 1
+    openNotification = () => {
+        notification.open({
+          message: 'Lỗi',
+          description:
+            'Số lượng sản phẩm phải lớn hơn 0 !',
+          icon: <FrownOutlined style={{ color: '#108ee9' }} />,
+        });
+    };
+
 
     handleOnChange=(e)=>{
         this.setState({
             [e.target.name]:parseInt(e.target.value),
         },
-        ()=>this.props.capNhatSoLuongSanPham(this.state.maSanPham,this.state.soLuong)
+        ()=>this.state.soLuong>0
+        ?this.props.capNhatSoLuongSanPham(this.state.maSanPham,this.state.soLuong)
+        :this.openNotification()
         )
     }
 
+    //Xoa san pham khoi gio hang
     xoaSanPham=(maSP)=>{
         this.props.xoaSanPhamGioHang(maSP);
-    }
-
-    updateSoLuong=(maSanPham)=>{
-        console.log("Mã sp : "+ maSanPham);
     }
 
     columns = [
@@ -95,7 +106,7 @@ class GioHang extends Component {
         let data = this.props.danhSachSanPham;
         return (
             <div>
-                {JSON.parse(sessionStorage.getItem('giohang'))!==null?
+                {this.props.soLuongSanPham!==0?
                 <Form className="frmGioHang">
                     <Row>
                         <Col span={24}><h1 className="tieude">GIỎ HÀNG</h1></Col>
@@ -151,7 +162,8 @@ class GioHang extends Component {
 const mapStateToProps = (state)=>{
     return{
         danhSachSanPham:state.DSSPMua.mangSanPham,
-        tongTien:state.DSSPMua.tongTien
+        tongTien:state.DSSPMua.tongTien,
+        soLuongSanPham:state.DSSPMua.soLuongSanPhamCoTrongGio
     }
 }
 

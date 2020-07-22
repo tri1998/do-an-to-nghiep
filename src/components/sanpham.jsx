@@ -32,7 +32,7 @@ class sanpham extends PureComponent {
                             onClick={()=>this.handleXemChiTiet(this.props.sanPham)}
                             shape="round" size="large"
                             >
-                                <Link to={`/${MaSP}`}>Mua Ngay</Link>
+                                <Link to={`/sanpham/${MaSP}`}>Mua Ngay</Link>
                             </Button>
                         </div>
                         

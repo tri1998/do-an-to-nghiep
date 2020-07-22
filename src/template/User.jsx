@@ -33,7 +33,7 @@ export default class User extends Component {
                   <Route path='/giohang' component={GioHang}></Route>
                   <Route path='/timkiem' component={TimKiem}></Route>
                   <Route path='/capnhatmatkhau/:email' component={CapNhatMatKhau}></Route>
-                  <Route path='/:MaSP' component={ChiTiet}></Route>
+                  <Route path='/sanpham/:MaSP' component={ChiTiet}></Route>
                   <Route exact path='/' component={Home}></Route>
                 </Switch>
                 <Footer></Footer>
