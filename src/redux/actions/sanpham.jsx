@@ -48,6 +48,13 @@ export const actLuuSanPhamVuaXem = (sanPham)=>{
         sanPham
     }
 }
+//act cap nhat thong tin san pham admin 
+export const actCapNhatThongTinSanPham=(sanPham)=>{
+    return{
+        type:types.CAP_NHAT_SAN_PHAM,
+        sanPham
+    }
+}
 //act luu mang danh muc san pham
 export const actLuuMangDanhMucSanPham=(sanPham)=>{
     return {

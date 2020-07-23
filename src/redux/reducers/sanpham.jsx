@@ -47,6 +47,21 @@ const sanPhamReducer = (state=stateDefault,action)=>{
             console.log(state.sanPhamChonAdmin);
             return {...state}
         }
+        //Cap nhat lai thong tin cho san pham
+        case types.CAP_NHAT_SAN_PHAM:{
+            let MaSP=action.sanPham.MaSP;
+            let sanPham=action.sanPham;
+            let mangSanPhamCapNhat = [...state.DanhSachSanPham];
+            let viTriSPUpdate = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===MaSP);
+            mangSanPhamCapNhat[viTriSPUpdate].MaDM=sanPham.MaDM;
+            mangSanPhamCapNhat[viTriSPUpdate].MaHang=sanPham.MaHang;
+            mangSanPhamCapNhat[viTriSPUpdate].TenSP=sanPham.TenSP;
+            mangSanPhamCapNhat[viTriSPUpdate].Gia=sanPham.Gia;
+            mangSanPhamCapNhat[viTriSPUpdate].SanPham_Moi=sanPham.SanPham_Moi;
+            mangSanPhamCapNhat[viTriSPUpdate].Hinh=sanPham.Hinh;
+            state.DanhSachSanPham=mangSanPhamCapNhat;
+            return {...state}
+        }
         case types.SAN_PHAM_VUA_XEM:{
             state.sanPhamVuaXem=action.sanPham;
             return {...state}

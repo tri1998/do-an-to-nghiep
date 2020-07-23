@@ -4,11 +4,9 @@ const cors = require('cors')
 const mysql = require('mysql');
 const app = express();
 const jwt = require('jsonwebtoken');
-const config=require('./config');
-const tokenList={};
 const bodyParser = require('body-parser');
 const { response } = require('express');
-const port = 5001;
+const port = 5005;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -30,6 +28,7 @@ connection.connect(function(err){
 
 app.use(cors());
 
+
 app.get('/api/taikhoan',(req,res)=>{
     var sql = "SELECT * FROM taikhoan";
     connection.query(sql,function(err,results){
@@ -47,26 +46,30 @@ app.post('/api/taikhoan/dangnhap',(req,res)=>{
         "password":data.password
     }
     var sql = `SELECT * FROM taikhoan WHERE Email='${user.email}' AND MatKhau='${user.password}'`;
-    connection.query(sql,function(err,results){
-        if(err){
-            throw err;
-        }
-        if(results)
+    connection.query(sql,(err,results)=>{
+        const Loi="Sai ten tai khoan , mat khau";
+        if(err) throw err;
+        if(results.length===0)
         {
-            const token = jwt.sign(user,config.secret,{
-                expiresIn: config.tokenLife,
-              });
-            
-              tokenList[refreshToken]=user;
-
-              const response = {
-                token,
-                results:results
-              }
-
-              res.json(response);
+            res.json(Loi);
         }
-        
+        else {
+            if(results[0].isAdmin===1)
+            {
+                res.json(results);
+            }
+            if(results[0].isAdmin===1)
+            {
+                res.json(results);
+            }
+            const token = jwt.sign(user,'secretkey');
+            const response = {
+                "data":results,
+                "token":token
+            }
+            res.json(response);
+        }
+
     })
 })
 
@@ -260,14 +263,14 @@ app.post('/api/sanpham/themSP',(req,res)=>{
             + "INTO sanpham(MaSP,MaDM,MaHang,TenSP,LuotBan,LuotXem,Gia,SanPham_Moi,TrangThai,Hinh)"
             + "VALUES('"
             + req.body.MaSP + "','"
-            + req.body.LoaiSP + "','"
-            + req.body.HangSX + "','"
+            + req.body.MaDM + "','"
+            + req.body.MaHang + "','"
             + req.body.TenSP + "','"
             + req.body.LuotBan + "','"
             + req.body.LuotXem +"','"
             + req.body.Gia + "','"
-            + req.body.SPMoi + "','"
-            + 1 + "','"
+            + req.body.SanPham_Moi + "','"
+            + req.body.TrangThai + "','"
             + req.body.Hinh + "')";
   
     connection.query(sql,(err,results)=>{
@@ -278,17 +281,19 @@ app.post('/api/sanpham/themSP',(req,res)=>{
 })
 
 //API cap nhat thong tin san pham 
-app.put('/api/sanpham/capNhatThongTin/:sp',(req,res)=>{
-    var sql = "UPDATE sanpham SET "
-            + "MaDM='"      +   req.body.MaDM  + "',"
-            + "MaHang='"     +   req.body.MaHang  + "',"
-            + "TenSP='"        +   req.body.TenSP  + "',"
-            + "Gia='"    +   req.body.Gia + "'"
-            + "SanPham_Moi='"    +   req.body.SanPham_Moi + "'"
-            + "ThongTinSP='"    +   req.body.ThongTinSP + "'"
-            + "TrangThai='"    +   req.body.TrangThai + "'"
-            + "Hinh='"    +   req.body.Hinh + "'"
-            + "WHERE MaSP='" +   req.params.sp  + "'";
+app.put('/api/sanpham/capNhatThongTin/:maSanPham',(req,res)=>{
+    var sanPham = req.body;
+    var sql = `
+                UPDATE sanpham SET 
+                MaDM='${sanPham.MaDM}',
+                MaHang='${sanPham.MaHang}',
+                TenSP='${sanPham.TenSP}',
+                Gia='${sanPham.Gia}',
+                SanPham_Moi='${sanPham.SanPham_Moi}',
+                ThongTinSP='${sanPham.ThongTinSP}',
+                TrangThai='${sanPham.TrangThai}',
+                Hinh='${sanPham.Hinh}' 
+                WHERE MaSP='${sanPham.MaSP}'`;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results)

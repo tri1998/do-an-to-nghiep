@@ -7,8 +7,6 @@ import {
     Form,
     Input,
     Select,
-    Upload,
-    message,
     Drawer,
     Row,
     Col
@@ -21,7 +19,7 @@ import {
   LoadingOutlined, 
   PlusOutlined,
   CloseOutlined,
-  RedoOutlined
+  RedoOutlined,
 } from '@ant-design/icons';
 import {connect} from 'react-redux';
 import axios from 'axios';
@@ -29,28 +27,14 @@ import {
   actUpdateTrangThai,
   actRecoverTrangThai,
   actThemSanPham,
-  actChonSanPhamCapNhat
+  actChonSanPhamCapNhat,
+  actCapNhatThongTinSanPham
 } from '../redux/actions/sanpham'
 import Highlighter from 'react-highlight-words';
 import {port} from '../config/configAPI';
+
 const { Option } = Select;
-function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  }
-  
-  function beforeUpload(file) {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-  }
+
 class QuanLySanPham extends Component {
     constructor(props) {
         super(props);
@@ -61,8 +45,10 @@ class QuanLySanPham extends Component {
           searchText: '',
           searchedColumn: '',
           loading: false,
+          dangThemAnh:false,
+          AnhSP:'',
+          AnhCapNhat:null
         };
-    
       }
 
       showDrawer = (sanPham) => {
@@ -75,37 +61,13 @@ class QuanLySanPham extends Component {
       onClose = () => {
         this.setState({
           visibleDrawer: false,
+          AnhCapNhat:null
         });
       };
-
-
-    handleChange = info => {
-        if (info.file.status === 'uploading') {
-          this.setState({ loading: true });
-          return;
-        }
-        if (info.file.status === 'done') {
-          // Get this url from response in real world.
-          getBase64(info.file.originFileObj, imageUrl =>
-            this.setState({
-              imageUrl,
-              loading: false,
-            }),
-          );
-        }
-      };
-
-    normFile = e => {
-        console.log('Upload event:', e);
-        if (Array.isArray(e)) {
-          return e;
-        }
-        return e && e.fileList;
-    };
-    
     showModal = () => {
         this.setState({
           visible: true,
+          dangThemAnh:!this.state.dangThemAnh
         })
     };
       //Click OK tren modal
@@ -127,21 +89,23 @@ class QuanLySanPham extends Component {
         console.log('Clicked cancel button');
         this.setState({
           visible: false,
+          dangThemAnh:!this.state.dangThemAnh
         });
     };
 
     //Them san pham
-    onFinish=(values)=>{
+    themSanPham=(values)=>{
         const sanPham = {
             MaSP:values.MaSP,
-            LoaiSP:values.LoaiSP,
-            HangSX:values.HangSX,
+            MaDM:parseInt(values.LoaiSP),
+            MaHang:parseInt(values.HangSX),
             TenSP:values.TenSP,
             LuotBan:0,
             LuotXem:0,
-            Gia:values.Gia,
-            SPMoi:values.SPMoi,
-            Hinh:`../img/${values.Hinh[0].name}`,
+            TrangThai:1,
+            Gia:parseInt(values.Gia),
+            SanPham_Moi:parseInt(values.SPMoi),
+            Hinh:this.state.AnhSP,
         }
         console.log(sanPham);
         axios({
@@ -151,7 +115,40 @@ class QuanLySanPham extends Component {
         })
         .then(res=>this.props.themSanPham(sanPham))
         .catch(err=>console.log(err))
-        this.setState({visible:false})
+        this.setState({
+          visible:false,
+          dangThemAnh:!this.state.dangThemAnh
+        })
+    }
+
+    //Cap nhat thong tin san pham 
+    capNhatThongTinSanPham = (values)=>{
+      console.log(values);
+      const sanPham = {
+        MaSP:values.MaSP,
+        MaDM:parseInt(values.MaDM),
+        MaHang:parseInt(values.MaHang),
+        TenSP:values.TenSP,
+        LuotBan:0,
+        LuotXem:0,
+        ThongTinSP:values.ThongTinSP,
+        TrangThai:parseInt(values.TrangThai),
+        Gia:parseInt(values.Gia),
+        SanPham_Moi:parseInt(values.SPMoi),
+        Hinh: this.state.AnhCapNhat!==null?this.state.AnhCapNhat:values.Hinh,
+      }
+      axios({
+        method:'PUT',
+        url:`http://localhost:${port}/api/sanpham/capNhatThongTin/${sanPham.MaSP}`,
+        data: sanPham
+      })
+      .then(res=>this.props.capNhatThongTinSanPham(sanPham))
+      .catch(err=>console.log(err))
+      console.log(sanPham);
+      this.setState({
+        visibleDrawer:false,
+        AnhCapNhat:null
+      })
     }
 
     //Cap nhat trang thai san pham
@@ -237,15 +234,6 @@ class QuanLySanPham extends Component {
         this.setState({ searchText: '' });
       };
 
-      //Cap nhat thong tin san pham 
-      onUpdate = (values)=>{
-        console.log(values);
-        this.setState({
-          visibleDrawer:false
-        })
-      }
-
-
      columns = [
         
         { 
@@ -296,19 +284,22 @@ class QuanLySanPham extends Component {
           )
         },
       ];
+
+    showWidget = (widget)=>{
+      widget.open();
+    }
       
     render() {
         let data = this.props.DanhSachSanPham;
         let dataChonCapNhat = this.props.SanPhamDuocChon;
-        console.log(dataChonCapNhat);
         const { visible, confirmLoading,imageUrl } = this.state;
-        const uploadButton = (
-            <div>
-              {this.state.loading ? <LoadingOutlined /> : <PlusOutlined />}
-              <div className="ant-upload-text">Upload</div>
-            </div>
-          );
-        console.log(data);
+        let widget = window.cloudinary.createUploadWidget({
+          cloudName:"dl9fnqrq3",
+          uploadPreset:"qsg1ozry"},
+          (error,result)=>!error && result && result.event === "success"?
+              (this.state.dangThemAnh===true?this.setState({AnhSP:result.info.url})
+              :this.setState({AnhCapNhat:result.info.url})):console.log(error)
+          )
         return (
             <div>
                 <Button onClick={this.showModal} type="primary">Thêm Sản Phẩm</Button>
@@ -343,7 +334,7 @@ class QuanLySanPham extends Component {
                         name="normal_login"
                         className="login-form"
                         initialValues={{ remember: true }}
-                        onFinish={this.onFinish}
+                        onFinish={this.themSanPham}
                     >
                         <Row>
                           <Col span={4}><h4>MÃ SP :</h4></Col>
@@ -454,20 +445,12 @@ class QuanLySanPham extends Component {
                           <Col span={20}>
                             <Form.Item
                               name="Hinh"
-                              valuePropName="fileList"
-                              getValueFromEvent={this.normFile}
+                              initialValue={this.state.AnhSP}
                             >
-                                <Upload
-                                    name="Anh"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    showUploadList={false}
-                                    action="https://http://localhost:3000/img"
-                                    beforeUpload={beforeUpload}
-                                    onChange={this.handleChange}
-                                >
-                                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                </Upload>
+                              <Button type="primary" onClick={()=>this.showWidget(widget)}>Thêm ảnh</Button>
+                              <div className="anhThem">
+                                <img className="anhThem" src={this.state.AnhSP} alt=""/>
+                              </div>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -506,7 +489,7 @@ class QuanLySanPham extends Component {
                       <Form 
                          layout="vertical" 
                          hideRequiredMark
-                         onFinish={this.onUpdate}
+                         onFinish={this.capNhatThongTinSanPham}
                       >
                         <Row gutter={16}>
                           <Col span={12}>
@@ -533,7 +516,7 @@ class QuanLySanPham extends Component {
                         <Row gutter={16}>
                           <Col span={12}>
                             <Form.Item
-                              name="LoaiSP"
+                              name="MaDM"
                               label="Loại Sản Phẩm"
                               initialValue={dataChonCapNhat.MaDM}
                               rules={[{ required: true, message: 'Please select an owner' }]}
@@ -547,7 +530,7 @@ class QuanLySanPham extends Component {
                           </Col>
                           <Col span={12}>
                             <Form.Item
-                              name="HangSX"
+                              name="MaHang"
                               label="Hãng Sản Xuất"
                               initialValue={dataChonCapNhat.MaHang}
                               rules={[{ required: true, message: 'Please choose the type' }]}
@@ -573,7 +556,7 @@ class QuanLySanPham extends Component {
                           </Col>
                           <Col span={12}>
                             <Form.Item
-                              name="TinhTrang"
+                              name="SanPham_Moi"
                               label="Tình Trạng : "
                               initialValue={dataChonCapNhat.SanPham_Moi}
                             >
@@ -606,10 +589,22 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="Hinh"
                               label="Hình Ảnh : "
-                            
+                              initialValue={dataChonCapNhat.Hinh}
                             >
-                              
-
+                              <Button 
+                                type="primary" 
+                                onClick={()=>this.showWidget(widget)}
+                              >Thay ảnh</Button>
+                            <div className="anhThem">
+                                <img 
+                                  className="anhThem" 
+                                  src={this.state.AnhCapNhat===null
+                                       ?dataChonCapNhat.Hinh
+                                       :this.state.AnhCapNhat
+                                  } 
+                                  alt={dataChonCapNhat.TenSP}
+                                />
+                            </div>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -619,12 +614,6 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="ThongTinSP"
                               label="Thông Tin Sản Phẩm"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: 'please enter url description',
-                                },
-                              ]}
                             >
                               <Input.TextArea rows={4} placeholder="Nhập Thông Tin Sản Phẩm" />
                             </Form.Item>
@@ -667,6 +656,9 @@ const mapDispatchToProps = (dispatch)=>{
         chonSanPham:(sanPham)=>{
           dispatch(actChonSanPhamCapNhat(sanPham))
         },
+        capNhatThongTinSanPham:(sanPham)=>{
+          dispatch(actCapNhatThongTinSanPham(sanPham))
+        }
     }
 }
 

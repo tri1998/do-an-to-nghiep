@@ -14,16 +14,18 @@ class LoaiSanPham extends Component {
                         key={index} 
                         path={`${this.props.match.url}/${loaiSP.LoaiSPurl}`} 
                         render={()=>
-                            <Row gutter={[0,16]}>
-                                {
-                                    loaiSP.TrangThai===1?
-                                    this.props.DanhSachSanPham.map((sp,index)=>{
-                                        return sp.MaDM===loaiSP.MaDM&&sp.TrangThai===1
-                                        ?<Col key={index} span={8}><SanPham sanPham={sp}></SanPham></Col>
-                                        :null
-                                    }):<h2>Loại sản phẩm này đã ngừng kinh doanh !</h2>
-                                }
-                            </Row>
+                            <div>
+                                <Row gutter={[0,16]}>
+                                    {
+                                        loaiSP.TrangThai===1?
+                                        this.props.DanhSachSanPham.map((sp,index)=>{
+                                            return sp.MaDM===loaiSP.MaDM&&sp.TrangThai===1
+                                            ?<Col key={index} span={8}><SanPham sanPham={sp}></SanPham></Col>
+                                            :null
+                                        }):<h2>Loại sản phẩm này đã ngừng kinh doanh !</h2>
+                                    }
+                                </Row>
+                            </div>
                         }
                     >
                     </Route>

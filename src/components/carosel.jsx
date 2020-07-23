@@ -9,16 +9,16 @@ export default class carosel extends Component {
                     <Col span={24}>
                         <Carousel dots={false} autoplay effect="fade">
                             <div>
-                                <img src="../img/aocter.png" alt="ao"/>
+                                <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492994/sieuphamaocter.png" alt="ao"/>
                             </div>
                             <div>
-                                <img src="./img/balocter.jpeg" alt="balo" />
+                                <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492993/balocter.jpg" alt="balo" />
                             </div>
                             <div>
-                                <img src="./img/mohinhcter.png" alt="mohinh" />
+                                <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492998/mohinhcter.png" alt="mohinh" />
                             </div>
                             <div>
-                                <img src="./img/logitech.png" alt="banphim" />
+                                <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492998/SP02.png" alt="banphim" />
                             </div>
                         </Carousel>
                     </Col>

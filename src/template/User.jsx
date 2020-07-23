@@ -11,6 +11,7 @@ import QuenMatKhau from '../pages/QuenMatKhau';
 import CapNhatMatKhau from '../pages/CapNhatMatKhau';
 import LoaiSanPham from '../components/LoaiSanPham';
 import TimKiem from '../pages/TimKiemSanPham';
+import ThongTinTaiKhoan from '../pages/ThongTinNguoiDung';
 import { Row, Col } from 'antd';
 import { UpCircleTwoTone } from '@ant-design/icons';
 import { BackTop, Button } from 'antd';
@@ -32,6 +33,7 @@ export default class User extends Component {
                   <Route path='/loaisanpham' component={LoaiSanPham}></Route>
                   <Route path='/giohang' component={GioHang}></Route>
                   <Route path='/timkiem' component={TimKiem}></Route>
+                  <Route path='/thongtintaikhoan/:tentaikhoan' component={ThongTinTaiKhoan}></Route>
                   <Route path='/capnhatmatkhau/:email' component={CapNhatMatKhau}></Route>
                   <Route path='/sanpham/:MaSP' component={ChiTiet}></Route>
                   <Route exact path='/' component={Home}></Route>

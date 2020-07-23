@@ -62,7 +62,7 @@ class header extends Component {
                 <Col span={4}>
                   <Link to="/trangchu">
                     <div className="logo">
-                      <img src="../img/logo.png" />
+                      <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595404236/img/logo_klzcmr.jpg" />
                     </div>
                   </Link>
 
@@ -77,9 +77,9 @@ class header extends Component {
                       (<Button type="primary" shape="round" size="large">
                       <Link  to="/dangnhap"><RightSquareOutlined />Đăng nhập</Link>
                       </Button>)
-                      :(<Button type="link" shape="round" size="large">
+                      :(<Link to={`thongtintaikhoan/${this.props.userLogIn.Email}`}><Button type="link" shape="round" size="large">
                       Chào {this.props.userLogIn.HoTen}
-                    </Button>)}
+                    </Button></Link>)}
                       
                     </Col>
                     <Col span={3}>

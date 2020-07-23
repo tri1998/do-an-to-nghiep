@@ -76,7 +76,7 @@ class dangnhap extends Component {
                 ),1)
                 this.props.history.push('/admin');
             }
-            if(this.isAdmin(user.Email)===0)
+            else
             {
                 let userLogIn=this.props.DanhSachNguoiDung.find(nd=>nd.Email===user.Email);
                 this.props.userLogin(userLogIn);

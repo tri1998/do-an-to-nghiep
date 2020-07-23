@@ -8,18 +8,22 @@ class all extends Component {
         super(props);
         this.state={
             current: 1,
+            min:0,
+            max:9
         }
     }
+
     
     onChange = page => {
         console.log(page);
         this.setState({
-          current: page,
-        });
+            min: (page - 1) * 9,
+            max: page * 9
+        })
     };
 
     loadSanPhamAll=()=>{
-        return this.props.DanhSachSanPham.map((sp,index)=>{
+        return this.props.DanhSachSanPham.slice(this.state.min,this.state.max).map((sp,index)=>{
             return <Col span={8} key={index}><SanPham sanPham={sp}></SanPham></Col>
         })
     }
@@ -28,9 +32,16 @@ class all extends Component {
         return (
             <div>
                 <Row gutter={[0,16]}>
-                        {this.loadSanPhamAll()}
+                        {
+                        this.loadSanPhamAll()
+                        }
                 </Row>
-                <Pagination defaultCurrent={this.state.current} onChange={this.onChange} defaultPageSize={12} total={50}></Pagination>
+                <Pagination 
+                defaultCurrent={1} 
+                onChange={this.onChange} 
+                defaultPageSize={9} 
+                total={this.props.DanhSachSanPham.length}>
+                </Pagination>
             </div>
         )
     }

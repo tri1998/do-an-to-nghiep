@@ -25,7 +25,7 @@ class sanpham extends PureComponent {
                             <span>{Gia}</span>
                         </div>
                         <div className="tenSP">
-                            <h3>{TenSP}</h3>
+                            <h3 className="tenSPCenter">{TenSP}</h3>
                         </div>
                         <div className="btn_sp">
                             <Button 
