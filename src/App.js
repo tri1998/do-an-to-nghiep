@@ -1,7 +1,8 @@
 import React, { Fragment, Component } from 'react';
 import "antd/dist/antd.css";
 import Admin from './template/Admin';
-import Auth from './components/Auth';
+import Auth from './HOCs/Auth.jsx';
+import Added from './HOCs/Added.jsx';
 import User from './template/User.jsx';
 import ThanhToan from './pages/ThanhToan';
 import { BrowserRouter, Route, Switch} from 'react-router-dom';
@@ -61,7 +62,7 @@ class App extends Component {
           <div className="App">
             <Switch>
               <Auth path='/admin' Component={Admin}></Auth>
-              <Route path='/thanhtoan' component={ThanhToan}></Route>
+              <Added path='/thanhtoan' Component={ThanhToan}></Added>
               <Route exact path='' component={User}></Route>
             </Switch>
           </div>

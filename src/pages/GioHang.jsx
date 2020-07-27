@@ -147,6 +147,9 @@ class GioHang extends Component {
                     
                 </Form>
                 :<div className="gioHangTrong">
+                    {
+                        sessionStorage.removeItem('giohang')
+                    }
                     <h1 >GIỎ HÀNG</h1>
                     <h4 >Không có sản phẩm nào trong giỏ hàng !</h4>
                     
