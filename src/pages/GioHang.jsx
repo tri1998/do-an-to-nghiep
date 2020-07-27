@@ -137,6 +137,7 @@ class GioHang extends Component {
                                 size="large" 
                                 type="primary" 
                                 danger
+                                onClick={()=>this.props.history.push('/thanhtoan')}
                                 style={{marginTop:5,marginBottom:5}}
                             >
                                 Thanh toán<RightOutlined />
