@@ -16,8 +16,6 @@ import {
   DollarOutlined,
   RadarChartOutlined,
   SearchOutlined,
-  LoadingOutlined, 
-  PlusOutlined,
   CloseOutlined,
   RedoOutlined,
 } from '@ant-design/icons';
@@ -454,13 +452,9 @@ class QuanLySanPham extends Component {
                             </Form.Item>
                           </Col>
                         </Row>
-
-
-                        <Form.Item>
                             <Button block type="danger" htmlType="submit" className="login-form-button">
                                     Thêm Sản Phẩm
                             </Button>            
-                        </Form.Item>
                     </Form>
                     </Modal>
 

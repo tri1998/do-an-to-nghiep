@@ -62,7 +62,7 @@ class GioHang extends Component {
           dataIndex: 'Hinh',
           key: 'Hinh',
           render:(text,record)=>(
-            <Link to={`/${record.MaSP}`}><img className="hinhSPGioHang" src={record.Hinh} alt={record.TenSP}/></Link> 
+            <Link to={`/sanpham/${record.MaSP}`}><img className="hinhSPGioHang" src={record.Hinh} alt={record.TenSP}/></Link> 
           )
         },
         {

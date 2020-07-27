@@ -15,6 +15,8 @@ import QuanLySanPham from '../pages/QuanLySanPham';
 import QuanLyLoaiSanPham from '../pages/QuanLyLoaiSanPham'
 import QuanLyKhachHang from '../pages/QuanLyKhachHang';
 import ThongBao from '../components/thongbao';
+import QuanLyKhuyenMai from '../pages/QuanLyKhuyenMai.jsx';
+import ChiTietKhuyenMai from '../components/ChiTietKhuyenMai.jsx';
 import {actAdminLogOut} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
 const { Header, Content, Footer, Sider } = Layout;
@@ -67,9 +69,15 @@ class Admin extends Component {
                             <Sider width={230} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                                 <div className="logo" />
                                 <Menu theme="dark" mode="inline">
-                                    <Menu.Item key="2" icon={<DesktopOutlined />}>
-                                        Quản Lý Khuyến Mãi
-                                    </Menu.Item>
+                                        <Menu.Item key="2" icon={<DesktopOutlined />}>
+                                            <Link
+                                            to={`${this.props.match.url}/quanlykhuyenmai`}
+                                            >
+                                                Quản Lý Khuyến Mãi
+                                            </Link>
+                                        </Menu.Item>
+                                    
+                                    
                                     <SubMenu key="sub1" icon={<UserOutlined />} title="Quản Lý Người Dùng">
                                         <Menu.Item key="3">Nhân Viên</Menu.Item>
                                         <Menu.Item key="4"><Link to={`${this.props.match.url}/quanlykhachhang`}>Khách Hàng</Link></Menu.Item>
@@ -106,6 +114,8 @@ class Admin extends Component {
                                         <Route path={`${this.props.match.url}/quanlysanpham`} component={QuanLySanPham}></Route>
                                         <Route path={`${this.props.match.url}/quanlyloaisanpham`} component={QuanLyLoaiSanPham}></Route>
                                         <Route path={`${this.props.match.url}/quanlythongbao`} component={ThongBao}></Route>
+                                        <Route path={`${this.props.match.url}/quanlykhuyenmai`} component={QuanLyKhuyenMai}></Route>
+                                        <Route path={`${this.props.match.url}/chitietkhuyenmai/:maKM`} component={ChiTietKhuyenMai}></Route>
                                         <Route exact path={`${this.props.match.url}/`} render={()=><h3>Xin Chào !</h3>}></Route>
                                       </Switch>
                                       </Fragment>

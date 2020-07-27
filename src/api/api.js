@@ -6,7 +6,7 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const { response } = require('express');
-const port = 5005;
+const port = 7777;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -36,6 +36,7 @@ app.get('/api/taikhoan',(req,res)=>{
         res.json(results)
     })
 })
+
 
 
 //api dang nhap
@@ -299,6 +300,86 @@ app.put('/api/sanpham/capNhatThongTin/:maSanPham',(req,res)=>{
         res.json(results)
     })
 })
+
+//KHUYEN MAI 
+app.get('/api/khuyenmai',(req,res)=>{
+    var sql = "SELECT * FROM chitiet_km";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//Api lay phan tram khuyen mai maSanPham
+app.get('/api/khuyenmai/layPhanTramKM/:maSanPham',(req,res)=>{
+    var sql = `SELECT PhanTram from chitiet_km WHERE chitiet_km.MaSP=${req.params.maSanPham} AND chitiet_km.TrangThai=1 `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//API lay thong tin cac dot khuyen mai 
+app.get('/api/khuyenmai/layDanhSachDotKM',(req,res)=>{
+    var sql = "SELECT * from khuyenmai";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//API lay chi tiet khuyen mai theo ma chuong trinh khuyen mai
+app.get('/api/khuyenmai/layChiTietKhuyenMai/:maKM',(req,res)=>{
+    var sql = `SELECT chitiet_km.MaKM,chitiet_km.MaSP,sanpham.TenSP
+               ,chitiet_km.PhanTram,chitiet_km.TrangThai From sanpham,chitiet_km 
+               WHERE sanpham.MaSP=chitiet_km.MaSP AND chitiet_km.MaKM=${req.params.maKM}`;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API update trang thai chi tiet khuyen mai = false theo ma san pham
+app.put('/api/khuyenmai/capNhatChiTiet0/:maSanPham',(req,res)=>{
+    var sql = `UPDATE chitiet_km SET TrangThai = 0 WHERE MaSP = ${req.params.maSanPham}`;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API update trang thai chi tiet khuyen mai = true theo ma san pham
+app.put('/api/khuyenmai/capNhatChiTiet1/:maSanPham',(req,res)=>{
+    var sql = `UPDATE chitiet_km SET TrangThai = 1 WHERE MaSP = ${req.params.maSanPham}`;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//API lay ra danh sach san pham chua duoc khuyen mai
+app.get('/api/khuyenmai/layDSSPChuaKM',(req,res)=>{
+    var sql = "SELECT sanpham.MaSP,sanpham.TenSP FROM sanpham WHERE sanpham.MaSP NOT IN (SELECT MaSP from chitiet_km )";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results)
+    })
+})
+
+//API them chi tiet khuyen mai moi theo dot khuyen mai
+app.post('/api/khuyenmai/themCTKM/:maKM',(req,res)=>{
+    let CTKM = req.body;
+    var sql = `INSERT INTO chitiet_km(MaKM,MaSP,PhanTram,TrangThai) VALUES('${req.params.maKM}','${CTKM.MaSP}','${CTKM.PhanTram}',1)`;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//API cap nhat chi tiet khuyen mai theo ma khuyen mai
+app.put('/api/khuyenmai/capNhatCTKM/:maKM',(req,res)=>{
+    let sql = `UPDATE chitiet_km SET PhanTram='${req.body.PhanTram}' WHERE MaKM='${req.params.maKM}' AND MaSP='${req.body.MaSP}'`
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
 
 
 

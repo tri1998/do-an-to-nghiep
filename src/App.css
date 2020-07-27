@@ -3,6 +3,9 @@
     font-size: 14px;
     line-height: 1.42857143;
     font-family: Arial !important;
+}
+
+.user{
     background-image: url("https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492994/wrapbody.png");
     background-repeat: repeat;
 }
@@ -150,17 +153,31 @@ ul li a:hover{
     
 }
 
-.wrapprice span{
+.giathuong{
     color:white;
     position: relative;
     top: 30px;
-    
+}
+
+.giakhuyenmai{
+    color:white;
+    position: relative;
+    top: 30px;
+    text-decoration: line-through;
 }
 
 .Gia{
     font-weight: bold;
     font-size: 30px;
     color:#FE5252;
+}
+
+.GiaKM{
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 300;
+    color: #b0b0b0 !important;
+    text-decoration: line-through;
 }
 
 .disableRow{
@@ -274,6 +291,8 @@ ul li a:hover{
     background: #fff;
 }
 
+
+
 /*CUSTOM MODAL ANTD*/
 .ant-modal-header {
     text-align: center;
@@ -306,6 +325,10 @@ ul li a:hover{
     height:120px;
     border: 1px solid red;
 }
+/*ADMIN QUAN LY KHUYEN MAI*/
+.btnThemKM{
+    width:100% !important;
+}
 
 /* GIO HANG  */
 
@@ -329,7 +352,26 @@ ul li a:hover{
 /*CUSTOME HINH SP*/
 .hinhSP{
     height:202px;
+    position: relative;
 }
+.giamgia {
+    top: 0px;
+    width: 0;
+    height: 0;
+    border-top: 80px solid red;
+    border-right: 100px solid transparent;
+    position: absolute;
+    left: -1px;
+    color: white;
+}
+
+.giamgia div{
+    position: absolute;
+    top: -60px !important;
+    left: 10px !important;
+    transform: rotate(-35deg);
+}
+
 .tenSP{
     height:50px;
     width:100%;
@@ -367,6 +409,10 @@ ul li a:hover{
     background-image: url("https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492994/wrapbody.png");
     background-repeat: repeat;
     text-align: center;
+}
+/*THANH TOAN*/
+.checkoutright{
+    background: #FAFAFA;
 }
 
 

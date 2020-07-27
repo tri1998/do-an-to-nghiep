@@ -22,7 +22,8 @@ class LoaiSanPham extends Component {
                                             return sp.MaDM===loaiSP.MaDM&&sp.TrangThai===1
                                             ?<Col key={index} span={8}><SanPham sanPham={sp}></SanPham></Col>
                                             :null
-                                        }):<h2>Loại sản phẩm này đã ngừng kinh doanh !</h2>
+                                        })
+                                        :<h2>Loại sản phẩm này đã ngừng kinh doanh !</h2>
                                     }
                                 </Row>
                             </div>
@@ -52,13 +53,16 @@ class LoaiSanPham extends Component {
                             </Menu.Item>
                             {
                                 this.props.DanhSachLoai.map((loai,index)=>{
-                                    return <Menu.Item key={index}>
-                                        <Link 
-                                            to={`${this.props.match.url}/${loai.LoaiSPurl}`}
-                                        >
-                                            {loai.LoaiSP}
-                                        </Link>
-                                    </Menu.Item>
+                                    return  <Menu.Item 
+                                            
+                                             key={index}
+                                            >
+                                                <Link 
+                                                    to={`${this.props.match.url}/${loai.LoaiSPurl}`}
+                                                >
+                                                    {loai.LoaiSP}
+                                                </Link>
+                                            </Menu.Item>
                                 })
                             }
         

@@ -6,7 +6,12 @@ import {
     Select,
     Button,
     Carousel,
-    notification
+    notification,
+    Spin,
+    Comment,
+    Avatar,
+    List,
+    Form
 } from 'antd'
 import { 
     ShoppingCartOutlined,
@@ -24,8 +29,32 @@ import {
 import {port} from '../config/configAPI';
 import axios from 'axios';
 import {actXemChiTiet} from '../redux/actions/sanpham';
+import {actLuuMangChiTietKM} from '../redux/actions/khuyenmai'
 //destructuring tu component Select cua antd de lay ra component Option
 const { Option } = Select;
+const { TextArea } = Input;
+
+const CommentList = ({ comments }) => (
+    <List
+      dataSource={comments}
+      header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+      itemLayout="horizontal"
+      renderItem={props => <Comment {...props} />}
+    />
+  );
+  
+  const Editor = ({ onChange, onSubmit, submitting, value }) => (
+    <>
+      <Form.Item>
+        <TextArea rows={4} onChange={onChange} value={value} />
+      </Form.Item>
+      <Form.Item>
+        <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
+          Add Comment
+        </Button>
+      </Form.Item>
+    </>
+  );
 class chitietsanpham extends Component {
 
 
@@ -34,13 +63,46 @@ class chitietsanpham extends Component {
         this.carouselRef=createRef();
         this.state={
             soLuong:1,
-            isLoading:false
+            isLoading:false,
+            phanTramKhuyenMai:100,
+            comments: [],
+            submitting: false,
+            value: '',
         }
     }
 
-    UNSAFE_componentWillMount(){
-        console.log("tao chay truoc");
-    }
+    
+      handleSubmit = () => {
+        if (!this.state.value) {
+          return;
+        }
+    
+        this.setState({
+          submitting: true,
+        });
+    
+        setTimeout(() => {
+          this.setState({
+            submitting: false,
+            value: '',
+            comments: [
+              {
+                author: 'Han Solo',
+                avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                content: <p>{this.state.value}</p>,
+              },
+              ...this.state.comments,
+            ],
+          });
+        }, 1000);
+      };
+    
+      handleChange = e => {
+        this.setState({
+          value: e.target.value,
+        });
+      };
+
 
     componentDidMount(){
         let maSanPham = this.props.match.params.MaSP;
@@ -53,6 +115,13 @@ class chitietsanpham extends Component {
             this.setState({isLoading:!this.state.isLoading});
         })
         .catch(err=>console.log(err));
+
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/khuyenmai/layPhanTramKM/${maSanPham}`
+          })
+        .then(res=>this.setState({phanTramKhuyenMai:res.data[0]}))
+        .catch(err=>console.log(err))
     }
 
     //Thong bao nay duoc show ra khi nguoi dung nhap so luon < 1
@@ -82,10 +151,11 @@ class chitietsanpham extends Component {
     //Chuc nang them vao nhan vao la 1 object sanPham
     themVaoGio=(sanPham)=>{
         let viTriSanPham=this.props.danhSachSanPham.findIndex(sp=>sp.MaSP===sanPham.MaSP);
+        let giaKhuyenMai = this.state.phanTramKhuyenMai!==undefined?sanPham.Gia-(sanPham.Gia*this.state.phanTramKhuyenMai.PhanTram/100):0;
         if(viTriSanPham===-1)
         {
-            sanPham = {...sanPham,SoLuong:this.state.soLuong,GiaCu:sanPham.Gia}
-            sanPham.Gia *=sanPham.SoLuong;
+            sanPham = {...sanPham,SoLuong:this.state.soLuong,GiaCu:this.state.phanTramKhuyenMai!==undefined?giaKhuyenMai:sanPham.Gia}
+            sanPham.Gia = (this.state.phanTramKhuyenMai!==undefined?giaKhuyenMai:sanPham.Gia) * sanPham.SoLuong;
             this.props.themVaoGio(sanPham);
         }
         else
@@ -102,11 +172,10 @@ class chitietsanpham extends Component {
 
     render() {
         let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
-        console.log(this.props.SPDuocChon);
-
+        const { comments, submitting, value } = this.state;
         return (
             <div>
-              {this.state.isLoading===false?<div>Loadding...</div>:
+              {this.state.isLoading===false?<div><Spin/>Loadding...</div>:
               <Row>
                 <Col span={18}>
                     <Row>
@@ -115,15 +184,6 @@ class chitietsanpham extends Component {
                                 <Carousel ref={this.carouselRef} dots={false} className="carouselchitiet">
                                 <div>
                                     <img alt="sp" src={Hinh}/>
-                                </div>
-                                <div>
-                                    <img alt="sp" src="./img/volang.png"/>
-                                </div>
-                                <div>
-                                    <img alt="sp" src="./img/taycammoi.png"/>
-                                </div>
-                                <div>
-                                    <img alt="sp" src="./img/tainghe.png"/>
                                 </div>
                                 </Carousel>
                                 <Button onClick={this.handlePrev} className="prevAnh" size="medium" icon={<LeftOutlined />} type="ghost"shape="circle" >
@@ -157,7 +217,19 @@ class chitietsanpham extends Component {
                                         </Col>
 
                                     </Row>
-                                    <span className="Gia">{Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</span>
+                                    
+                                    {
+                                        this.state.phanTramKhuyenMai!==undefined
+                                        ?<span className="Gia">{(Gia-(Gia*this.state.phanTramKhuyenMai.PhanTram/100)).toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</span>
+                                        :null
+                                    }
+
+                                    <span className={this.state.phanTramKhuyenMai!==undefined?"GiaKM":"Gia"}>
+                                    {
+                                        Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})
+                                    }
+                                    </span>
+
                                 </Col>
 
                                 <Col span={12} className="right">
@@ -184,6 +256,27 @@ class chitietsanpham extends Component {
                             </Row>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col span={24}>
+                        {comments.length > 0 && <CommentList comments={comments} />}
+                        <Comment
+                        avatar={
+                            <Avatar
+                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                            alt="Han Solo"
+                            />
+                        }
+                        content={
+                            <Editor
+                            onChange={this.handleChange}
+                            onSubmit={this.handleSubmit}
+                            submitting={submitting}
+                            value={value}
+                            />
+                        }
+                        />
+                        </Col>
+                    </Row>
                     
                     
                 </Col>
@@ -200,6 +293,7 @@ const mapStateToProp = (state)=>{
     return {
         SPDuocChon:state.DSSP.sanPhamDuocChon,
         danhSachSanPham:state.DSSPMua.mangSanPham,
+        mangKM:state.DSCTKhuyenMai.mangChiTietKhuyenMai
     }
 }
 
@@ -213,7 +307,10 @@ const mapDispatchToProps = (dispatch)=>{
         },
         xemChiTiet:(sanPham)=>{
             dispatch(actXemChiTiet(sanPham))
-        }
+        },
+        onSaveChiTietKhuyenMai:(danhsachkm)=>{
+            dispatch(actLuuMangChiTietKM(danhsachkm))
+         }
     }
 }
 

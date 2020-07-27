@@ -2,10 +2,12 @@ import React, { Fragment, Component } from 'react';
 import "antd/dist/antd.css";
 import Admin from './template/Admin';
 import Auth from './components/Auth';
-import User from './template/User.jsx'
+import User from './template/User.jsx';
+import ThanhToan from './pages/ThanhToan';
 import { BrowserRouter, Route, Switch} from 'react-router-dom';
 import { actLuuTaiKhoan } from './redux/actions/nguoidung';
-import { actLuuMangSP,actLuuMangDanhMucSanPham } from './redux/actions/sanpham';
+import { actLuuMangSP,actLuuMangDanhMucSanPham} from './redux/actions/sanpham';
+import { actLuuMangChiTietKM} from './redux/actions/khuyenmai'
 import {port} from './config/configAPI';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -39,6 +41,16 @@ class App extends Component {
     })
     .catch(error=>console.log(error));
 
+    axios({
+      method:'GET',
+      url: `http://localhost:${port}/api/khuyenmai`
+    }).then(res=>{
+      this.props.onSaveChiTietKhuyenMai(res.data);
+    })
+    .catch(error=>console.log(error));
+
+
+
   }
 
 
@@ -49,6 +61,7 @@ class App extends Component {
           <div className="App">
             <Switch>
               <Auth path='/admin' Component={Admin}></Auth>
+              <Route path='/thanhtoan' component={ThanhToan}></Route>
               <Route exact path='' component={User}></Route>
             </Switch>
           </div>
@@ -60,12 +73,6 @@ class App extends Component {
 }
 
 
-const mapStateToProps = (state) => {
-  return {
-    isAdminLogin: state.DSND.adminLogin
-  }
-}
-
 const mapDispatchToProps = (dispatch) => {
   return {
     onSaveDSNguoiDung: (danhsachnguoidung) => {
@@ -76,9 +83,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     onSaveDSLoaiSanPham:(danhsachloaisanpham)=>{
       dispatch(actLuuMangDanhMucSanPham(danhsachloaisanpham))
+    },
+    onSaveChiTietKhuyenMai:(danhsachkm)=>{
+      dispatch(actLuuMangChiTietKM(danhsachkm))
     }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(App);
 

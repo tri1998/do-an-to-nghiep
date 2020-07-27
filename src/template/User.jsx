@@ -20,7 +20,7 @@ import {Route, Switch} from 'react-router-dom';
 export default class User extends Component {
     render() {
         return (
-            <div>
+            <div className="user">
             <Row>
               <Col span={2}></Col>
               <Col className="wrapper" span={20}>
