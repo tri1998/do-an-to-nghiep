@@ -69,6 +69,15 @@ const gioHangReducer = (state=stateDefault,action)=>{
             sessionStorage.setItem('giohang',JSON.stringify(state.mangSanPham));//luu tren session mangSanPham moi va tong tien moi
             return{...state}
         }
+        case types.XOA_GIO_HANG:{
+            let mangCapNhat = {...state};
+            mangCapNhat.mangSanPham=[];
+            mangCapNhat.tongTien=0;
+            mangCapNhat.soLuongSanPhamCoTrongGio=0;
+            state=mangCapNhat;
+            sessionStorage.removeItem('giohang');
+            return {...state}
+        }
 
         default:return{...state};
     }

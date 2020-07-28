@@ -29,3 +29,9 @@ export const actCapNhatSoLuongSanPham=(maSanPham,soLuong)=>{
         soLuong
     }
 }
+
+export const actXoaGioHang = ()=>{
+    return {
+        type:types.XOA_GIO_HANG
+    }
+}

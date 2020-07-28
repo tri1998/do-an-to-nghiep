@@ -17,6 +17,7 @@ import QuanLyKhachHang from '../pages/QuanLyKhachHang';
 import ThongBao from '../components/thongbao';
 import QuanLyKhuyenMai from '../pages/QuanLyKhuyenMai.jsx';
 import ChiTietKhuyenMai from '../components/ChiTietKhuyenMai.jsx';
+import TrangChu from '../containers/adminTrangChu';
 import {actAdminLogOut} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
 const { Header, Content, Footer, Sider } = Layout;
@@ -69,6 +70,13 @@ class Admin extends Component {
                             <Sider width={230} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                                 <div className="logo" />
                                 <Menu theme="dark" mode="inline">
+                                        <Menu.Item key="1" icon={<DesktopOutlined />}>
+                                            <Link
+                                            to={`${this.props.match.url}`}
+                                            >
+                                                Trang chủ
+                                            </Link>
+                                        </Menu.Item>
                                         <Menu.Item key="2" icon={<DesktopOutlined />}>
                                             <Link
                                             to={`${this.props.match.url}/quanlykhuyenmai`}
@@ -116,7 +124,7 @@ class Admin extends Component {
                                         <Route path={`${this.props.match.url}/quanlythongbao`} component={ThongBao}></Route>
                                         <Route path={`${this.props.match.url}/quanlykhuyenmai`} component={QuanLyKhuyenMai}></Route>
                                         <Route path={`${this.props.match.url}/chitietkhuyenmai/:maKM`} component={ChiTietKhuyenMai}></Route>
-                                        <Route exact path={`${this.props.match.url}/`} render={()=><h3>Xin Chào !</h3>}></Route>
+                                        <Route exact path={`${this.props.match.url}/`} component={TrangChu}></Route>
                                       </Switch>
                                       </Fragment>
                                     </div>
