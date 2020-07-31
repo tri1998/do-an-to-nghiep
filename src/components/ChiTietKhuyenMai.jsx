@@ -193,7 +193,7 @@ class ChiTietKhuyenMai extends Component {
     themKhuyenMai=(values)=>{
         let MaKM = this.props.match.params.maKM;
         let objKM = this.state.danhSachSanPhamChuaKM.find(km=>km.MaSP===values.MaSP);
-        
+        console.log(values);
         let CTKM = {
             MaKM:MaKM,
             MaSP:values.MaSP,
@@ -308,7 +308,7 @@ class ChiTietKhuyenMai extends Component {
                         name="frmThemChiTietKM"
                         className="login-form"
                         initialValues={{ remember: true }}
-                        onFinish={this.capNhatChiTietKhuyenMai}
+                        onFinish={this.themKhuyenMai}
                     >
                         <Form.Item
                             name="MaSP"
@@ -355,9 +355,6 @@ class ChiTietKhuyenMai extends Component {
                                 </Button>
                             </Form.Item> 
  
-                    
-                
-
                 </Form>
                 </Modal>
 

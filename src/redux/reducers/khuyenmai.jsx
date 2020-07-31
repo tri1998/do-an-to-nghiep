@@ -48,6 +48,26 @@ const khuyenMaiReducer=(state=stateDefault,action)=>{
             state.mangChiTietKhuyenMai=mangCapNhat;
             return {...state}
         }
+        case types.XOA_KHUYEN_MAI:{
+            let mangCapNhat = [...state.danhSachKM];
+            let viTri = mangCapNhat.findIndex(km=>km.MaKM===action.maKhuyenMai);
+            mangCapNhat[viTri].TrangThai = 0;
+            state.danhSachKM=mangCapNhat;
+            return{...state}
+        }
+        case types.PHUC_HOI_KHUYEN_MAI:{
+            let mangCapNhat = [...state.danhSachKM];
+            let viTri = mangCapNhat.findIndex(km=>km.MaKM===action.maKhuyenMai);
+            mangCapNhat[viTri].TrangThai = 1;
+            state.danhSachKM=mangCapNhat;
+            return{...state}
+        }
+        case types.THEM_DOT_KHUYEN_MAI:{
+            let mangCapNhat = [...state.danhSachKM];
+            mangCapNhat.push(action.khuyenMai);
+            state.danhSachKM=mangCapNhat;
+            return {...state}
+        }
 
         default: return {...state};
     }

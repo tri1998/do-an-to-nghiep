@@ -1,23 +1,23 @@
 import React from 'react'
 import {Route,Redirect} from 'react-router-dom'
-import Swal from 'sweetalert2'
-const Auth=({path,Component})=>{
+import Swal from 'sweetalert2';
+const Logined=({path,Component})=>{
     return(
         <Route path={path} render={(routeProps)=>{
-            if(sessionStorage.getItem('admintoken')!==null)
+            if(sessionStorage.getItem('userinfo')===null)
             {
                 return <Component {...routeProps}/>
             }
             Swal.fire(
                 '',
-                'Vui lòng đăng nhập !',
+                'Bạn đã đăng nhập !',
                 'warning'
             )
-            return <Redirect to='/dangnhap'/>
+            return <Redirect to=''/>
         }}
 
         />
     );
 };
 
-export default Auth;
+export default Logined;

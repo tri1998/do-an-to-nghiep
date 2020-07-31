@@ -16,6 +16,7 @@ import {Link} from 'react-router-dom';
 import Success from '../components/DatHangThanhCong.jsx';
 import axios from 'axios';
 import {connect} from 'react-redux';
+import {port} from '../config/configAPI'
 const {Option} = Select;
 
 class ThanhToan extends Component {
@@ -34,20 +35,65 @@ class ThanhToan extends Component {
             radioOption:1,
             gioHang:sessionStorage.getItem('giohang'),
             shipFee:0,
-            hoaDon:undefined
+            hoaDon:undefined,
+            soLuongHoaDon:0,
+            thanhTien:0
         }
+    }
+
+    shouldComponentUpdate(nextProps,nextState){
+        return true;
     }
 
     
 
     hoanTatDonHang=(values)=>{
         console.log(values);
+        let mangSanPham = this.props.mangSanPham;
+        let hoaDon = {
+            MaHD:values.MaHD,
+            MaTK:null,
+            HoTen:values.HoTen,
+            Email:values.Email,
+            SDT:values.SoDienThoai,
+            DiaChi:values.DiaChi,
+            ThanhTien:this.props.tongTien+this.state.shipFee
+        }
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/api/hoadon/themHoaDon`,
+            data:hoaDon  
+        })
+        .then(res=>console.log(res.data))
+        .catch(err=>console.log(err));
+
+        for(let i=0;i<mangSanPham.length;i++){
+            let sanPham=mangSanPham[i];
+            sanPham={...sanPham,MaHD:hoaDon.MaHD}
+            axios({
+                method:"POST",
+                url:`http://localhost:${port}/api/hoadon/themCTHD`,
+                data:sanPham
+            })
+            .then(res=>console.log(res.data))
+            .catch(err=>console.log(err));
+        }
+
         this.setState({
-            hoaDon:values
+            done:true,
+            hoaDon:hoaDon
         })
     }
 
     componentDidMount(){
+        console.log('tao chay 1 lan duy nhat');
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/hoadon/laySoLuongHoaDon`, 
+        })
+        .then(res=>this.setState({soLuongHoaDon:res.data[0].SOLUONG}))
+        .catch(err=>console.log(err))
+
         axios({
             method:"GET",
             url:"https://cors-anywhere.herokuapp.com/https://thongtindoanhnghiep.co/api/city",
@@ -55,6 +101,7 @@ class ThanhToan extends Component {
         })
         .then(res=>this.setState({tinhThanh:res.data.LtsItem}))
         .catch(err=>console.log(err))
+
     }
 
 
@@ -101,7 +148,7 @@ class ThanhToan extends Component {
       };
 
     render() {
-        const {tinhThanh,quanHuyen,phuongXa,option,shipFee} = this.state;
+        let {tinhThanh,quanHuyen,phuongXa,option,shipFee,soLuongHoaDon} = this.state;
         const phiShip=shipFee;
         let {tongTien,mangSanPham }= this.props;
         const radioStyle = {
@@ -109,6 +156,7 @@ class ThanhToan extends Component {
             height: '30px',
             lineHeight: '30px',
         };
+        console.log(1);
         return (
             <div>
                 <Row>
@@ -128,6 +176,21 @@ class ThanhToan extends Component {
                                         initialValues={{ remember: true }}
                                         onFinish={this.hoanTatDonHang}
                                     >
+                                        {soLuongHoaDon!==0?
+                                        <Form.Item
+                                            hidden={true}
+                                            name="MaHD"
+                                            shouldUpdate
+                                            initialValue={`HD0${soLuongHoaDon+=1}`}
+                                        >
+                                            <Input
+                                                disabled
+                                                size="large"
+                                                style={{width:'100%',borderRadius:5}}
+                                                placeholder="Mã Hóa Đơn"
+                                            />
+                                        </Form.Item>:null}
+
                                         <Form.Item
                                             name="HoTen"
                                             rules={[{ required: true, message: 'Nhập họ tên please...' }]}

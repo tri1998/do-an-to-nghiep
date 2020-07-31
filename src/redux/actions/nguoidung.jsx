@@ -108,3 +108,18 @@ export const actUpdatePassWordUser=(USER)=>{
         USER
     }
 }
+
+//act luu thong tin nguoi dung 
+export const actLuuThongTinNguoiDung=(user)=>{
+    return{
+        type:types.LUU_THONG_TIN_NGUOI_DUNG,
+        user
+    }
+}
+
+//act dang xuat nguoi dung 
+export const actDangXuatNguoiDung = ()=>{
+    return {
+        type:types.DANG_XUAT_NGUOI_DUNG,
+    }
+}

@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import {Link} from 'react-router-dom';
 import Swal from 'sweetalert2'
-import {actAdminDangNhap,actUserLogin,actSetUserLogIn} from '../redux/actions/nguoidung'
+import {actAdminDangNhap,actUserLogin,actSetUserLogIn, actLuuThongTinNguoiDung} from '../redux/actions/nguoidung'
 import {connect} from 'react-redux'
 import axios from 'axios';
 import {port} from '../config/configAPI';
@@ -22,6 +22,44 @@ class dangnhap extends Component {
 
     constructor(props){
         super(props);
+    }
+
+    dangNhap=(values)=>{
+        const user={
+            Email:values.email,
+            Password:md5(values.password)
+        }
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/api/dangnhap`,
+            data:user
+        }).then(res=>{
+            console.log(res.data);
+            if(res.data.message)
+            {
+                alert(res.data.message);
+            }
+            else{
+                let roles = res.data.user[0].isAdmin;
+                if(roles===1)
+                {
+                    sessionStorage.setItem('admintoken',res.data.token);
+                    sessionStorage.setItem('userinfo',JSON.stringify(res.data.user[0]));
+                    this.props.luuThongTinNguoiDung(res.data.user[0]);
+                    this.props.history.push('/admin');
+                }
+                else
+                {
+                    sessionStorage.setItem('usertoken',res.data.token);
+                    sessionStorage.setItem('userinfo',JSON.stringify(res.data.user[0]));
+                    this.props.luuThongTinNguoiDung(res.data.user[0]);
+                    this.props.history.push('/');
+                }
+            }
+            
+        })
+        .catch(err=>console.log(err));
+
     }
 
 
@@ -112,7 +150,7 @@ class dangnhap extends Component {
                     className="login-form"
                     validateMessages={validateMessages}
                     initialValues={{ remember: true }}
-                    onFinish={this.onFinish}
+                    onFinish={this.dangNhap}
                     >
                     <Form.Item
                         name="email"
@@ -168,6 +206,9 @@ const mapDispatchToProps=(dispatch)=>{
         },
         setUserLogin:()=>{
             dispatch(actSetUserLogIn())
+        },
+        luuThongTinNguoiDung:(user)=>{
+            dispatch(actLuuThongTinNguoiDung(user))
         }
     }
 }

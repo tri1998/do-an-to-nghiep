@@ -5,12 +5,26 @@ const nguoiDungDefault = {
     userLogin:{},
     isUserLogin:false,
     userDuocChon:{},
-    userUpdatePassword:[]
+    userUpdatePassword:[],
+    UserInformation:JSON.parse(sessionStorage.getItem('userinfo'))
     
 }
 
 const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
     switch(action.type){
+        //Luu thong tin nguoi dung sau khi dang nhap jwt
+        case types.LUU_THONG_TIN_NGUOI_DUNG:{
+            state.UserInformation = action.user;
+            return {...state};
+        }
+        //Dang xuat nguoi dung 
+        case types.DANG_XUAT_NGUOI_DUNG:{
+            sessionStorage.removeItem('admintoken');
+            sessionStorage.removeItem('userinfo');
+            sessionStorage.removeItem('usertoken');
+            state.UserInformation=null;
+            return {...state};
+        }
         case types.LUU_TAIKHOAN:{
             state.DSND=action.tk;
             return {...state};
@@ -62,7 +76,7 @@ const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
             console.log(state.userDuocChon);
             return {...state}
         }
-        case  types.DANG_KY:{
+        case types.DANG_KY:{
             let mangNguoiDungCapNhat = [...state.DSND];
             mangNguoiDungCapNhat.push(action.info);
             state.DSND=mangNguoiDungCapNhat;

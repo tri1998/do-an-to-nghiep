@@ -40,3 +40,24 @@ export const actCapNhatPhanTramKhuyenMai = (khuyenMai)=>{
         khuyenMai
     }
 }
+
+export const actXoaKhuyenMai = (maKhuyenMai)=>{
+    return {
+        type:types.XOA_KHUYEN_MAI,
+        maKhuyenMai
+    }
+}
+
+export const actPhucHoiKhuyenMai = (maKhuyenMai)=>{
+    return {
+        type:types.PHUC_HOI_KHUYEN_MAI,
+        maKhuyenMai
+    }
+}
+
+export const actThemDotKhuyenMai = (khuyenMai)=>{
+    return {
+        type:types.THEM_DOT_KHUYEN_MAI,
+        khuyenMai
+    }
+}

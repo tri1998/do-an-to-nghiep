@@ -6,19 +6,21 @@ import {
     AppstoreOutlined,
     UserOutlined,
     FileAddOutlined,
-    NotificationOutlined
-    
+    NotificationOutlined,
+    MessageOutlined
 } from '@ant-design/icons';
 import { Link} from 'react-router-dom';
 import {Route, Switch } from 'react-router-dom'
 import QuanLySanPham from '../pages/QuanLySanPham';
 import QuanLyLoaiSanPham from '../pages/QuanLyLoaiSanPham'
 import QuanLyKhachHang from '../pages/QuanLyKhachHang';
+import QuanLyHoaDon from '../pages/QuanLyHoaDon';
+import QuanLyBinhLuan from '../pages/QuanLyBinhLuan';
 import ThongBao from '../components/thongbao';
 import QuanLyKhuyenMai from '../pages/QuanLyKhuyenMai.jsx';
 import ChiTietKhuyenMai from '../components/ChiTietKhuyenMai.jsx';
 import TrangChu from '../containers/adminTrangChu';
-import {actAdminLogOut} from '../redux/actions/nguoidung.jsx'
+import {actAdminLogOut,actDangXuatNguoiDung} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -59,7 +61,8 @@ class Admin extends Component {
     };
 
     adminLogOut=()=>{
-        sessionStorage.removeItem('loginAdmin');
+        sessionStorage.removeItem('admintoken');
+        this.props.dangXuat();
         this.props.history.push('/');
     }
     render() {
@@ -81,31 +84,42 @@ class Admin extends Component {
                                             <Link
                                             to={`${this.props.match.url}/quanlykhuyenmai`}
                                             >
-                                                Quản Lý Khuyến Mãi
+                                                Quản lý khuyến mại
                                             </Link>
                                         </Menu.Item>
                                     
                                     
-                                    <SubMenu key="sub1" icon={<UserOutlined />} title="Quản Lý Người Dùng">
+                                    <SubMenu key="sub1" icon={<UserOutlined />} title="Quản lý người dùng">
                                         <Menu.Item key="3">Nhân Viên</Menu.Item>
                                         <Menu.Item key="4"><Link to={`${this.props.match.url}/quanlykhachhang`}>Khách Hàng</Link></Menu.Item>
                                         <Menu.Item key="5">Quản Trị</Menu.Item>
                                     </SubMenu>
-                                    <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Quản Lý Sản Phẩm">
-                                        <Menu.Item key="6"><Link to={`${this.props.match.url}/quanlysanpham`}>Sản Phẩm</Link></Menu.Item>
-                                        <Menu.Item key="8"><Link to={`${this.props.match.url}/quanlyloaisanpham`}>Loại Sản Phẩm</Link></Menu.Item>
+                                    <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Quản lý sản phẩm">
+                                        <Menu.Item key="6"><Link to={`${this.props.match.url}/quanlysanpham`}>Sản phẩm</Link></Menu.Item>
+                                        <Menu.Item key="8"><Link to={`${this.props.match.url}/quanlyloaisanpham`}>Loại sản phẩm</Link></Menu.Item>
                                     </SubMenu>
                                     <Menu.Item icon={<FileAddOutlined />}>
-                                        Quản Lý Hóa Đơn
+                                        <Link
+                                            to={`${this.props.match.url}/quanlyhoadon`}
+                                            >
+                                                Quản lý hóa đơn
+                                        </Link>
+                                    </Menu.Item>
+                                    <Menu.Item icon={<MessageOutlined />}>
+                                        <Link
+                                            to={`${this.props.match.url}/quanlybinhluan`}
+                                            >
+                                                Quản lý bình luận
+                                        </Link>
                                     </Menu.Item>
                                     <Menu.Item icon={<NotificationOutlined />}>
                                         <Link to={`${this.props.match.url}/quanlythongbao`}>
                                             <Badge dot>
-                                                Thông Báo
+                                                Thông báo
                                             </Badge>
                                         </Link>
                                     </Menu.Item>
-                                    <Menu.Item key="9" icon={<LogoutOutlined />} onClick={this.adminLogOut}>Đăng Xuất</Menu.Item>
+                                    <Menu.Item key="9" icon={<LogoutOutlined />} onClick={this.adminLogOut}>Đăng xuất</Menu.Item>
                                 </Menu>
                             </Sider>
                             <Layout className="site-layout">
@@ -123,6 +137,8 @@ class Admin extends Component {
                                         <Route path={`${this.props.match.url}/quanlyloaisanpham`} component={QuanLyLoaiSanPham}></Route>
                                         <Route path={`${this.props.match.url}/quanlythongbao`} component={ThongBao}></Route>
                                         <Route path={`${this.props.match.url}/quanlykhuyenmai`} component={QuanLyKhuyenMai}></Route>
+                                        <Route path={`${this.props.match.url}/quanlyhoadon`} component={QuanLyHoaDon}></Route>
+                                        <Route path={`${this.props.match.url}/quanlybinhluan`} component={QuanLyBinhLuan}></Route>
                                         <Route path={`${this.props.match.url}/chitietkhuyenmai/:maKM`} component={ChiTietKhuyenMai}></Route>
                                         <Route exact path={`${this.props.match.url}/`} component={TrangChu}></Route>
                                       </Switch>
@@ -140,8 +156,8 @@ class Admin extends Component {
 
 const mapDispatchToProps = (dispatch)=>{
     return {
-        adminLogOut:()=>{
-            dispatch(actAdminLogOut())
+        dangXuat:()=>{
+            dispatch(actDangXuatNguoiDung())
         }
     }
 }

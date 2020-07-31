@@ -65,7 +65,8 @@ class sanpham extends PureComponent {
 
 const mapStateToProps=(state)=>{
     return {
-        mangKM:state.DSCTKhuyenMai.mangChiTietKhuyenMai
+        mangKM:state.DSCTKhuyenMai.mangChiTietKhuyenMai,
+        dotKhuyenMai:state.DSCTKhuyenMai.danhSachKM
     }
 }
 

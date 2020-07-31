@@ -1,12 +1,19 @@
 import React, { Component } from 'react'
 import { Button, Tooltip} from 'antd';
-import { Row, Col } from 'antd';
-import { UserOutlined, RightSquareOutlined, SearchOutlined, ShoppingCartOutlined, CloseOutlined } from '@ant-design/icons';
+import { Row, Col,Avatar, Badge } from 'antd';
+import { UserOutlined,
+  LoginOutlined,
+    SearchOutlined
+    , ShoppingCartOutlined,
+     CloseOutlined,
+     LogoutOutlined,
+     UserAddOutlined
+    } from '@ant-design/icons';
 import { Input } from 'antd';
 import {Link} from 'react-router-dom';
 import Menu1 from './Menu.jsx';
 import {connect} from 'react-redux'
-import {actSetUserLogIn} from '../redux/actions/nguoidung';
+import {actSetUserLogIn,actDangXuatNguoiDung} from '../redux/actions/nguoidung';
 import {actLuuMangSanPhamCanTim} from '../redux/actions/sanpham';
 import {port} from '../config/configAPI'
 import axios from 'axios';
@@ -22,8 +29,13 @@ class header extends Component {
         this.state = {
             status:false,
             userStatus:localStorage.getItem('user'),
-            tensp:''
+            tensp:'',
+            user:JSON.parse(sessionStorage.getItem('userinfo'))
         }
+    }
+
+    componentDidMount(){
+      console.log(this.state.user);
     }
 
     timKiem=(value)=>{
@@ -57,6 +69,8 @@ class header extends Component {
     }
 
     render() {
+        let ThongTin = this.props.thongTinNguoiDung;
+        let adminLogined = sessionStorage.getItem('admintoken');
         return (
             <Row>
                 <Col span={4}>
@@ -69,28 +83,31 @@ class header extends Component {
                 </Col>
                 <Col span={20}>
                   <Row>
-                    <Col span={17}></Col>
-                    <Col span={4}>
+                    <Col span={21} style={{textAlign:'right'}}>
                     
-                      {this.props.isUserLogIn===false?
+                      {ThongTin===null?
                       
                       (<Button type="primary" shape="round" size="large">
-                      <Link  to="/dangnhap"><RightSquareOutlined />Đăng nhập</Link>
+                      <Link  to="/dangnhap"><LoginOutlined />Đăng nhập</Link>
                       </Button>)
-                      :(<Link to={`thongtintaikhoan/${this.props.userLogIn.Email}`}><Button type="link" shape="round" size="large">
-                      Chào {this.props.userLogIn.HoTen}
+                      :(<Link to={adminLogined===null?`/thongtintaikhoan/${ThongTin.MaTK}`:"/admin"}><Button type="link" shape="round" size="large">
+                        <span style={{marginRight:'10px'}} className="avatar-item">
+                        <Badge count={1}>
+                          <Avatar  size="small" shape="square" icon={<UserOutlined />} />
+                        </Badge>
+                      </span>
+                        {ThongTin.HoTen}
                     </Button></Link>)}
                       
                     </Col>
                     <Col span={3}>
-                      {this.props.isUserLogIn===false?
+                      {ThongTin===null?
                       (<Button type="primary" shape="round" size="large">
-                        <Link  to="/dangky"><UserOutlined />Đăng ký</Link>
+                        <Link  to="/dangky"><UserAddOutlined />Đăng ký</Link>
                       </Button>)
-                      :(<Button type="primary" onClick={()=>{
-                        this.props.userLogOut();
-                        }} type="link" shape="round" size="large">
-                      Đăng Xuất
+                      :(<Button type="primary" onClick={()=>this.props.dangXuat()
+                        } type="link" shape="round" size="large">
+                      <LogoutOutlined /> Đăng xuất
                     </Button>)}
                     </Col>
                   </Row>
@@ -156,6 +173,7 @@ class header extends Component {
 
 const mapStateToProps=(state)=>{
   return{
+    thongTinNguoiDung:state.DSND.UserInformation,
     userLogIn:state.DSND.userLogin,
     isUserLogIn:state.DSND.isUserLogin,
     soLuongSPCoTrongGio:state.DSSPMua.soLuongSanPhamCoTrongGio
@@ -169,6 +187,9 @@ const mapDispatchToProps=(dispatch)=>{
     },
     luuMangSPCanTim:(mangSP)=>{
       dispatch(actLuuMangSanPhamCanTim(mangSP))
+    },
+    dangXuat:()=>{
+      dispatch(actDangXuatNguoiDung());
     }
   }
 }

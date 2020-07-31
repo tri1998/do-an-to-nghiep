@@ -11,7 +11,9 @@ import {
     Comment,
     Avatar,
     List,
-    Form
+    Form,
+    Popconfirm,
+    message
 } from 'antd'
 import { 
     ShoppingCartOutlined,
@@ -19,6 +21,7 @@ import {
     RightOutlined,
     FrownOutlined, 
 } from '@ant-design/icons';
+import moment from 'moment';
 import SPLienQuan from './sanphamlienquan'
 import { createRef } from 'react';
 import {connect} from 'react-redux';
@@ -34,14 +37,6 @@ import {actLuuMangChiTietKM} from '../redux/actions/khuyenmai'
 const { Option } = Select;
 const { TextArea } = Input;
 
-const CommentList = ({ comments }) => (
-    <List
-      dataSource={comments}
-      header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
-      itemLayout="horizontal"
-      renderItem={props => <Comment {...props} />}
-    />
-  );
   
   const Editor = ({ onChange, onSubmit, submitting, value }) => (
     <>
@@ -50,7 +45,7 @@ const CommentList = ({ comments }) => (
       </Form.Item>
       <Form.Item>
         <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
-          Add Comment
+          Thêm bình luận
         </Button>
       </Form.Item>
     </>
@@ -68,40 +63,12 @@ class chitietsanpham extends Component {
             comments: [],
             submitting: false,
             value: '',
+            danhSachComments:[]
         }
     }
 
     
-      handleSubmit = () => {
-        if (!this.state.value) {
-          return;
-        }
-    
-        this.setState({
-          submitting: true,
-        });
-    
-        setTimeout(() => {
-          this.setState({
-            submitting: false,
-            value: '',
-            comments: [
-              {
-                author: 'Han Solo',
-                avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-                content: <p>{this.state.value}</p>,
-              },
-              ...this.state.comments,
-            ],
-          });
-        }, 1000);
-      };
-    
-      handleChange = e => {
-        this.setState({
-          value: e.target.value,
-        });
-      };
+      
 
 
     componentDidMount(){
@@ -116,6 +83,21 @@ class chitietsanpham extends Component {
         })
         .catch(err=>console.log(err));
 
+        //lay danh sach binh luan theo ma san pham
+
+        
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/binhluan/layDanhSachBinhLuan/${maSanPham}`
+        })
+        .then(res=>{
+            this.setState({
+                danhSachComments:res.data
+            });
+        })
+        .catch(err=>console.log(err));
+
+        //lay % khuyen mai theo ma san pham
         axios({
             method:"GET",
             url:`http://localhost:${port}/api/khuyenmai/layPhanTramKM/${maSanPham}`
@@ -168,11 +150,166 @@ class chitietsanpham extends Component {
     }
 
 
+    //BINH LUAN HERE
+    handleSubmit = (nguoiDung) => {
+        if (!this.state.value) {
+          return;
+        }
+
+        let checkAdmin=sessionStorage.getItem('admintoken');
+        let ThoiGian = moment().format('YYYY-MM-DD HH:mm:ss');
+        const binhLuan={
+            MaTK:nguoiDung.MaTK,
+            HoTen:nguoiDung.HoTen,
+            MaSP:this.props.match.params.MaSP,
+            NoiDung:this.state.value,
+            ThoiGian:ThoiGian,
+            TrangThai:1
+        }
+        this.setState({
+            danhSachComments:[...this.state.danhSachComments,binhLuan]
+        })
+
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/taikhoan/thembinhluan`,
+            headers:{
+                'Content-Type':'application/json',
+                'access-token':checkAdmin===null
+                               ?sessionStorage.getItem('usertoken')
+                               :sessionStorage.getItem('admintoken')
+            },
+            data:binhLuan
+        })
+        .then(res=>console.log(res.data))
+        .catch(err=>console.log(err))
+
+        console.log(binhLuan)
+    
+        this.setState({
+          submitting: true,
+        });
+    
+        setTimeout(() => {
+          this.setState({
+            submitting: false,
+            value: '',
+            comments: [
+              {
+                author: nguoiDung.Email,
+                avatar: 'https://scontent-hkg4-1.xx.fbcdn.net/v/t1.0-1/cp0/p60x60/24174638_701020676761352_2864616792018077956_n.png?_nc_cat=108&amp;_nc_sid=1eb0c7&amp;_nc_ohc=nokdmwvSntEAX_zNYBR&amp;_nc_ht=scontent-hkg4-1.xx&amp;oh=96a7ccfbab2a3b5b18edee659efadc73&amp;oe=5F4AAEFD',
+                content: <p>{this.state.value}</p>,
+                datetime: (
+                      <span>
+                        {moment().format('YYYY-MM-DD HH:mm:ss')}
+                      </span>
+                )
+              },
+              ...this.state.comments,
+            ],
+          });
+        }, 1000);
+      };
+    
+      handleChange = e => {
+        this.setState({
+          value: e.target.value,
+        });
+      };
+
+    //Xoa Binh Luan Danh Cho Admin HERE !
+    xoaBinhLuan=(index)=>{
+
+
+        let mangBinhLuanCapNhat = this.state.danhSachComments;
+        let viTri = mangBinhLuanCapNhat.findIndex(bl=>bl.MaBL===index);
+        mangBinhLuanCapNhat.splice(viTri,1);
+        this.setState({
+            danhSachComments:mangBinhLuanCapNhat
+        })
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/taikhoan/xoabinhluan/${index}`,
+            headers:{
+                'Content-Type':'application/json',
+                'access-token':sessionStorage.getItem('admintoken')
+            }
+        })
+        .then(res=>console.log(res.data))
+        .catch(err=>console.log(err))
+    }
+
+    //Khi xac nhan viec xoa binh luan cua admin
+    confirm =(index)=>{
+        console.log(index);
+        let mangBinhLuanCapNhat = this.state.danhSachComments;
+        let viTri = mangBinhLuanCapNhat.findIndex(bl=>bl.MaBL===index);
+        mangBinhLuanCapNhat.splice(viTri,1);
+        this.setState({
+            danhSachComments:mangBinhLuanCapNhat
+        })
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/taikhoan/xoabinhluan/${index}`,
+            headers:{
+                'Content-Type':'application/json',
+                'access-token':sessionStorage.getItem('admintoken')
+            }
+        })
+        .then(res=>message.success('xóa thành công !'))
+        .catch(err=>console.log(err))
+    }
+      
+    cancel=(e)=> {
+        console.log(e);
+        message.error('Click on No');
+    }
+
+
     
 
     render() {
         let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
-        const { comments, submitting, value } = this.state;
+        const { comments, submitting, value, danhSachComments } = this.state;
+        let nguoiDung =  this.props.nguoiDungDangNhap;
+        let adminOnline = sessionStorage.getItem('admintoken');
+        let data = danhSachComments.length!==0
+        ? danhSachComments.map((cmt,index)=>{
+                return {
+                    actions: [                
+                        <span key={`comment-list-reply-to-${index}`}>Phản hồi</span>,
+                        adminOnline!==null
+                        ?<Popconfirm
+                        title="Bạn có muốn xóa bình luận này không ?"
+                        onConfirm={()=>this.confirm(cmt.MaBL)}
+                        onCancel={this.cancel}
+                        okText="Có"
+                        cancelText="Không"
+                        >
+                            <span key={`comment-list-reply-to-${index}`}>Xóa</span>
+                        </Popconfirm>:null,
+                    ],
+                    author: <span style={{color:cmt.MaTK==='TK0'?'red':null}}>{cmt.HoTen}</span>,
+                    avatar: cmt.MaTK!=='TK0'?'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+                    :'https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595404236/img/logo_klzcmr.jpg',
+                    content: (
+                    <p>
+                        {cmt.TrangThai===1?cmt.NoiDung:"Comment không hợp lệ !"}
+                    </p>
+                    ),
+                    datetime: (
+                        <span>
+                          {
+                            moment(cmt.ThoiGian).format('YYYY-MM-DD HH:mm:ss')
+                          }
+                        </span>
+                    )
+                }
+            
+   
+            
+        })
+        :[]
         return (
             <div>
               {this.state.isLoading===false?<div><Spin/>Loadding...</div>:
@@ -256,25 +393,54 @@ class chitietsanpham extends Component {
                             </Row>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row style={{padding:'20px'}}>
                         <Col span={24}>
-                        {comments.length > 0 && <CommentList comments={comments} />}
+                        <List
+                            className="comment-list"
+                            header={`${data.length} phản hồi`}
+                            itemLayout="horizontal"
+                            dataSource={data}
+                            renderItem={item => (
+                            <li>
+                                <Comment
+                                actions={item.actions}
+                                author={item.author}
+                                avatar={item.avatar}
+                                content={item.content}
+                                datetime={item.datetime}
+                                />
+                            </li>
+                            )}
+                        />
+
+
+
+
+
+
+
+                        {comments.length > 0}
                         <Comment
                         avatar={
                             <Avatar
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                            src={adminOnline===null
+                                ?"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                :'https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595404236/img/logo_klzcmr.jpg'}
                             alt="Han Solo"
                             />
                         }
                         content={
                             <Editor
                             onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}
+                            onSubmit={()=>nguoiDung!==null?this.handleSubmit(nguoiDung):this.props.history.push('/dangnhap')}
                             submitting={submitting}
                             value={value}
                             />
                         }
+                        
                         />
+
+                        
                         </Col>
                     </Row>
                     
@@ -293,7 +459,8 @@ const mapStateToProp = (state)=>{
     return {
         SPDuocChon:state.DSSP.sanPhamDuocChon,
         danhSachSanPham:state.DSSPMua.mangSanPham,
-        mangKM:state.DSCTKhuyenMai.mangChiTietKhuyenMai
+        mangKM:state.DSCTKhuyenMai.mangChiTietKhuyenMai,
+        nguoiDungDangNhap:state.DSND.UserInformation
     }
 }
 
