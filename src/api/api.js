@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5559;
+const port = 5555;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -138,6 +138,23 @@ ProtectedRoutes.post('/thembinhluan',(req,res)=>{
     })
 })
 
+
+//API them chi tiet binh luan
+ProtectedRoutes.post('/themchitietbinhluan',(req,res)=>{
+    let token = req.headers['access-token'];
+    let decodetoken = jwt.decode(token);
+    let user = decodetoken.user;
+    const binhLuan = req.body;
+    var sql = `
+                INSERT INTO chitiet_bl(MaBL,MaTK,NoiDung,ThoiGian,TrangThai)
+                VALUES('${binhLuan.MaBL}','${user.MaTK}','${binhLuan.NoiDung}','${binhLuan.ThoiGian}',1)
+                `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
 //Xoa binh luan san pham
 ProtectedRoutes.post('/xoabinhluan/:maBinhLuan',(req,res)=>{
     var sql = `
@@ -148,11 +165,22 @@ ProtectedRoutes.post('/xoabinhluan/:maBinhLuan',(req,res)=>{
         res.json(results);
     })
 })
+
+//Xoa chi tiet binh luan san pham
+ProtectedRoutes.post('/xoachitietbinhluan/:maCTBL',(req,res)=>{
+    var sql = `
+                UPDATE chitiet_bl SET TrangThai=0 WHERE MaCTBL='${req.params.maCTBL}'
+              `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
 //API lay danh sach cac binh luan theo ma san pham
 app.get('/api/binhluan/layDanhSachBinhLuan/:maSanPham',(req,res)=>{
     var sql = `
               SELECT binhluan.MaBL,binhluan.MaTK,taikhoan.HoTen,binhluan.NoiDung,binhluan.ThoiGian,binhluan.TrangThai FROM binhluan,taikhoan
-              WHERE binhluan.MaTK=taikhoan.MaTK AND binhluan.TrangThai=1 AND binhluan.MaSP='${req.params.maSanPham}' ORDER BY binhluan.MaBL ASC
+              WHERE binhluan.MaTK=taikhoan.MaTK AND binhluan.TrangThai=1 AND binhluan.MaSP='${req.params.maSanPham}' ORDER BY binhluan.MaBL DESC
               `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
@@ -160,6 +188,20 @@ app.get('/api/binhluan/layDanhSachBinhLuan/:maSanPham',(req,res)=>{
     })
 })
 
+//API lay chi tiet binh luan theo ma binh luan 
+app.get('/api/binhluan/layDanhSachCTBinhLuan/:maBinhLuan',(req,res)=>{
+    var sql = `
+                SELECT chitiet_bl.MaCTBL,chitiet_bl.MaBL,chitiet_bl.MaTK,
+                chitiet_bl.NoiDung,chitiet_bl.ThoiGian,taikhoan.HoTen 
+                FROM chitiet_bl,taikhoan WHERE chitiet_bl.MaBL=${req.params.maBinhLuan}
+                AND chitiet_bl.TrangThai=1 AND chitiet_bl.MaTK=taikhoan.MaTK
+                ORDER BY chitiet_bl.MaCTBL DESC
+              `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
 
 
 //API Dang Nhap

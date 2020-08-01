@@ -76,7 +76,7 @@ class header extends Component {
                 <Col span={4}>
                   <Link to="/trangchu">
                     <div className="logo">
-                      <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595404236/img/logo_klzcmr.jpg" />
+                      <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492996/logo_mkwtqz.jpg" />
                     </div>
                   </Link>
 
