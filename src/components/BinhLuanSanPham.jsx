@@ -45,7 +45,9 @@ class BinhLuanSanPham extends Component {
             value: '',
             danhSachComments: [],
             maComment: null,
-            dangPhanHoi: false
+            dangPhanHoi: false,
+            min:0,
+            max:5
         }
     }
 
@@ -197,13 +199,25 @@ class BinhLuanSanPham extends Component {
         message.error('Click on No');
     }
 
+    taiThemBinhLuan=()=>{
+        let gioihan=this.state.danhSachComments.length;
+        let max = this.state.max+5;
+        max>gioihan
+        ?this.setState({
+            max:gioihan
+        })
+        :this.setState({
+            max:max
+        })
+    }
+
 
     render() {
-        const { submitting, value, danhSachComments, maComment, dangPhanHoi } = this.state;
+        const { submitting, value, danhSachComments, maComment, dangPhanHoi,min,max } = this.state;
         let nguoiDung = this.props.nguoiDungDangNhap;
         let adminOnline = sessionStorage.getItem('admintoken');
         let data = danhSachComments.length !== 0
-            ? danhSachComments.map((cmt, index) => {
+            ? danhSachComments.slice(min,max).map((cmt, index) => {
                 return {
                     actions: [
                         <span onClick={() => nguoiDung===null
@@ -261,7 +275,7 @@ class BinhLuanSanPham extends Component {
                 <List
                     key="listComments"
                     className="comment-list"
-                    header={`${data.length} bình luận`}
+                    header={`${danhSachComments.length} bình luận`}
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={item => (
@@ -298,6 +312,12 @@ class BinhLuanSanPham extends Component {
                     }
 
                 />:null}
+                {this.state.max>=danhSachComments.length?null:<Button
+                block
+                onClick={this.taiThemBinhLuan}
+                >
+                  Tải thêm bình luận
+                </Button>}
             </div>
         )
     }

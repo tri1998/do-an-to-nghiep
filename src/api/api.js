@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5555;
+const port = 5007;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -176,6 +176,9 @@ ProtectedRoutes.post('/xoachitietbinhluan/:maCTBL',(req,res)=>{
         res.json(results);
     })
 })
+
+
+
 //API lay danh sach cac binh luan theo ma san pham
 app.get('/api/binhluan/layDanhSachBinhLuan/:maSanPham',(req,res)=>{
     var sql = `
@@ -201,7 +204,20 @@ app.get('/api/binhluan/layDanhSachCTBinhLuan/:maBinhLuan',(req,res)=>{
         if(err) throw err;
         res.json(results);
     })
-})
+}) 
+
+//API lay danh sach cac binh luan theo ngay hien tai
+app.get('/api/binhluan/layDanhSachBinhLuanTheoNgay/:ngay',(req,res)=>{
+    var sql = `
+              SELECT binhluan.MaBL,binhluan.MaTK,binhluan.MaSP,taikhoan.HoTen,binhluan.NoiDung
+              ,binhluan.ThoiGian,binhluan.TrangThai FROM binhluan,taikhoan,sanpham
+              WHERE binhluan.MaSP=sanpham.MaSP AND binhluan.MaTK=taikhoan.MaTK AND binhluan.TrangThai=1 AND binhluan.ThoiGian >= '${req.params.ngay}' ORDER BY binhluan.MaBL DESC
+              `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+}) 
 
 
 //API Dang Nhap

@@ -28,6 +28,7 @@ import {
   actChonSanPhamCapNhat,
   actCapNhatThongTinSanPham
 } from '../redux/actions/sanpham'
+import CKEditor from 'ckeditor4-react';
 import Highlighter from 'react-highlight-words';
 import {port} from '../config/configAPI';
 
@@ -435,6 +436,14 @@ class QuanLySanPham extends Component {
                                     }
                                 </Select>
                             </Form.Item>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col span={24}>
+                            <CKEditor
+                                data="<p>Hello from CKEditor 4!</p>"
+                            />
                           </Col>
                         </Row>
                         

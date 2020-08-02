@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { Layout, Menu, Breadcrumb,Badge } from 'antd';
+import { Layout, Menu, Space,Badge } from 'antd';
 import {
     DesktopOutlined,
     LogoutOutlined,
@@ -22,6 +22,7 @@ import ChiTietKhuyenMai from '../components/ChiTietKhuyenMai.jsx';
 import TrangChu from '../containers/adminTrangChu';
 import {actAdminLogOut,actDangXuatNguoiDung} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
+import moment from 'moment';
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -66,6 +67,9 @@ class Admin extends Component {
         this.props.history.push('/');
     }
     render() {
+        let Ngay = moment().format('DD');
+        let Thang = moment().format('MM');
+        let Nam = moment().format('YYYY');
         return (
             <div>
                 
@@ -125,10 +129,9 @@ class Admin extends Component {
                             <Layout className="site-layout">
                                 <Header className="site-layout-background" style={{ padding: 0 }} />
                                 <Content style={{ margin: '0 16px' }}>
-                                    <Breadcrumb itemRender={itemRender} routes={routes} style={{ margin: '16px 0' }}>
-                                        <Breadcrumb.Item>User</Breadcrumb.Item>
-                                        <Breadcrumb.Item>Bill</Breadcrumb.Item>
-                                    </Breadcrumb>
+                                    <Space>
+                                        <h1>Ngày {Ngay} Tháng {Thang} Năm {Nam}</h1>
+                                    </Space>
                                     <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                                       <Fragment>
                                       <Switch>

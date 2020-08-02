@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox,message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import {Link} from 'react-router-dom';
-import Swal from 'sweetalert2'
 import {actAdminDangNhap,actUserLogin,actSetUserLogIn, actLuuThongTinNguoiDung} from '../redux/actions/nguoidung'
 import {connect} from 'react-redux'
 import axios from 'axios';
@@ -37,9 +36,10 @@ class dangnhap extends Component {
             console.log(res.data);
             if(res.data.message)
             {
-                alert(res.data.message);
+                message.error('Tài khoản hoặc mật khẩu không chính xác !');
             }
             else{
+                message.success('Đăng nhập thành công !');
                 let roles = res.data.user[0].isAdmin;
                 if(roles===1)
                 {
@@ -63,80 +63,7 @@ class dangnhap extends Component {
     }
 
 
-    kiemTraDangNhap=(email,matkhau)=>{
-        let index = this.props.DanhSachNguoiDung.findIndex(
-            nguoidung=>nguoidung.Email===email&&nguoidung.MatKhau===matkhau&&nguoidung.TrangThai===1
-        )
-        if(index!==-1){
-            return true;
-        }
-        else return false;
-    }
-
-    isAdmin=(email)=>{
-        let index = this.props.DanhSachNguoiDung.findIndex(nguoidung=>nguoidung.Email===email&&nguoidung.isAdmin===1)
-        if(index!==-1)
-        {
-            return 1;
-        }else return 0;
-    }
-
-    onFinish2 = (values)=>{
-        const user = {
-            email:values.email,
-            password:md5(values.password)
-        };
-        axios({
-            method:"POST",
-            url:`http://localhost:${port}/api/taikhoan/dangnhap`,
-            data:user
-        }).then(res=>console.log(res.data))
-        .catch(err=>console.log(err));
-    }
-    
-    onFinish = (values) =>{
-        const user = {
-            Email:values.email,
-            MatKhau:md5(values.password)
-        };
-        if(this.kiemTraDangNhap(user.Email,user.MatKhau)===true)
-        {
-            if(this.isAdmin(user.Email)===1)
-            {
-                console.log(sessionStorage.getItem('loginAdmin'));
-                sessionStorage.setItem('loginAdmin',user.Email);
-                console.log('day la tai khoan admin');
-                this.props.isAdminLogin();
-                setTimeout(()=>Swal.fire(
-                    '',
-                    'Đăng Nhập Thành Công !',
-                    'success'
-                ),1)
-                this.props.history.push('/admin');
-            }
-            else
-            {
-                let userLogIn=this.props.DanhSachNguoiDung.find(nd=>nd.Email===user.Email);
-                this.props.userLogin(userLogIn);
-                localStorage.setItem('userLogin',true);
-                this.props.setUserLogin();
-                console.log(userLogIn);
-                console.log('day la tai khoan user');
-                setTimeout(()=>Swal.fire(
-                    '',
-                    'Đăng Nhập Thành Công !',
-                    'success'
-                ),1000)
-                setTimeout(()=>this.props.history.push('/'),2000);
-            }
-        }
-        else setTimeout(()=>Swal.fire(
-            'Rất tiếc',
-            'Bạn đã nhập sai tên tài khoản hoặc mật khẩu',
-            'error'
-        ),1000)
-                
-    }
+   
     
     render() {
         return (
