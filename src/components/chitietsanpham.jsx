@@ -8,7 +8,7 @@ import {
     Carousel,
     notification,
     Spin,
-
+    Tag
 } from 'antd'
 import { 
     ShoppingCartOutlined,
@@ -18,8 +18,10 @@ import {
 } from '@ant-design/icons';
 import SPLienQuan from './sanphamlienquan';
 import BinhLuan from './BinhLuanSanPham';
+import KichThuoc from './KichThuoc';
 import { createRef } from 'react';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
 import {
     actThemVaoGio,
     actThemSanPhamDaTonTai
@@ -38,6 +40,7 @@ class chitietsanpham extends Component {
             soLuong:1,
             isLoading:false,
             phanTramKhuyenMai:100,
+            option:1
         }
     }
     componentDidMount(){
@@ -115,10 +118,7 @@ class chitietsanpham extends Component {
     
 
     render() {
-        let {TenSP,Gia,Hinh} = this.props.SPDuocChon;
-
-
-        
+        let {TenSP,GIA,Hinh,MaKT,SL,ThongTinSP} = this.props.SPDuocChon;
         return (
             <div>
               {this.state.isLoading===false?<div><Spin/>Loadding...</div>:
@@ -151,31 +151,16 @@ class chitietsanpham extends Component {
                             <hr/>
                             <Row className="thongtinsanpham">
                                 <Col span={12}>
-                                    <span className="fs16">Sản Phẩm: </span><span className="fs16">Còn</span><br/>
-                                    <Row>
-                                        <Col span={8}><span className="fs16">Bảo Hành: </span></Col>
+                                    <span className="fs16">Sản Phẩm: </span>
+                                    {SL===0?<span style={{color:'red'}} className="fs16">Hết</span>
+                                    :<span className="fs16">Còn {SL} </span>}
+                                    {MaKT===6?null:<Row>
+                                        <Col span={8}><span className="fs16">Kích Thước: </span></Col>
                                         <Col span={16}>
-                                            <Select defaultValue="6 Tháng" style={{width:105}}>
-                                                <Option value="6 Tháng">6 Tháng</Option>
-                                                <Option value="12 Tháng">12 Tháng</Option>
-                                                <Option value="24 Tháng">24 Tháng</Option>
-                                            </Select>
+                                            <KichThuoc maKichThuoc={MaKT}></KichThuoc>
                                         </Col>
-
-                                    </Row>
-                                    
-                                    {
-                                        this.state.phanTramKhuyenMai!==undefined
-                                        ?<span className="Gia">{(Gia-(Gia*this.state.phanTramKhuyenMai.PhanTram/100)).toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</span>
-                                        :null
-                                    }
-
-                                    <span className={this.state.phanTramKhuyenMai!==undefined?"GiaKM":"Gia"}>
-                                    {
-                                        Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})
-                                    }
-                                    </span>
-
+                                    </Row>} 
+                                    <br/><span className="Gia">{GIA.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</span>
                                 </Col>
 
                                 <Col span={12} className="right">
@@ -193,7 +178,9 @@ class chitietsanpham extends Component {
                                     ?this.themVaoGio(this.props.SPDuocChon)
                                     :this.openNotification()} 
                                     className="btnAddCart" danger type="primary" 
-                                    shape="round" size="large"
+                                    shape="round" 
+                                    size="large"
+                                    disabled={SL===0?true:false}
                                     >
                                         <ShoppingCartOutlined />Thêm Vào Giỏ Hàng
                                     </Button>
@@ -202,8 +189,47 @@ class chitietsanpham extends Component {
                             </Row>
                         </Col>
                     </Row>
+
                     <Row style={{padding:'20px'}}>
                         <Col span={24}>
+                            <Button 
+                            size="large" 
+                            shape="round"
+                            style={{marginRight:'5px'}}
+                            onClick={()=>this.setState({option:1})}
+                            >
+                                CHI TIẾT SẢN PHẨM
+                            </Button>
+                            <Button 
+                            size="large" 
+                            shape="round"
+                            onClick={()=>this.setState({option:2})}
+                            >
+                                TAGS
+                            </Button>      
+                            {ThongTinSP!==null && this.state.option===1
+                            ?<div  
+                            dangerouslySetInnerHTML={{ __html:ThongTinSP}} 
+                            className="chitietsanpham"
+                            >
+                            </div>:null}
+                            {this.state.option===2
+                            ?<div  
+                            className="chitietsanpham"
+                            >
+                                <div>
+                                    <Link><Tag color="magenta">Sản phẩm mới</Tag></Link>
+                                    <Link to="/loaisanpham/aoin"><Tag color="red">Áo TTG</Tag></Link>
+                                    <Link to="/loaisanpham/gaminggear"><Tag color="volcano">Gear</Tag></Link>
+                                    <Link to="/loaisanpham/gundam"><Tag color="orange">Gundam</Tag></Link>
+                                </div>
+                            </div>:null}
+                        </Col>
+                    </Row>
+
+                    <Row style={{padding:'20px'}}>
+                        <Col span={24}>
+
                             <Button 
                             size="large" 
                             shape="round"

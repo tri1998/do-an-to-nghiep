@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5007;
+const port = 5555;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -36,33 +36,6 @@ app.get('/api/taikhoan',(req,res)=>{
         if(err) throw err;
         res.json(results)
     })
-})
-
-//API DANG NHAP VOI JWT(JASON WEB TOKEN) VI DU
-app.post('/authenticate',(req,res)=>{
-    let user = req.body;
-    if(user.username==="tri")
-    {
-        if(user.password===18121998)
-        {
-            const payload = {
-                check:true
-            }
-            var token = jwt.sign(payload,config.secret,{
-                expiresIn:1440
-            })
-
-            res.json({
-                message:'authentication done',
-                token:token
-            })
-        }
-        else res.json({message:"please check your password !"})
-    }
-    else
-    {
-        res.json({message:"user not found !"})
-    }
 })
 
 const ProtectedRoutes = express.Router();
@@ -122,6 +95,36 @@ ProtectedRoutes.put('/capnhatnguoidung',(req,res)=>{
     })
 })
 
+//API cap nhat mat khau user 
+ProtectedRoutes.put('/capnhatmatkhau',(req,res)=>{
+    let token = req.headers['access-token'];
+    let decodetoken = jwt.decode(token);
+    let user = decodetoken.user;
+    const password = req.body;
+    var sql = `SELECT * FROM taikhoan WHERE MatKhau='${password.MatKhauMoi1}'
+               AND MaTK='${user.MaTK}'`
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        if(results.length>0)
+        {
+            res.json({messageWarrning:'Bạn đã nhập mật khẩu cũ ! Vui lòng nhập mật khẩu mới !'})
+        }
+        else {
+            var sql = `
+                UPDATE taikhoan SET 
+                MatKhau='${password.MatKhauMoi1}'
+                WHERE MaTK='${user.MaTK}'
+            `;
+            connection.query(sql,(err,results)=>{
+                if(err) throw err;
+                res.json({
+                    messageSuccess:'Cập nhật mật khẩu thành công !'
+                });
+            })
+        }
+    })
+})
+
 //Them binh luan san pham
 ProtectedRoutes.post('/thembinhluan',(req,res)=>{
     let token = req.headers['access-token'];
@@ -177,8 +180,6 @@ ProtectedRoutes.post('/xoachitietbinhluan/:maCTBL',(req,res)=>{
     })
 })
 
-
-
 //API lay danh sach cac binh luan theo ma san pham
 app.get('/api/binhluan/layDanhSachBinhLuan/:maSanPham',(req,res)=>{
     var sql = `
@@ -217,14 +218,15 @@ app.get('/api/binhluan/layDanhSachBinhLuanTheoNgay/:ngay',(req,res)=>{
         if(err) throw err;
         res.json(results);
     })
-}) 
+})
+
 
 
 //API Dang Nhap
 
 app.post('/api/dangnhap',(req,res)=>{
     let user = req.body;
-    var sql = `SELECT MaTK,HoTen,Email,isAdmin from taikhoan WHERE Email='${user.Email}' AND MatKhau='${user.Password}' AND TrangThai=1`;
+    var sql = `SELECT MaTK,HoTen,Email,SDT,DiaChi,isAdmin from taikhoan WHERE Email='${user.Email}' AND MatKhau='${user.Password}' AND TrangThai=1`;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         if(results.length!==0)
@@ -241,6 +243,38 @@ app.post('/api/dangnhap',(req,res)=>{
             })
         }
         else res.send({message:"tai khoan hoac mat khau khong khop !"})
+    })
+})
+
+//API dang ky tai khoan 
+app.post('/api/dangkytaikhoan',(req,res)=>{
+    let taiKhoan = req.body;
+    var sql = `SELECT * FROM taikhoan WHERE taikhoan.Email ='${taiKhoan.Email}'`;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        if(results.length===1){
+            res.json({
+                message:"Email này đã tồn tại !"
+            })
+        }
+        else{
+            var sql = "SELECT COUNT(MaTK) AS SOLUONG from taikhoan";
+            connection.query(sql,(err,results)=>{
+                if(err) throw err;
+                let MaTK = `TK${results[0].SOLUONG}`;
+                let user = {MaTK:MaTK,...taiKhoan};
+                var sql = `
+                INSERT INTO taikhoan(MaTK,HoTen,Email,SDT,MatKhau,isAdmin,TrangThai)
+                VALUES('${user.MaTK}','${user.HoTen}','${user.Email}','${user.SDT}','${user.MatKhau}',0,1)
+                `;
+                connection.query(sql,(err,results)=>{
+                    if(err) throw err;
+                    res.json({
+                        message:"Đăng kí thành công !"
+                    });
+                })
+            })
+        }
     })
 })
 
@@ -388,7 +422,17 @@ app.put('/api/sanpham/capnhatSP/:id',(req,res)=>{
 //API xem chi tiet san pham
 app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
     let maSanPham = req.params.id;
-    var sql = `SELECT * FROM sanpham WHERE MaSP = '${maSanPham}'`;
+    var sql = `
+    SELECT sanpham.MaSP, sanpham.MaDM,
+     sanpham.MaHang, chitiet_sp.MaKT,
+      chitiet_sp.SL, sanpham.TenSP,
+       sanpham.LuotBan, sanpham.LuotXem,
+        sanpham.GIA, sanpham.SanPham_Moi,
+         sanpham.ThongTinSP, sanpham.TrangThai,
+          sanpham.Hinh FROM sanpham,chitiet_sp
+    WHERE sanpham.MaSP=chitiet_sp.MaSP AND sanpham.MaSP='${maSanPham}'`;
+
+    ;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);
@@ -432,7 +476,7 @@ app.put('/api/sanpham/khoiphucSP/:id',(req,res)=>{
 
 app.post('/api/sanpham/themSP',(req,res)=>{
     var sql = "INSERT "
-            + "INTO sanpham(MaSP,MaDM,MaHang,TenSP,LuotBan,LuotXem,Gia,SanPham_Moi,TrangThai,Hinh)"
+            + "INTO sanpham(MaSP,MaDM,MaHang,TenSP,LuotBan,LuotXem,Gia,SanPham_Moi,ThongTinSP,TrangThai,Hinh)"
             + "VALUES('"
             + req.body.MaSP + "','"
             + req.body.MaDM + "','"
@@ -442,6 +486,7 @@ app.post('/api/sanpham/themSP',(req,res)=>{
             + req.body.LuotXem +"','"
             + req.body.Gia + "','"
             + req.body.SanPham_Moi + "','"
+            + req.body.ThongTinSP + "','"
             + req.body.TrangThai + "','"
             + req.body.Hinh + "')";
   
@@ -450,6 +495,35 @@ app.post('/api/sanpham/themSP',(req,res)=>{
         res.json(results);
     })
 
+})
+
+app.post('/api/sanpham/themCTSP',(req,res)=>{
+    const sanPham = req.body;
+    var sql = `INSERT chitiet_sp(MaSP,MaKT,MaMau,SL)
+               VALUES('${sanPham.MaSP}','${sanPham.MaKT}',9,'${sanPham.SL}')
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API lay danh sach cac kich thuoc 
+app.get('/api/kichthuoc/layDSKT',(req,res)=>{
+    var sql = "SELECT * FROM kichthuoc";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API lay danh sach hang san xuat 
+app.get('/api/hangsx/layDSHangsx',(req,res)=>{
+    var sql = "SELECT * FROM hangsx";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
 })
 
 //API cap nhat thong tin san pham 

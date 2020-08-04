@@ -123,3 +123,11 @@ export const actDangXuatNguoiDung = ()=>{
         type:types.DANG_XUAT_NGUOI_DUNG,
     }
 }
+
+//act cap nhat thong tin nguoi dung 
+export const actCapNhatThongTin = (nguoiDung)=>{
+    return{
+        type:types.CAP_NHAT_THONG_TIN_NGUOI_DUNG,
+        nguoiDung
+    }
+}

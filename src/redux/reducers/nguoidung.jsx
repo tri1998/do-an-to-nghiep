@@ -25,6 +25,18 @@ const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
             state.UserInformation=null;
             return {...state};
         }
+        //Cap nhat thong tin nguoi dung dang nhap
+        case types.CAP_NHAT_THONG_TIN_NGUOI_DUNG:{
+            let nguoiDung = action.nguoiDung;
+            let nguoiDungCapNhat = {...state.UserInformation};
+            nguoiDungCapNhat.HoTen = nguoiDung.HoTen;
+            nguoiDungCapNhat.SDT=nguoiDung.SDT;
+            nguoiDungCapNhat.DiaChi=nguoiDung.DiaChi;
+            state.UserInformation = nguoiDungCapNhat;
+            sessionStorage.setItem('userinfo',JSON.stringify(state.UserInformation));
+            return {...state};
+        }
+
         case types.LUU_TAIKHOAN:{
             state.DSND=action.tk;
             return {...state};

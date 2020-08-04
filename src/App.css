@@ -281,6 +281,14 @@ ul li a:hover{
     width:90px;
 }
 
+.chitietsanpham{
+
+    width:100%;
+    border: solid 1px lightgray;
+    margin-top: 20px;
+    padding:15px
+}
+
 #components-layout-demo-side .logo {
     height: 32px;
     background: rgba(255, 255, 255, 0.2);

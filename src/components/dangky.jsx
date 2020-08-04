@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { Form, Input, Button } from 'antd';
-import { Row, Col } from 'antd';
+import { Row, Col,message } from 'antd';
 import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined } from '@ant-design/icons';
-import Swal from 'sweetalert2'
-import { Link } from 'react-router-dom'
 import { actThemTaiKhoan } from '../redux/actions/nguoidung'
 import { connect } from 'react-redux'
+import {Link} from 'react-router-dom';
 import axios from 'axios'
 import {port} from '../config/configAPI';
 let md5 = require('md5');
@@ -20,47 +19,38 @@ const validateMessages = {
 
 class dangky extends Component {
 
-    onFinish = (values) => {
-
+   
+    dangKy=(values)=>{
         const newUser = {
-            MaTK: values.MaTK,
             HoTen: values.HoTen,
             SDT: values.sodienthoai,
             Email: values.email,
-            MatKhau: md5(values.password)
+            MatKhau:md5(values.password)
         }
-        let index = this.props.MangNguoiDung.findIndex(nguoidung => nguoidung.Email === newUser.Email);
-        if (index === -1) {
-            this.props.themTaiKhoan(newUser);
-            axios.post(`http://localhost:${port}/api/themtaikhoan`, newUser)
-                .then(res => {
-                    setTimeout(() => Swal.fire(
-                        'Chúc Mừng!',
-                        'Bạn đã đăng ký thành công !',
-                        'success'
-                    ), 1000);
-                })
-                .catch(error => console.log(error));
-            setTimeout(() => this.props.history.push('/dangnhap'), 2000);
-        }
-        else setTimeout(() => Swal.fire(
-            'Rất Tiếc!',
-            'Email này đã tồn tại!',
-            'error'
-        ), 1000);
-
-
-
+        axios({
+            method:"POST",
+            url:`http://localhost:${port}/api/dangkytaikhoan`,
+            data:newUser
+        })
+        .then(res=>{
+            if(res.data.message==="Đăng kí thành công !")
+            {
+                message.success(res.data.message);
+                this.props.history.push('/dangnhap');
+            }
+            else message.error(res.data.message);
+            
+        })
+        .catch(err=>console.log(err))
     }
 
 
     render() {
-        let matk = this.props.MangNguoiDung.length;
-        console.log(this.props.MangNguoiDung);
+
         return (
             <div>
-                {this.props.MangNguoiDung.length !== 0 ?
-                    (<Row>
+              
+                    <Row>
                         <Col span={8}></Col>
                         <Col span={8} className="dangky">
                             <h1 className="center">ĐĂNG KÝ</h1>
@@ -69,16 +59,9 @@ class dangky extends Component {
                                 name="normal_login"
                                 className="login-form"
                                 initialValues={{ remember: true }}
-                                onFinish={this.onFinish}
+                                onFinish={this.dangKy}
                                 validateMessages={validateMessages}
                             >
-                                <Form.Item
-                                    hidden={true}
-                                    initialValue={`TK${matk}`}
-                                    name="MaTK"
-                                >
-                                    <Input prefix={<UserOutlined className="site-form-item-icon" />} />
-                                </Form.Item>
                                 <Form.Item
                                     name="HoTen"
                                     rules={[{ required: true, message: 'Nhập họ tên!'}]}
@@ -88,21 +71,30 @@ class dangky extends Component {
 
                                 <Form.Item
                                     name="sodienthoai"
-                                    rules={[{ required: true, message: 'số điện thoại không đúng !',pattern:'[0-9]{10,11}' }]}
+                                    rules={[
+                                        {required: true, message: 'Nhập số điện thoại !' },
+                                        {message: 'số điện thoại không đúng !',pattern:'[0-9]{10,11}'}
+                                    ]}
                                 >
-                                    <Input prefix={<PhoneOutlined className="site-form-item-icon" />} type="number" placeholder="Số điện thoại" />
+                                    <Input maxLength={11} prefix={<PhoneOutlined className="site-form-item-icon" />} placeholder="Số điện thoại" />
                                 </Form.Item>
 
                                 <Form.Item
                                     name="email"
-                                    rules={[{ required: true, message: 'Nhập email !', type: 'email' }]}
+                                    rules={[
+                                        { required: true, message: 'Nhập email !', type: 'email' },
+                                    ]}
                                 >
                                     <Input prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
                                 </Form.Item>
 
                                 <Form.Item
                                     name="password"
-                                    rules={[{ required: true, message: 'Nhập mật khẩu!' }]}
+                                    rules={[
+                                        { required: true, message: 'Nhập mật khẩu!' },
+                                        {message:'Mật khẩu không đủ mạnh !',pattern:'(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'},
+                               
+                                    ]}
                                 >
                                     <Input
                                         prefix={<LockOutlined className="site-form-item-icon" />}
@@ -120,7 +112,7 @@ class dangky extends Component {
                             </Form>
                         </Col>
                         <Col span={8}></Col>
-                    </Row>) : null}
+                    </Row>)
             </div>
         )
     }

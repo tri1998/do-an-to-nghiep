@@ -28,11 +28,15 @@ import {
   actChonSanPhamCapNhat,
   actCapNhatThongTinSanPham
 } from '../redux/actions/sanpham'
-import CKEditor from 'ckeditor4-react';
 import Highlighter from 'react-highlight-words';
+import KichThuoc from '../components/KichThuoc';
+import HangSanXuat from '../components/HangSanXuat';
+import 'react-quill/dist/quill.snow.css';
 import {port} from '../config/configAPI';
+import ReactQuill from 'react-quill';
 
 const { Option } = Select;
+
 
 class QuanLySanPham extends Component {
     constructor(props) {
@@ -99,8 +103,11 @@ class QuanLySanPham extends Component {
             MaDM:parseInt(values.LoaiSP),
             MaHang:parseInt(values.HangSX),
             TenSP:values.TenSP,
+            ThongTinSP:values.ThongTinSP,
             LuotBan:0,
             LuotXem:0,
+            MaKT:parseInt(values.KichThuoc),
+            SL:parseInt(values.SoLuong),
             TrangThai:1,
             Gia:parseInt(values.Gia),
             SanPham_Moi:parseInt(values.SPMoi),
@@ -112,7 +119,16 @@ class QuanLySanPham extends Component {
           url:`http://localhost:${port}/api/sanpham/themSP`,
           data: sanPham
         })
-        .then(res=>this.props.themSanPham(sanPham))
+        .then(res=>{
+          axios({
+            method:'POST',
+            url:`http://localhost:${port}/api/sanpham/themCTSP`,
+            data:sanPham
+          })
+          .then(res=>console.log(res.data))
+          .catch(err=>console.log(err))
+          this.props.themSanPham(sanPham);
+        })
         .catch(err=>console.log(err))
         this.setState({
           visible:false,
@@ -287,6 +303,16 @@ class QuanLySanPham extends Component {
     showWidget = (widget)=>{
       widget.open();
     }
+
+    modules = {
+      toolbar: [
+        [{ 'header': [1, 2, false] }],
+        ['bold', 'italic', 'underline','strike', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+        ['link', 'image'],
+        ['clean']
+      ],
+    }
       
     render() {
         let data = this.props.DanhSachSanPham;
@@ -408,14 +434,10 @@ class QuanLySanPham extends Component {
                           <Col span={20}>
                             <Form.Item
                               name="HangSX"
-                              hasFeedback
+                              initialValue={4}
                               rules={[{ required: true, message: 'Mời chọn !' }]}
                             >
-                                <Select placeholder="Chọn Hãng Sản Xuất !">
-                                    <Option value={1}>Dare-U</Option>
-                                    <Option value={2}>Logitech</Option>
-                                    <Option value={3}>Steelseries</Option>
-                                </Select>
+                                <HangSanXuat></HangSanXuat>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -440,10 +462,40 @@ class QuanLySanPham extends Component {
                         </Row>
 
                         <Row>
-                          <Col span={24}>
-                            <CKEditor
-                                data="<p>Hello from CKEditor 4!</p>"
-                            />
+                          <Col span={4}><h4>SỐ LƯỢNG :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="SoLuong"
+                              hasFeedback
+                              rules={[{ required: true, message: 'Nhập số lượng !' }]}
+                            >
+                                <Input type="number" min={1} max={100} placeholder="Nhập số lượng" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col span={4}><h4>KÍCH THƯỚC :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="KichThuoc"
+                              initialValue={6}
+                              rules={[{ required: true, message: 'Chọn kích thước !' }]}
+                            >
+                                <KichThuoc></KichThuoc>
+                            </Form.Item>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col span={4}><h4>Chi Tiết :</h4></Col>
+                          <Col span={20}>
+                            <Form.Item
+                              name="ThongTinSP"
+                            >
+                              <ReactQuill modules={this.modules} value="..."></ReactQuill>
+                            </Form.Item>
+                            
                           </Col>
                         </Row>
                         
