@@ -19,6 +19,7 @@ import {
 import SPLienQuan from './sanphamlienquan';
 import BinhLuan from './BinhLuanSanPham';
 import KichThuoc from './KichThuoc';
+import DanhSachAnh from './DanhSachAnhTheoMaSP';
 import { createRef } from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
@@ -39,11 +40,10 @@ class chitietsanpham extends Component {
         this.state={
             soLuong:1,
             isLoading:false,
-            phanTramKhuyenMai:100,
-            option:1
         }
     }
     componentDidMount(){
+        console.log('tao chay ne');
         let maSanPham = this.props.match.params.MaSP;
         axios({
             method:"GET",
@@ -54,16 +54,6 @@ class chitietsanpham extends Component {
             this.setState({isLoading:!this.state.isLoading});
         })
         .catch(err=>console.log(err));
-
-
-
-        //lay % khuyen mai theo ma san pham
-        axios({
-            method:"GET",
-            url:`http://localhost:${port}/api/khuyenmai/layPhanTramKM/${maSanPham}`
-          })
-        .then(res=>this.setState({phanTramKhuyenMai:res.data[0]}))
-        .catch(err=>console.log(err))
     }
 
     //Thong bao nay duoc show ra khi nguoi dung nhap so luon < 1
@@ -93,11 +83,13 @@ class chitietsanpham extends Component {
     //Chuc nang them vao nhan vao la 1 object sanPham
     themVaoGio=(sanPham)=>{
         let viTriSanPham=this.props.danhSachSanPham.findIndex(sp=>sp.MaSP===sanPham.MaSP);
-        let giaKhuyenMai = this.state.phanTramKhuyenMai!==undefined?sanPham.Gia-(sanPham.Gia*this.state.phanTramKhuyenMai.PhanTram/100):0;
+        let giaKhuyenMai = sanPham.PhanTram===undefined?sanPham.Gia:sanPham.Gia-(sanPham.Gia*sanPham.PhanTram/100);
+        console.log(giaKhuyenMai);
         if(viTriSanPham===-1)
         {
-            sanPham = {...sanPham,SoLuong:this.state.soLuong,GiaCu:this.state.phanTramKhuyenMai!==undefined?giaKhuyenMai:sanPham.Gia}
-            sanPham.Gia = (this.state.phanTramKhuyenMai!==undefined?giaKhuyenMai:sanPham.Gia) * sanPham.SoLuong;
+            sanPham = {...sanPham,SoLuong:this.state.soLuong,GiaCu:giaKhuyenMai}
+            sanPham.Gia = giaKhuyenMai * sanPham.SoLuong;
+            console.log(sanPham);
             this.props.themVaoGio(sanPham);
         }
         else
@@ -109,23 +101,17 @@ class chitietsanpham extends Component {
         
     }
 
-
-
-
-
-
-
-    
-
     render() {
-        let {TenSP,GIA,Hinh,MaKT,SL,ThongTinSP} = this.props.SPDuocChon;
+        let {TenSP,Gia,Hinh,MaKT,SL,ThongTinSP,PhanTram,MaSP} = this.props.SPDuocChon;
+        console.log(Gia);
+        let GiaKM=PhanTram===undefined?0:Gia-(Gia*PhanTram/100);
         return (
             <div>
               {this.state.isLoading===false?<div><Spin/>Loadding...</div>:
               <Row>
-                <Col span={18}>
+                <Col xs={{span:24}} lg={{span:18}}>
                     <Row>
-                        <Col span={10} className="wrapanhctsp">
+                        <Col lg={{span:10}} xs={{span:24}}  className="wrapanhctsp">
                             <div className="anhctsp">
                                 <Carousel ref={this.carouselRef} dots={false} className="carouselchitiet">
                                 <div>
@@ -138,15 +124,13 @@ class chitietsanpham extends Component {
                                 </Button>
                             </div>
 
-                            <Row>
-                                <Col span={6}>
-                                    <img alt="sp" className="anhctspduoi" src={Hinh}/>
-                                </Col>
+                            
+                            <DanhSachAnh MaSP={MaSP} />
                                 
-                            </Row>
+                            
                         </Col>
                         
-                        <Col span={14}>
+                        <Col xs={{span:24}} lg={{span:14}}>
                             <h1 className="tensanpham">{TenSP}</h1>
                             <hr/>
                             <Row className="thongtinsanpham">
@@ -160,7 +144,17 @@ class chitietsanpham extends Component {
                                             <KichThuoc maKichThuoc={MaKT}></KichThuoc>
                                         </Col>
                                     </Row>} 
-                                    <br/><span className="Gia">{GIA.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</span>
+                                    <br/>
+                                    
+                                    {PhanTram===undefined?null:<span 
+                                    className={GiaKM!==0?"Gia":"GiaKM"}>
+                                    {GiaKM.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}
+                                    </span>}
+
+                                    <span 
+                                    className={GiaKM!==0?"GiaKM":"Gia"}>
+                                    {Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}
+                                    </span>
                                 </Col>
 
                                 <Col span={12} className="right">
@@ -243,7 +237,7 @@ class chitietsanpham extends Component {
                     
                 </Col>
 
-                <Col span={6} className="center">
+                <Col xs={{span:24}} lg={{span:6}} className="center">
                     <SPLienQuan></SPLienQuan>
                 </Col>
               </Row>}

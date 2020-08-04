@@ -20,7 +20,7 @@ class LoaiSanPham extends Component {
                                         loaiSP.TrangThai===1?
                                         this.props.DanhSachSanPham.map((sp,index)=>{
                                             return sp.MaDM===loaiSP.MaDM&&sp.TrangThai===1
-                                            ?<Col key={index} span={8}><SanPham sanPham={sp}></SanPham></Col>
+                                            ?<Col key={index} xs={{span:24}} xl={{span:8}}><SanPham sanPham={sp}></SanPham></Col>
                                             :null
                                         })
                                         :<h2>Loại sản phẩm này đã ngừng kinh doanh !</h2>
@@ -38,7 +38,7 @@ class LoaiSanPham extends Component {
         return (
             <div>
                 <Row>
-                    <Col style={{paddingLeft:15}} span={6}>
+                    <Col style={{paddingLeft:15}} xs={{span:24}} lg={{span:6}}>
                         <Button
                             size='large'
                             shape='round'
@@ -69,7 +69,7 @@ class LoaiSanPham extends Component {
 
                         </Menu>
                     </Col>
-                    <Col span={18}>
+                    <Col xs={{span:24}} lg={{span:18}}>
                         <div>
                             <img width="100%" src="../img/aocter.png" alt="abc"/>
                         </div>
@@ -78,7 +78,7 @@ class LoaiSanPham extends Component {
                             <Col span={16}>
                                 <span className="sapxep">Sắp Xếp Theo :</span>
                                 <Select style={{width:170,margin:5}} size="middle" defaultValue="sanphamnoibat">
-                                    <Option value="sanphamnoibat">Sản phẩm nổi bật</Option>
+                                    <Option value="sanphamnoibat">Đang giảm giá</Option>
                                     <Option value="giatangdan">Giá: Tăng dần</Option>
                                     <Option value="giagiamdan">Giá: Giảm dần</Option>
                                     <Option value="tenaz">Tên: A-Z</Option>

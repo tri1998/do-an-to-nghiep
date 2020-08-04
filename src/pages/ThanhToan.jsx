@@ -160,7 +160,7 @@ class ThanhToan extends Component {
         return (
             <div>
                 <Row>
-                    <Col span={14}>
+                    <Col xs={{span:24}} lg={{span:14}}>
                         <Row>
                             <Col span={4}></Col>
                             <Col span={18}>
@@ -360,10 +360,10 @@ class ThanhToan extends Component {
                             <Col span={2}></Col>
                         </Row>
                     </Col>
-                    <Col className="checkoutright" span={10}>
+                    <Col className="checkoutright" xs={{span:24}} lg={{span:10}}>
                         <Row style={{marginTop:'55px'}}>
-                            <Col span={2}></Col>
-                            <Col span={17}>
+                            <Col xs={{span:4}} lg={{span:2}}></Col>
+                            <Col xs={{span:18}} lg={{span:17}}>
                                 {
                                     mangSanPham.map((sanPham,index)=>{
                                         return <Row key={index} style={{marginBottom:'20px'}}>
@@ -407,7 +407,7 @@ class ThanhToan extends Component {
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col span={5}></Col>
+                            <Col xs={{span:2}} lg={{span:5}}></Col>
                         </Row>
                     </Col>
                 </Row>

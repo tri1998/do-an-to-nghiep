@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5555;
+const port = 5002;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -419,24 +419,79 @@ app.put('/api/sanpham/capnhatSP/:id',(req,res)=>{
     })
 })
 
-//API xem chi tiet san pham
-app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
-    let maSanPham = req.params.id;
+//API them anh san pham dua theo ma san pham
+app.post('/api/sanpham/themAnhSP',(req,res)=>{
+    let anhSP=req.body;
     var sql = `
-    SELECT sanpham.MaSP, sanpham.MaDM,
-     sanpham.MaHang, chitiet_sp.MaKT,
-      chitiet_sp.SL, sanpham.TenSP,
-       sanpham.LuotBan, sanpham.LuotXem,
-        sanpham.GIA, sanpham.SanPham_Moi,
-         sanpham.ThongTinSP, sanpham.TrangThai,
-          sanpham.Hinh FROM sanpham,chitiet_sp
-    WHERE sanpham.MaSP=chitiet_sp.MaSP AND sanpham.MaSP='${maSanPham}'`;
+              INSERT INTO anhsp_lq(MaSP,HinhAnh,TrangThai)
+              VALUES('${anhSP.MaSP}','${anhSP.HinhAnh}',1)
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json({
+            message:"Thêm ảnh thành công !"
+        })
+    })
+})
 
-    ;
+//API lay danh sach hinh anh SP theo ma san pham 
+app.get('/api/sanpham/layDanhSachAnh/:MaSP',(req,res)=>{
+    var sql = `SELECT * FROM anhsp_lq WHERE MaSP='${req.params.MaSP}'`
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);
     })
+})
+
+//API xem chi tiet san pham
+app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
+    let maSanPham = req.params.id;
+    let sql = `
+    SELECT chitiet_km.PhanTram from chitiet_km,sanpham 
+    WHERE sanpham.MaSP=chitiet_km.MaSP AND chitiet_km.TrangThai = 1 AND sanpham.MaSP ='${maSanPham}'
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        if(results.length===0)
+        {
+            var sql = `
+                SELECT sanpham.MaSP, sanpham.MaDM,
+                    sanpham.MaHang, chitiet_sp.MaKT,
+                    chitiet_sp.SL, sanpham.TenSP,
+                    sanpham.LuotBan, sanpham.LuotXem,
+                    sanpham.Gia, sanpham.SanPham_Moi,
+                    sanpham.ThongTinSP, sanpham.TrangThai,
+                    sanpham.Hinh FROM sanpham,chitiet_sp
+                WHERE  sanpham.MaSP=chitiet_sp.MaSP AND sanpham.MaSP='${maSanPham}'`;
+            connection.query(sql,(err,results)=>{
+                    if(err) throw err;
+                    res.json(results);
+            })
+        }
+        else
+        {
+            let phanTram=results[0].PhanTram;
+            var sql = `
+                SELECT sanpham.MaSP, sanpham.MaDM,
+                    sanpham.MaHang, chitiet_sp.MaKT,
+                    chitiet_sp.SL, sanpham.TenSP,
+                    sanpham.LuotBan, sanpham.LuotXem,
+                    sanpham.Gia, sanpham.SanPham_Moi,
+                    sanpham.ThongTinSP, sanpham.TrangThai,
+                    sanpham.Hinh FROM sanpham,chitiet_sp
+                WHERE  sanpham.MaSP=chitiet_sp.MaSP AND sanpham.MaSP='${maSanPham}'`;
+            connection.query(sql,(err,results)=>{
+                    if(err) throw err;
+                    results[0]={...results[0],PhanTram:phanTram}
+                    res.json(results);
+            })
+        }
+    })
+
+
+
+
+    
 })
 
 //API tim kiem san pham theo ten

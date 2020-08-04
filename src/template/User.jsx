@@ -24,8 +24,8 @@ export default class User extends Component {
         return (
             <div className="user">
             <Row>
-              <Col span={2}></Col>
-              <Col className="wrapper" span={20}>
+              <Col xs={{span:0}} lg={{span:2}}></Col>
+              <Col className="wrapper" xs={{span:24}} lg={{span:20}}>
                 <Header></Header>
                 <Switch>
                   <Route path='/trangchu' component={Home}></Route>
@@ -43,7 +43,7 @@ export default class User extends Component {
                 <Footer></Footer>
               </Col>
 
-              <Col span={2}></Col>
+              <Col xs={{span:0}} lg={{span:2}}></Col>
             </Row>
             <BackTop>
               <Button type="primary" shape="circle" icon={<UpCircleTwoTone />} size="large"></Button>

@@ -3,14 +3,14 @@ import { Button } from 'antd';
 import { Card } from 'antd';
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-import {actXemChiTiet,actLuuSanPhamVuaXem} from '../redux/actions/sanpham';
+import {actLuuSanPhamVuaXem} from '../redux/actions/sanpham';
+import axios from 'axios'
 class sanpham extends PureComponent {
     constructor(props){
         super(props);
     }
 
     handleXemChiTiet=(sanPham)=>{
-        this.props.xemChiTiet(sanPham);
         this.props.luuSPVuaXem(sanPham);
     }
 
@@ -20,6 +20,7 @@ class sanpham extends PureComponent {
         let GiaGoc = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'});
         let GiaKM = khuyenMai!==undefined?(Gia-Gia*(khuyenMai.PhanTram/100)):0;
         return (
+                    <Link to={`/sanpham/${MaSP}`}>
                     <Card
                     hoverable
                     style={{ width: 260 }}
@@ -48,7 +49,7 @@ class sanpham extends PureComponent {
                             <h3 className="tenSPCenter">{TenSP}</h3>
                         </div>
                         <div className="btn_sp">
-                            <Button 
+                            <Button
                             onClick={()=>this.handleXemChiTiet(this.props.sanPham)}
                             shape="round" size="large"
                             >
@@ -58,6 +59,7 @@ class sanpham extends PureComponent {
                         
                         
                     </Card>
+                    </Link>
                 
         )
     }
@@ -72,9 +74,6 @@ const mapStateToProps=(state)=>{
 
 const mapDispatchToProps=(dispatch)=>{
     return{
-        xemChiTiet:(sp)=>{
-            dispatch(actXemChiTiet(sp))
-        },
         luuSPVuaXem:(sp)=>{
             dispatch(actLuuSanPhamVuaXem(sp))
         }

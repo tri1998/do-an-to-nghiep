@@ -23,8 +23,6 @@ class aocarousel extends Component {
         })
     }
 
-
-
     render() {
         let checkAo=this.props.DanhSachLoaiSanPham.findIndex(ao=>ao.MaDM===3&&ao.TrangThai===1);
         return (
@@ -51,11 +49,16 @@ class aocarousel extends Component {
                         </Col>
                     </Row>
                     <br />
-                     <Carousel ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
-                        {
-                            checkAo!==-1?this.loadDSAo():null
-                        }
-                    </Carousel>
+                    <Row>
+                        <Col span={24}>
+                            <Carousel ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
+                            {
+                                checkAo!==-1?this.loadDSAo():null
+                            }
+                            </Carousel>
+                        </Col>
+                    </Row>
+                     
                 </div>:null}
             </div>
         )

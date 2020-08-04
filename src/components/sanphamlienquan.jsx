@@ -28,17 +28,9 @@ class sanphamlienquan extends Component {
                     size='large'
                     shape='round'
                 >
-                    SẢN PHẨM LIÊN QUAN
+                    PHỤ KIỆN ĐIỆN THOẠI
                 </Button>
-                <Carousel style={{marginTop:15}} dots={false} className="sanphamlienquan" autoplay ref={this.carouselRef}>
-                    {
-                        this.loadSanPhamLienQuan()
-                    }
-                </Carousel>
-            <Button size="medium" icon={<LeftOutlined />} type="ghost"shape="circle" onClick={this.handlePrev}>
-            </Button>
-            <Button size="medium" icon={<RightOutlined />} type="ghost" shape="circle" onClick={this.handleNext}>
-            </Button>
+                
         </div>
         )
     }

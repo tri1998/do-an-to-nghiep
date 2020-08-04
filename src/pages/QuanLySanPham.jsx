@@ -9,7 +9,8 @@ import {
     Select,
     Drawer,
     Row,
-    Col
+    Col,
+    message
   } from 'antd';
 import {
   FormOutlined,
@@ -18,6 +19,7 @@ import {
   SearchOutlined,
   CloseOutlined,
   RedoOutlined,
+  PictureOutlined 
 } from '@ant-design/icons';
 import {connect} from 'react-redux';
 import axios from 'axios';
@@ -31,6 +33,7 @@ import {
 import Highlighter from 'react-highlight-words';
 import KichThuoc from '../components/KichThuoc';
 import HangSanXuat from '../components/HangSanXuat';
+import DanhSachAnh from '../components/DanhSachAnhTheoMaSP';
 import 'react-quill/dist/quill.snow.css';
 import {port} from '../config/configAPI';
 import ReactQuill from 'react-quill';
@@ -44,13 +47,17 @@ class QuanLySanPham extends Component {
         this.state = {
           visible: false,
           visibleDrawer:false,
+          visibleThemAnh:false,
           confirmLoading: false,
           searchText: '',
           searchedColumn: '',
           loading: false,
           dangThemAnh:false,
           AnhSP:'',
-          AnhCapNhat:null
+          AnhCapNhat:null,
+          AnhSPDaiDien:'',
+          MaAnhSPLienQuan:'',
+          AnhSPLienQuan:''
         };
       }
 
@@ -73,6 +80,34 @@ class QuanLySanPham extends Component {
           dangThemAnh:!this.state.dangThemAnh
         })
     };
+
+    showModalThemAnh=(MaSP,Hinh)=>{
+      this.setState({
+        MaAnhSPLienQuan:MaSP,
+        visibleThemAnh: true,
+        AnhSPDaiDien:Hinh
+      })
+
+    }
+
+    themAnhSanPhamLienQuan(url)
+    {
+      let AnhSP={
+        MaSP:this.state.MaAnhSPLienQuan,
+        HinhAnh:url
+      }
+      axios({
+        method:"POST",
+        url:`http://localhost:${port}/api/sanpham/themAnhSP`,
+        data:AnhSP
+      })
+      .then(res=>{
+        this.setState({visibleThemAnh:false});
+        message.success(res.data.message);
+      })
+      .catch(err=>console.log(err))
+    }
+
       //Click OK tren modal
     handleOk = () => {
         this.setState({
@@ -95,6 +130,13 @@ class QuanLySanPham extends Component {
           dangThemAnh:!this.state.dangThemAnh
         });
     };
+
+    handleCancelThemAnh = () => {
+      console.log('Clicked cancel button');
+      this.setState({
+        visibleThemAnh: false,
+      });
+  };
 
     //Them san pham
     themSanPham=(values)=>{
@@ -289,6 +331,15 @@ class QuanLySanPham extends Component {
                         type="primary">
                         <CloseOutlined style={{ fontSize: '20px' }} />
                     </Button>
+
+                    <Button
+                        disabled={record.TrangThai===0?true:false} 
+                        onClick={()=>this.showModalThemAnh(record.MaSP,record.Hinh)} 
+                        ghost
+                        type="primary">
+                        <PictureOutlined style={{ fontSize: '20px' }} />
+                    </Button>
+
                     {record.TrangThai===0?
                     (<Button 
                         type="dashed"
@@ -317,14 +368,21 @@ class QuanLySanPham extends Component {
     render() {
         let data = this.props.DanhSachSanPham;
         let dataChonCapNhat = this.props.SanPhamDuocChon;
-        const { visible, confirmLoading,imageUrl } = this.state;
+        const { visible, confirmLoading,imageUrl,visibleThemAnh,AnhSPDaiDien } = this.state;
         let widget = window.cloudinary.createUploadWidget({
           cloudName:"dl9fnqrq3",
           uploadPreset:"qsg1ozry"},
           (error,result)=>!error && result && result.event === "success"?
               (this.state.dangThemAnh===true?this.setState({AnhSP:result.info.url})
               :this.setState({AnhCapNhat:result.info.url})):console.log(error)
-          )
+        )
+
+        let widget2 = window.cloudinary.createUploadWidget({
+          cloudName:"dl9fnqrq3",
+          uploadPreset:"qsg1ozry"},
+          (error,result)=>!error && result && result.event === "success"?
+              this.themAnhSanPhamLienQuan(result.info.url):console.log(error)
+        )
         return (
             <div>
                 <Button onClick={this.showModal} type="primary">Thêm Sản Phẩm</Button>
@@ -347,6 +405,34 @@ class QuanLySanPham extends Component {
                     }}
                     dataSource={data}
                 />
+
+                    <Modal
+                      title="THÊM ẢNH CHO SẢN PHẨM"
+                      visible={visibleThemAnh}
+                      onOk={this.handleOk}
+                      confirmLoading={confirmLoading}
+                      onCancel={this.handleCancelThemAnh}
+                      destroyOnClose={true}
+                    >
+                      <div style={{width:'100%',height:'700px',textAlign:'center'}}>
+                        <h1>ẢNH ĐẠI DIỆN</h1>
+                        <img style={{width:'100%',height:'300px'}} src={AnhSPDaiDien} alt=""/>
+                        <Button
+                        type="primary"
+                        size="large"
+                        onClick={()=>this.showWidget(widget2)}
+                        style={{borderRadius:'5px'}}
+                        >
+                          Thêm Ảnh
+                        </Button>
+                        <h1>DANH SÁCH ẢNH LIÊN QUAN</h1>
+
+                          <DanhSachAnh MaSP={this.state.MaAnhSPLienQuan}></DanhSachAnh>
+           
+                      </div>
+                    </Modal>
+
+
                 <Modal
                     title="THÊM SẢN PHẨM MỚI"
                     visible={visible}

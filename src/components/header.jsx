@@ -73,7 +73,7 @@ class header extends Component {
         let adminLogined = sessionStorage.getItem('admintoken');
         return (
             <Row>
-                <Col span={4}>
+                <Col style={{textAlign:'center'}} xs={{span:24}} lg={{span:4}}>
                   <Link to="/trangchu">
                     <div className="logo">
                       <img src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492996/logo_mkwtqz.jpg" />
