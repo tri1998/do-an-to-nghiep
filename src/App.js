@@ -1,57 +1,96 @@
-import React, { Fragment,Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import "antd/dist/antd.css";
-import NguoiDung from './pages/NguoiDung';
-import Admin from './pages/Admin';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import axios from 'axios'
-import {connect} from 'react-redux';
-
+import Admin from './template/Admin';
+import Auth from './components/Auth';
+import User from './template/User.jsx'
+import { BrowserRouter, Route, Switch} from 'react-router-dom';
+import { actLuuTaiKhoan } from './redux/actions/nguoidung';
+import { actLuuMangSP,actLuuMangDanhMucSanPham } from './redux/actions/sanpham';
+import { actLuuMangHD } from './redux/actions/hoadon';
+import {port} from './config/configAPI';
+import axios from 'axios';
+import { connect } from 'react-redux';
 import './App.css';
-import {actLuuMangSP} from './redux/actions/sanpham';
-import {actLuuTaiKhoan} from './redux/actions/nguoidung'
 
 
 class App extends Component {
 
-  componentDidMount(){
+  componentDidMount() {
     axios({
-      method:"GET",
-      url:'http://localhost:7000/api/taikhoan' 
+      method: "GET",
+      url: `http://localhost:${port}/api/taikhoan`
+    }).then(res => {
+      this.props.onSaveDSNguoiDung(res.data);
+    })
+    .catch(error => console.log(error));
+
+    axios({
+      method: "GET",
+      url: `http://localhost:${port}/api/sanpham`
+    }).then(res => {
+            this.props.onSaveDSSanPham(res.data);
+    })
+    .catch(error => console.log(error));
+
+    axios({
+      method:'GET',
+      url: `http://localhost:${port}/api/danhmucsanpham`
     }).then(res=>{
-          this.props.onSaveDSNguoiDung(res.data);
-        })
-      .catch(error=>console.log(error));
-  
+      this.props.onSaveDSLoaiSanPham(res.data);
+    })
+    .catch(error=>console.log(error));
+
+    axios({
+      method:'GET',
+      url: `http://localhost:${port}/api/hoadon`
+    }).then(res=>{
+      this.props.onSaveDSHoaDon(res.data);
+    })
+    .catch(error=>console.log(error));
+
   }
 
-  render(){
+
+  render() {
     return (
-      <BrowserRouter>
-      <div className="App">
-       
-          <Fragment>
+      <BrowserRouter >
+        <Fragment>
+          <div className="App">
             <Switch>
-              <Route exact path="/" component={NguoiDung}></Route>
-              <Route path="/admin" component={Admin}></Route>
+              <Auth path='/admin' Component={Admin}></Auth>
+              <Route exact path='' component={User}></Route>
             </Switch>
-          </Fragment>
-        
-      </div>
+          </div>
+        </Fragment>
       </BrowserRouter>
 
-  );
-}
-}
-
-const mapDispatchToProps = (dispatch)=>{
-  return{
-    onSaveDSNguoiDung:(danhsachnguoidung)=>{
-      dispatch(actLuuTaiKhoan(danhsachnguoidung))
-    },
-    
+    );
   }
 }
 
 
-export default connect(null,mapDispatchToProps)(App);
+const mapStateToProps = (state) => {
+  return {
+    isAdminLogin: state.DSND.adminLogin
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSaveDSNguoiDung: (danhsachnguoidung) => {
+      dispatch(actLuuTaiKhoan(danhsachnguoidung))
+    },
+    onSaveDSSanPham: (danhsachsanpham) => {
+      dispatch(actLuuMangSP(danhsachsanpham))
+    },
+    onSaveDSLoaiSanPham:(danhsachloaisanpham)=>{
+      dispatch(actLuuMangDanhMucSanPham(danhsachloaisanpham))
+    },
+    onSaveDSHoaDon:(danhsachmanghoadon)=>{
+      dispatch(actLuuMangHD(danhsachmanghoadon))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 

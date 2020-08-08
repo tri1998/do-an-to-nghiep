@@ -3,10 +3,7 @@
     font-size: 14px;
     line-height: 1.42857143;
     font-family: Arial !important;
-}
-
-.nguoidung{
-    background-image: url("/img/wrap-bg-body.png");
+    background-image: url("https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492994/wrapbody.png");
     background-repeat: repeat;
 }
 
@@ -24,7 +21,7 @@ a{
 }
 
 .logo img{
-    width: 218px;
+    width: 210px;
     height: 150px;
 }
 
@@ -36,7 +33,7 @@ hr{
 }
 
 .cart {
-    text-align: right;
+    text-align: center;
 }
 
 /*----CAROUSEL HERE*/
@@ -45,6 +42,22 @@ hr{
     height: 550px;
     line-height: 160px;
     overflow: hidden;
+}
+
+.ant-carousel .slick-dots {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 15;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin-right: 0% !important;
+    margin-left: 0% !important;
+    padding-left: 0;
+    list-style: none;
 }
   
 
@@ -127,6 +140,7 @@ ul li a:hover{
     border-top-left-radius: 100px;
     border-top-right-radius: 100px;
     border-bottom: 0;
+    text-align: center;
     background: #56bc9a;
     box-sizing: border-box;
     opacity: 0.85;
@@ -143,11 +157,20 @@ ul li a:hover{
     
 }
 
-.gia{
+.Gia{
     font-weight: bold;
     font-size: 30px;
     color:#FE5252;
 }
+
+.disableRow{
+    color: gainsboro;
+}
+
+.tenSPCenter{
+    text-align: center;
+}
+
 
 .half-circle {
     width: 130px;
@@ -250,6 +273,206 @@ ul li a:hover{
 .site-layout .site-layout-background {
     background: #fff;
 }
+
+/*CUSTOM MODAL ANTD*/
+.ant-modal-header {
+    text-align: center;
+}
+
+/*ADMIN CSS*/
+
+.admin{
+    background:lavender;
+}
+
+.hinh{
+    width:110px;
+}
+
+.ant-drawer-header{
+    text-align: center;
+}
+
+.ant-drawer-footer{
+    display: none;
+}
+
+.ant-modal-footer{
+    display: none;
+}
+
+.anhThem{
+    width:120px;
+    height:120px;
+    border: 1px solid red;
+}
+
+/* GIO HANG  */
+
+.tieude{
+    text-align: center;
+}
+
+.trangthaitrue{
+    color:cornflowerblue;
+}
+.trangthaifalse{
+    color:red;
+}
+
+/*CHUC NANG SAP XEP */
+.sapxep{
+    font-size: 16px;
+}
+/*HET CHUC NANG SAP XEP*/
+
+/*CUSTOME HINH SP*/
+.hinhSP{
+    height:202px;
+}
+.tenSP{
+    height:50px;
+    width:100%;
+}
+.btn_sp{
+    width:100%;
+    text-align: center;
+}
+
+/*GIO HANG*/
+.rowTongTien{
+    text-align: center;
+    background: #F9F9F9;
+}
+.tongTien{
+    font-weight: bold;
+    font-size: 20px;
+}
+.soLuongSP{
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.hinhSPGioHang{
+    max-width: 150px;
+}
+
+.frmGioHang ul{
+    display: none;
+}
+
+.gioHangTrong{
+    width:100%;
+    height:400px;
+    background-image: url("https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492994/wrapbody.png");
+    background-repeat: repeat;
+    text-align: center;
+}
+/* ThanhToan */
+.right{
+    text-align: right;
+    background-color: #fafafa;
+    height: auto;
+    box-shadow: 1px 0 0 #e1e1e1 inset;
+    background-color: #f7f7f7;
+    padding-left: 2em;
+}
+
+.content-box{
+    padding:0;  
+}
+.box{
+    padding: 3%;
+    border: ridge;
+}
+.box-mid p{
+    text-align: center;
+}
+.box p{
+    text-align: center;
+}
+.btnThanhtoan{
+    float:right;
+    margin:2%;
+}
+.price{
+    right: 0;
+    position: absolute;
+}
+button a{
+    color: white;
+}
+/* quanlyhoadon */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  .temp{
+      text-align: center;
+  }
+  .hide{
+      display:none;
+  }
+  .styleDG{
+      background-color: #85ea00;
+  }
+
+
 
 
 
