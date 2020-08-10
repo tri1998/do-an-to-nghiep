@@ -23,7 +23,7 @@ export default class DanhSachAnhTheoMaSP extends Component {
     render() {
         let {danhSachAnh} = this.state;
         return (
-            <Row>
+            <Row gutter={[8,8]}>
                 {
                     danhSachAnh===[]?null:danhSachAnh.map((anh,index)=>{
                         return <Col key={index} span={8}>

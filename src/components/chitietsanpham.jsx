@@ -40,11 +40,22 @@ class chitietsanpham extends Component {
         this.state={
             soLuong:1,
             isLoading:false,
+            danhSachKT:[]
         }
     }
     componentDidMount(){
-        console.log('tao chay ne');
         let maSanPham = this.props.match.params.MaSP;
+
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/sanpham/layKichThuocSanPham/${maSanPham}`
+        })
+        .then(res=>{
+            this.setState({danhSachKT:res.data});
+        })
+        .catch(err=>console.log(err));
+
+
         axios({
             method:"GET",
             url:`http://localhost:${port}/api/sanpham/xemChiTietSP/${maSanPham}`
@@ -54,6 +65,7 @@ class chitietsanpham extends Component {
             this.setState({isLoading:!this.state.isLoading});
         })
         .catch(err=>console.log(err));
+
     }
 
     //Thong bao nay duoc show ra khi nguoi dung nhap so luon < 1
@@ -77,7 +89,6 @@ class chitietsanpham extends Component {
             [e.target.name]:parseInt(e.target.value)
         })
         console.log(this.state.soLuong);
-
     }
 
     //Chuc nang them vao nhan vao la 1 object sanPham
@@ -103,6 +114,7 @@ class chitietsanpham extends Component {
 
     render() {
         let {TenSP,Gia,Hinh,MaKT,SL,ThongTinSP,PhanTram,MaSP} = this.props.SPDuocChon;
+        const {danhSachKT} = this.state
         console.log(Gia);
         let GiaKM=PhanTram===undefined?0:Gia-(Gia*PhanTram/100);
         return (
@@ -139,22 +151,17 @@ class chitietsanpham extends Component {
                                     {SL===0?<span style={{color:'red'}} className="fs16">Hết</span>
                                     :<span className="fs16">Còn {SL} </span>}
                                     {MaKT===6?null:<Row>
-                                        <Col span={8}><span className="fs16">Kích Thước: </span></Col>
-                                        <Col span={16}>
-                                            <KichThuoc maKichThuoc={MaKT}></KichThuoc>
+                                        <Col span={24}>
+                                            <Select defaultValue={1} style={{width:'100%'}}>
+                                                {
+                                                    danhSachKT.map((kt,index)=>{
+                                                    return <Option key={index} value={kt.MaKT}>Size {kt.TenKT}</Option>
+                                                    })
+                                                }
+                                            </Select>
                                         </Col>
                                     </Row>} 
                                     <br/>
-                                    
-                                    {PhanTram===undefined?null:<span 
-                                    className={GiaKM!==0?"Gia":"GiaKM"}>
-                                    {GiaKM.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}
-                                    </span>}
-
-                                    <span 
-                                    className={GiaKM!==0?"GiaKM":"Gia"}>
-                                    {Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}
-                                    </span>
                                 </Col>
 
                                 <Col span={12} className="right">
@@ -166,7 +173,23 @@ class chitietsanpham extends Component {
                                         <Col span={2}></Col>
                                     </Row>
                                 <br/>
-                                    <Button 
+                                    
+
+                                </Col>
+                                <Col span={12} style={{marginBottom:'-50px'}}>
+                                    {PhanTram===undefined?null:<span 
+                                    className={GiaKM!==0?"Gia":"GiaKM"}>
+                                    {GiaKM.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}
+                                    </span>}
+
+                                    <span 
+                                    className={GiaKM!==0?"GiaKM":"Gia"}>
+                                    {Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}
+                                    </span>
+                                </Col>
+
+                                <Col span={12} style={{marginBottom:'-50px'}}>
+                                <Button 
                                     onClick={
                                     ()=>this.state.soLuong>0
                                     ?this.themVaoGio(this.props.SPDuocChon)
@@ -178,7 +201,6 @@ class chitietsanpham extends Component {
                                     >
                                         <ShoppingCartOutlined />Thêm Vào Giỏ Hàng
                                     </Button>
-
                                 </Col>
                             </Row>
                         </Col>

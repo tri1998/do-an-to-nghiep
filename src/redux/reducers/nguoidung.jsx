@@ -79,7 +79,6 @@ const nguoiDungReducer=(state=nguoiDungDefault,action)=>{
             mangNguoiDungCapNhat[viTri].HoTen=user.HoTen;
             mangNguoiDungCapNhat[viTri].DiaChi=user.DiaChi;
             mangNguoiDungCapNhat[viTri].SDT=user.SoDienThoai;
-            mangNguoiDungCapNhat[viTri].MatKhau=user.MatKhau;
             state.DSND=mangNguoiDungCapNhat;
             return {...state}
         }

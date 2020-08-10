@@ -24,7 +24,7 @@ export default class KichThuoc extends Component {
         const {danhSachKichThuoc} = this.state;
         let MaKT = this.props.maKichThuoc;
         return (
-            <Select defaultValue={MaKT===undefined?6:MaKT} placeholder="Chọn kích thước">
+            <Select defaultValue={MaKT} placeholder="Chọn kích thước">
             {
                 danhSachKichThuoc.map((kt,index)=>{
                     return <Option key={index} value={kt.MaKT}>{kt.TenKT}</Option>

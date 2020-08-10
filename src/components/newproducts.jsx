@@ -52,7 +52,7 @@ class newproducts extends Component {
                         </Col>
                     </Row>
                     <br />
-                     <Carousel ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
+                     <Carousel responsive={[{breakpoint:600,settings:{slidesToShow:2}}]} ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
                         {
                              this.loadDSSP()
                         }

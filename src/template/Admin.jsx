@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { Layout, Menu, Space,Badge } from 'antd';
+import { Layout, Menu, Space,Badge,Popconfirm } from 'antd';
 import {
     DesktopOutlined,
     LogoutOutlined,
@@ -7,7 +7,8 @@ import {
     UserOutlined,
     FileAddOutlined,
     NotificationOutlined,
-    MessageOutlined
+    MessageOutlined,
+    LockOutlined
 } from '@ant-design/icons';
 import { Link} from 'react-router-dom';
 import {Route, Switch } from 'react-router-dom'
@@ -20,52 +21,33 @@ import ThongBao from '../components/thongbao';
 import QuanLyKhuyenMai from '../pages/QuanLyKhuyenMai.jsx';
 import ChiTietKhuyenMai from '../components/ChiTietKhuyenMai.jsx';
 import TrangChu from '../containers/adminTrangChu';
+import DoiMatKhau from '../pages/AdminDoiMatKhau';
 import {actAdminLogOut,actDangXuatNguoiDung} from '../redux/actions/nguoidung.jsx'
 import {connect} from 'react-redux'
 import moment from 'moment';
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const routes = [
-    {
-      path: 'index',
-      breadcrumbName: 'Home',
-    },
-    {
-      path: 'first',
-      breadcrumbName: 'first',
-      
-    },
-    {
-      path: 'second',
-      breadcrumbName: 'second',
-    },
-  ];
-
-function itemRender(route, params, routes, paths) {
-    const last = routes.indexOf(route) === routes.length - 1;
-    return last ? (
-      <span>{route.breadcrumbName}</span>
-    ) : (
-      <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-    );
-  }
-
 class Admin extends Component {
     state = {
         collapsed: false,
     };
+
+    confirm=(e)=> {
+        sessionStorage.removeItem('admintoken');
+        this.props.dangXuat();
+        this.props.history.push('/');
+    }
+      
+    cancel =(e)=> {
+        console.log(e);
+    }
 
     onCollapse = collapsed => {
         console.log(collapsed);
         this.setState({ collapsed });
     };
 
-    adminLogOut=()=>{
-        sessionStorage.removeItem('admintoken');
-        this.props.dangXuat();
-        this.props.history.push('/');
-    }
     render() {
         let Ngay = moment().format('DD');
         let Thang = moment().format('MM');
@@ -91,17 +73,18 @@ class Admin extends Component {
                                                 Quản lý khuyến mại
                                             </Link>
                                         </Menu.Item>
-                                    
-                                    
-                                    <SubMenu key="sub1" icon={<UserOutlined />} title="Quản lý người dùng">
-                                        <Menu.Item key="3">Nhân Viên</Menu.Item>
-                                        <Menu.Item key="4"><Link to={`${this.props.match.url}/quanlykhachhang`}>Khách Hàng</Link></Menu.Item>
-                                        <Menu.Item key="5">Quản Trị</Menu.Item>
-                                    </SubMenu>
-                                    <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Quản lý sản phẩm">
+
+                                    <Menu.Item icon={<UserOutlined />} key="3">
+                                        <Link to={`${this.props.match.url}/quanlykhachhang`}>
+                                            Quản lý khách hàng
+                                        </Link>
+                                    </Menu.Item>
+
+                                    <SubMenu key="sub1" icon={<AppstoreOutlined />} title="Quản lý sản phẩm">
                                         <Menu.Item key="6"><Link to={`${this.props.match.url}/quanlysanpham`}>Sản phẩm</Link></Menu.Item>
                                         <Menu.Item key="8"><Link to={`${this.props.match.url}/quanlyloaisanpham`}>Loại sản phẩm</Link></Menu.Item>
                                     </SubMenu>
+
                                     <Menu.Item icon={<FileAddOutlined />}>
                                         <Link
                                             to={`${this.props.match.url}/quanlyhoadon`}
@@ -123,7 +106,22 @@ class Admin extends Component {
                                             </Badge>
                                         </Link>
                                     </Menu.Item>
-                                    <Menu.Item key="9" icon={<LogoutOutlined />} onClick={this.adminLogOut}>Đăng xuất</Menu.Item>
+                                    <Menu.Item icon={<LockOutlined />}>
+                                        <Link to={`${this.props.match.url}/thaydoimatkhau`}>
+                                             Đổi mật khẩu
+                                        </Link>
+                                    </Menu.Item>
+                                    <Menu.Item key="9" icon={<LogoutOutlined />}>
+                                    <Popconfirm
+                                        title="Bạn muốn đăng xuất ?"
+                                        onConfirm={this.confirm}
+                                        onCancel={this.cancel}
+                                        okText="Có"
+                                        cancelText="Hủy"
+                                    >
+                                        Đăng xuất
+                                    </Popconfirm>
+                                    </Menu.Item>
                                 </Menu>
                             </Sider>
                             <Layout className="site-layout">
@@ -142,6 +140,7 @@ class Admin extends Component {
                                         <Route path={`${this.props.match.url}/quanlykhuyenmai`} component={QuanLyKhuyenMai}></Route>
                                         <Route path={`${this.props.match.url}/quanlyhoadon`} component={QuanLyHoaDon}></Route>
                                         <Route path={`${this.props.match.url}/quanlybinhluan`} component={QuanLyBinhLuan}></Route>
+                                        <Route path={`${this.props.match.url}/thaydoimatkhau`} component={DoiMatKhau}></Route>
                                         <Route path={`${this.props.match.url}/chitietkhuyenmai/:maKM`} component={ChiTietKhuyenMai}></Route>
                                         <Route exact path={`${this.props.match.url}/`} component={TrangChu}></Route>
                                       </Switch>

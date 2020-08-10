@@ -14,8 +14,6 @@ import {
   } from 'antd';
 import {
   FormOutlined,
-  DollarOutlined,
-  RadarChartOutlined,
   SearchOutlined,
   CloseOutlined,
   RedoOutlined,
@@ -31,16 +29,12 @@ import {
   actCapNhatThongTinSanPham
 } from '../redux/actions/sanpham'
 import Highlighter from 'react-highlight-words';
-import KichThuoc from '../components/KichThuoc';
-import HangSanXuat from '../components/HangSanXuat';
 import DanhSachAnh from '../components/DanhSachAnhTheoMaSP';
+import CapNhatSanPham from '../components/CapNhatSanPham';
 import 'react-quill/dist/quill.snow.css';
 import {port} from '../config/configAPI';
 import ReactQuill from 'react-quill';
-
 const { Option } = Select;
-
-
 class QuanLySanPham extends Component {
     constructor(props) {
         super(props);
@@ -57,9 +51,32 @@ class QuanLySanPham extends Component {
           AnhCapNhat:null,
           AnhSPDaiDien:'',
           MaAnhSPLienQuan:'',
-          AnhSPLienQuan:''
+          AnhSPLienQuan:'',
+          maSanPham:'',
+          danhSachHangSX:[],
+          danhSachKichThuoc:[]
         };
       }
+
+      componentDidMount(){
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/hangsx/layDSHangsx`
+        })
+        .then(res=>this.setState({
+            danhSachHangSX:res.data
+        }))
+        .catch(err=>console.log(err))
+
+        axios({
+          method:"GET",
+          url:`http://localhost:${port}/api/kichthuoc/layDSKT`
+        })
+        .then(res=>this.setState({
+            danhSachKichThuoc:res.data
+        }))
+        .catch(err=>console.log(err))
+    }
 
       showDrawer = (sanPham) => {
         this.props.chonSanPham(sanPham);
@@ -140,8 +157,9 @@ class QuanLySanPham extends Component {
 
     //Them san pham
     themSanPham=(values)=>{
+        let SanPham = [...this.props.DanhSachSanPham].pop();
         const sanPham = {
-            MaSP:values.MaSP,
+            MaSP:SanPham.MaSP,
             MaDM:parseInt(values.LoaiSP),
             MaHang:parseInt(values.HangSX),
             TenSP:values.TenSP,
@@ -319,7 +337,7 @@ class QuanLySanPham extends Component {
                 <Space>
                     <Button
                         disabled={record.TrangThai === 0 ? true : false}
-                        onClick={()=>this.showDrawer(record)} 
+                        onClick={()=>this.showDrawer1(record.MaSP)} 
                         type="primary"><FormOutlined style={{ fontSize: '20px' }} />
 
                     </Button>
@@ -364,11 +382,25 @@ class QuanLySanPham extends Component {
         ['clean']
       ],
     }
+
+    formats = [
+      'header',
+      'bold', 'italic', 'underline', 'strike', 'blockquote',
+      'list', 'bullet', 'indent',
+      'link', 'image'
+    ]
+
+    showDrawer1=(maSanPham)=>{
+      console.log(maSanPham);
+      this.setState({
+        visibleDrawer: true,
+        maSanPham:maSanPham
+      });
+    }
       
     render() {
         let data = this.props.DanhSachSanPham;
-        let dataChonCapNhat = this.props.SanPhamDuocChon;
-        const { visible, confirmLoading,imageUrl,visibleThemAnh,AnhSPDaiDien } = this.state;
+        const { visible, confirmLoading,visibleThemAnh,AnhSPDaiDien,maSanPham,danhSachKichThuoc } = this.state;
         let widget = window.cloudinary.createUploadWidget({
           cloudName:"dl9fnqrq3",
           uploadPreset:"qsg1ozry"},
@@ -448,9 +480,9 @@ class QuanLySanPham extends Component {
                         onFinish={this.themSanPham}
                     >
                         <Row>
-                          <Col span={4}><h4>MÃ SP :</h4></Col>
-                          <Col span={20}>
+                          <Col span={24}>
                             <Form.Item
+                            hidden={true}
                             name="MaSP"
                             initialValue={data.length+1}
                             rules={[{ required: true, message: 'Please input your Username!' }]}
@@ -458,7 +490,7 @@ class QuanLySanPham extends Component {
                             <Input
                                 disabled={true}
                                 size="large" 
-                                prefix={<RadarChartOutlined className="site-form-item-icon" />} 
+                                 
                                 placeholder="Tên Sản Phẩm" 
                             />
                             </Form.Item>
@@ -474,7 +506,7 @@ class QuanLySanPham extends Component {
                             >
                             <Input 
                                 size="large" 
-                                prefix={<RadarChartOutlined className="site-form-item-icon" />} 
+                               
                                 placeholder="Tên Sản Phẩm" 
                             />
                             </Form.Item>
@@ -492,7 +524,7 @@ class QuanLySanPham extends Component {
                             <Input
                                 type="number"
                                 size="large" 
-                                prefix={<DollarOutlined className="site-form-item-icon" />} 
+                                
                                 placeholder="Giá" 
                             />
                             </Form.Item>
@@ -520,10 +552,16 @@ class QuanLySanPham extends Component {
                           <Col span={20}>
                             <Form.Item
                               name="HangSX"
-                              initialValue={4}
+                              hasFeedback
                               rules={[{ required: true, message: 'Mời chọn !' }]}
                             >
-                                <HangSanXuat></HangSanXuat>
+                                <Select placeholder="Chọn Hãng Sản Xuất !">
+                                  {
+                                      this.state.danhSachHangSX.map((hang,index)=>{
+                                      return <Option key={index} value={hang.MaHang}>{hang.Tenhang}</Option>
+                                      })
+                                  }
+                              </Select>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -566,9 +604,16 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="KichThuoc"
                               initialValue={6}
+                              hasFeedback
                               rules={[{ required: true, message: 'Chọn kích thước !' }]}
                             >
-                                <KichThuoc></KichThuoc>
+                                <Select placeholder="Chọn kích thước">
+                                {
+                                    danhSachKichThuoc.map((kt,index)=>{
+                                        return <Option key={index} value={kt.MaKT}>{kt.TenKT}</Option>
+                                    })
+                                }
+                                </Select>
                             </Form.Item>
                           </Col>
                         </Row>
@@ -579,7 +624,11 @@ class QuanLySanPham extends Component {
                             <Form.Item
                               name="ThongTinSP"
                             >
-                              <ReactQuill modules={this.modules} value="..."></ReactQuill>
+                              <ReactQuill 
+                              modules={this.modules}
+                              formats={this.formats}
+                              value="..."
+                              ></ReactQuill>
                             </Form.Item>
                             
                           </Col>
@@ -627,147 +676,8 @@ class QuanLySanPham extends Component {
                         </div>
                       }
                     >
-                      <Form 
-                         layout="vertical" 
-                         hideRequiredMark
-                         onFinish={this.capNhatThongTinSanPham}
-                      >
-                        <Row gutter={16}>
-                          <Col span={12}>
-                            <Form.Item
-                              name="MaSP"
-                              label="Mã Sản Phẩm"
-                              rules={[{ required: true, message: 'Please enter user name' }]}
-                              initialValue={dataChonCapNhat.MaSP}
-                            >
-                              <Input disabled placeholder="Mã Sản Phẩm" />
-                            </Form.Item>
-                          </Col>
-                          <Col span={12}>
-                            <Form.Item
-                              name="TenSP"
-                              label="Tên Sản Phẩm"
-                              initialValue={dataChonCapNhat.TenSP}
-                              rules={[{ required: true, message: 'Please enter url' }]}
-                            >
-                              <Input placeholder="Tên Sản Phẩm" />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <Row gutter={16}>
-                          <Col span={12}>
-                            <Form.Item
-                              name="MaDM"
-                              label="Loại Sản Phẩm"
-                              initialValue={dataChonCapNhat.MaDM}
-                              rules={[{ required: true, message: 'Please select an owner' }]}
-                            >
-                              <Select placeholder="Please select an owner">
-                                <Option value={1}>Gameming Gear</Option>
-                                <Option value={2}>GunDam</Option>
-                                <Option value={3}>Áo in</Option>
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col span={12}>
-                            <Form.Item
-                              name="MaHang"
-                              label="Hãng Sản Xuất"
-                              initialValue={dataChonCapNhat.MaHang}
-                              rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                              <Select placeholder="Please choose the type">
-                                <Option value={1}>Dare-U</Option>
-                                <Option value={2}>Logitech</Option>
-                                <Option value={3}>Steelserie</Option>
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <Row gutter={16}>
-                          <Col span={12}>
-                            <Form.Item
-                              name="Gia"
-                              label="Giá : "
-                              initialValue={dataChonCapNhat.Gia}
-                              rules={[{ required: true, message: 'Please choose the approver' }]}
-                            >
-                              <Input type="number" />
-                            </Form.Item>
-                          </Col>
-                          <Col span={12}>
-                            <Form.Item
-                              name="SanPham_Moi"
-                              label="Tình Trạng : "
-                              initialValue={dataChonCapNhat.SanPham_Moi}
-                            >
-                              <Select  placeholder="Please choose the type">
-                                <Option value={0}>Sản Phẩm Cũ</Option>
-                                <Option value={1}>Sản Phẩm Mới</Option>
-
-                              </Select>
-
-                            </Form.Item>
-                          </Col>
-                        </Row>
-
-                        <Row gutter={16}>
-                          <Col span={12}>
-                            <Form.Item
-                              name="TrangThai"
-                              label="Trạng Thái : "
-                              initialValue={dataChonCapNhat.TrangThai}
-                              rules={[{ required: true, message: 'Please choose the approver' }]}
-                            >
-                              <Select placeholder="Please choose the type">
-                                <Option value={0}>Ngừng Bán</Option>
-                                <Option value={1}>Đang Bán</Option>
-
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col span={12}>
-                            <Form.Item
-                              name="Hinh"
-                              label="Hình Ảnh : "
-                              initialValue={dataChonCapNhat.Hinh}
-                            >
-                              <Button 
-                                type="primary" 
-                                onClick={()=>this.showWidget(widget)}
-                              >Thay ảnh</Button>
-                            <div className="anhThem">
-                                <img 
-                                  className="anhThem" 
-                                  src={this.state.AnhCapNhat===null
-                                       ?dataChonCapNhat.Hinh
-                                       :this.state.AnhCapNhat
-                                  } 
-                                  alt={dataChonCapNhat.TenSP}
-                                />
-                            </div>
-                            </Form.Item>
-                          </Col>
-                        </Row>
-
-                        <Row gutter={16}>
-                          <Col span={24}>
-                            <Form.Item
-                              name="ThongTinSP"
-                              label="Thông Tin Sản Phẩm"
-                            >
-                              <Input.TextArea rows={4} placeholder="Nhập Thông Tin Sản Phẩm" />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-
-                        <Row gutter={16}>
-                          <Col span={24}>
-                            <Button block type="danger" htmlType="submit">Cập Nhật</Button>
-                          </Col>
-                        </Row>
-                      </Form>
-
+                      
+                      <CapNhatSanPham maSanPham={maSanPham} danhSachHangSX={this.props.danhSachHangSX}/>
                       
                     </Drawer>
             </div>

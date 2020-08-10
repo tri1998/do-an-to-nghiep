@@ -6,7 +6,7 @@ class TimKiemSanPham extends Component {
     
     loadDSSP=()=>{
         return this.props.DSSP.map((sp,index)=>{
-            return <Col key={index} span={6}><SanPham key={index} sanPham={sp}></SanPham></Col>
+            return <Col key={index} xs={{span:12}} lg={{span:6}}><SanPham key={index} sanPham={sp}></SanPham></Col>
         })
     }
     
@@ -19,6 +19,10 @@ class TimKiemSanPham extends Component {
                     <Col span={1}></Col>
                     <Col span={22}>
                     <Row gutter={[0,20]}>
+                        <Col style={{textAlign:'center'}} span={24}>
+                            <h1>TÌM KIẾM</h1>
+                            <h3>Có {this.props.DSSP.length} kết quả tìm kiếm cho <span style={{fontWeight:'bold'}}>"{JSON.parse(localStorage.getItem('timkiem'))}"</span></h3>
+                        </Col>
                     {
                         this.loadDSSP()
                     }

@@ -37,27 +37,23 @@ class ThanhToan extends Component {
             shipFee:0,
             hoaDon:undefined,
             soLuongHoaDon:0,
-            thanhTien:0
+            thanhTien:0,
+            TrangThaiThanhToan:''
         }
     }
 
-    shouldComponentUpdate(nextProps,nextState){
-        return true;
-    }
-
-    
 
     hoanTatDonHang=(values)=>{
-        console.log(values);
         let mangSanPham = this.props.mangSanPham;
         let hoaDon = {
             MaHD:values.MaHD,
-            MaTK:null,
+            MaTK:values.MaTK===""?"":values.MaTK,
             HoTen:values.HoTen,
             Email:values.Email,
             SDT:values.SoDienThoai,
             DiaChi:values.DiaChi,
-            ThanhTien:this.props.tongTien+this.state.shipFee
+            ThanhTien:this.props.tongTien+this.state.shipFee,
+            PhuongThucTT:values.PhuongThucTT
         }
         axios({
             method:"POST",
@@ -156,7 +152,8 @@ class ThanhToan extends Component {
             height: '30px',
             lineHeight: '30px',
         };
-        console.log(1);
+        const user = JSON.parse(sessionStorage.getItem('userinfo'));
+        console.log(user);
         return (
             <div>
                 <Row>
@@ -169,7 +166,7 @@ class ThanhToan extends Component {
                                 <div>
                                     <h4> <Link to="/giohang"> Giỏ hàng </Link> {'>'} Thông tin giao hàng </h4>
                                     <h2 style={{marginTop:25,marginBottom:25,fontWeight:400}}>Thông tin giao hàng</h2>
-                                    <h3>Bạn đã có tài khoản ? <Link to="/dangnhap">Đăng nhập</Link></h3>
+                                    {user===null?<h3>Bạn đã có tài khoản ? <Link to="/dangnhap">Đăng nhập</Link></h3>:null}
                                     <Form
                                         name="frmThanhToan"
                                         className="login-form"
@@ -192,8 +189,23 @@ class ThanhToan extends Component {
                                         </Form.Item>:null}
 
                                         <Form.Item
+                                            hidden={true}
+                                            name="MaTK"
+                                            shouldUpdate
+                                            initialValue={user!==null?user.MaTK:""}
+                                        >
+                                            <Input
+                                                disabled
+                                                size="large"
+                                                style={{width:'100%',borderRadius:5}}
+                                                placeholder="Mã Hóa Đơn"
+                                            />
+                                        </Form.Item>
+
+                                        <Form.Item
                                             name="HoTen"
                                             rules={[{ required: true, message: 'Nhập họ tên please...' }]}
+                                            initialValue={user!==null?user.HoTen:""}
                                         >
                                             <Input
                                                 size="large"
@@ -205,6 +217,7 @@ class ThanhToan extends Component {
                                         <Row gutter={[8]}>
                                             <Col span={16}>
                                                 <Form.Item
+                                                    initialValue={user!==null?user.Email:""}
                                                     name="Email"
                                                     rules={[
                                                         { required: true, message: 'Nhập email please...' },
@@ -224,6 +237,7 @@ class ThanhToan extends Component {
 
                                             <Col span={8}>
                                                 <Form.Item
+                                                    initialValue={user!==null?user.SDT:""}
                                                     name="SoDienThoai"
                                                     rules={[{ required: true, message: 'Nhập số điện thoại please...'},{pattern:'[0-9]{10,11}',message: 'Số điện thoại không đúng !'} ]}
                                                 >
@@ -238,6 +252,7 @@ class ThanhToan extends Component {
                                         </Row>
 
                                         <Form.Item
+                                            initialValue={user!==null?user.DiaChi:""}
                                             name="DiaChi"
                                             rules={[{ required: true, message: 'Nhập địa chỉ please...' }]}
                                         >
@@ -322,10 +337,25 @@ class ThanhToan extends Component {
                                         </Radio.Group>}
 
                                         <h2 style={{marginBottom:25,fontWeight:400}}>Phương thức thanh toán</h2>
-                                        <Radio.Group className="radioThanhToan" size="large" onChange={this.onChangeRadio} value={this.state.radioOption}>
-                                            <Radio  style={radioStyle} value={1}>Thanh toán khi giao hàng(COD)</Radio>
-                                            <Radio  style={radioStyle} value={2}>Chuyển khoản ngân hàng</Radio>
-                                        </Radio.Group>
+                                        <Form.Item
+                                            name="PhuongThucTT"
+                                            rules={[{ required: true, message: 'Chọn phương thức thanh toán ! ' }]}
+                                        >
+                                            <Radio.Group className="radioThanhToan" size="large" onChange={this.onChangeRadio} value={this.state.radioOption}>
+                                                <Radio 
+                                                style={radioStyle} 
+                                                value={1}
+                                                >Thanh toán khi giao hàng(COD)
+                                                </Radio>
+
+                                                <Radio
+                                                style={radioStyle} 
+                                                value={2}
+                                                >
+                                                    Chuyển khoản ngân hàng
+                                                </Radio>
+                                            </Radio.Group>
+                                        </Form.Item>
 
                                         {this.state.radioOption===2?
                                         <div className="chuyenKhoan">

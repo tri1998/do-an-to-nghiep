@@ -25,6 +25,8 @@
     "moment": "^2.27.0",
     "multer": "^1.4.2",
     "mysql": "^2.18.1",
+    "quill-image-drop-module": "^1.0.3",
+    "quill-image-resize-module": "^3.0.0",
     "randomstring": "^1.1.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

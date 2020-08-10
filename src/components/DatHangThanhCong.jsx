@@ -48,9 +48,11 @@ class DatHangThanhCong extends Component {
                         <p>Họ tên : {hoaDon.HoTen}</p>
                         <p>Email : {hoaDon.Email}</p>
                         <p>Địa chỉ : {hoaDon.DiaChi}</p>
-                        <p>Số điện thoại : {hoaDon.SoDienThoai}</p>
+                        <p>Số điện thoại : {hoaDon.SDT}</p>
                         <p>Vietnam</p>
-                        <p>Phương thúc thanh toán</p>
+                        <p>Phương thúc thanh toán:
+                            {hoaDon.PhuongThucTT===1?<span>Ship COD</span>:<span>Chuyển khoản ngân hàng</span>}
+                            </p>
                     </Col>
                 </Row>
                 <Row>

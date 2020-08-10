@@ -33,6 +33,11 @@ class LoaiSanPham extends Component {
         })
     }
 
+    sapXepSanPham=(value)=>{
+        console.log(`selected ${value}`);
+        console.log(this.props.match.url);
+    }
+
 
     render() {
         return (
@@ -77,7 +82,7 @@ class LoaiSanPham extends Component {
                             <Col span={8}></Col>
                             <Col span={16}>
                                 <span className="sapxep">Sắp Xếp Theo :</span>
-                                <Select style={{width:170,margin:5}} size="middle" defaultValue="sanphamnoibat">
+                                <Select onChange={this.sapXepSanPham} style={{width:170,margin:5}} size="middle" defaultValue="sanphamnoibat">
                                     <Option value="sanphamnoibat">Đang giảm giá</Option>
                                     <Option value="giatangdan">Giá: Tăng dần</Option>
                                     <Option value="giagiamdan">Giá: Giảm dần</Option>

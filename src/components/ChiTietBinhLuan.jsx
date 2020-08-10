@@ -10,7 +10,6 @@ import {
     Popconfirm,
     message
 } from 'antd'
-import { connect } from 'react-redux';
 import moment from 'moment';
 import { port } from '../config/configAPI';
 import axios from 'axios';
@@ -140,8 +139,9 @@ export default class ChiTietBinhLuan extends Component {
                         </Popconfirm> : null
                     ],
                     author: <span style={{ color: repliedcmt.MaTK === 'TK0' ? 'red' : null }}>{repliedcmt.HoTen}</span>,
-                    avatar: repliedcmt.MaTK !== 'TK0' ? 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-                        : 'https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492996/logo_mkwtqz.jpg',
+                    avatar: repliedcmt.MaTK !== 'TK0'
+                    ?'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+                    :"https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492996/logo_mkwtqz.jpg",
                     content: (
                         <p>
                             {repliedcmt.NoiDung}
@@ -182,8 +182,8 @@ export default class ChiTietBinhLuan extends Component {
                                 avatar={
                                     <Avatar
                                         src={adminOnline === null
-                                            ? "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                                            : 'https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595404236/img/logo_klzcmr.jpg'}
+                                            ?"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                            :"https://res.cloudinary.com/dl9fnqrq3/image/upload/v1595492996/logo_mkwtqz.jpg"}
                                         alt="Han Solo"
                                     />
                                 }

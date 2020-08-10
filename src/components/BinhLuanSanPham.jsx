@@ -64,18 +64,13 @@ class BinhLuanSanPham extends Component {
             });
         })
         .catch(err => console.log(err));
-
-
     }
 
     //BINH LUAN HERE
     handleSubmit = (nguoiDung) => {
-
-      
             if (!this.state.value) {
                 return;
             }
-
             let checkAdmin = sessionStorage.getItem('admintoken');
             let ThoiGian = moment().format('YYYY-MM-DD HH:mm:ss');
             const binhLuan = {
@@ -135,8 +130,6 @@ class BinhLuanSanPham extends Component {
             })
             .then(res => console.log(res.data))
             .catch(err => console.log(err))
-    
-            
     }
 
     handleChange = e => {
@@ -153,8 +146,6 @@ class BinhLuanSanPham extends Component {
 
     //Xoa Binh Luan Danh Cho Admin HERE !
     xoaBinhLuan = (index) => {
-
-
         let mangBinhLuanCapNhat = this.state.danhSachComments;
         let viTri = mangBinhLuanCapNhat.findIndex(bl => bl.MaBL === index);
         mangBinhLuanCapNhat.splice(viTri, 1);
@@ -316,7 +307,7 @@ class BinhLuanSanPham extends Component {
                 block
                 onClick={this.taiThemBinhLuan}
                 >
-                  Tải thêm bình luận
+                 Xem thêm bình luận
                 </Button>}
             </div>
         )

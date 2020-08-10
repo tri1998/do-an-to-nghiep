@@ -8,6 +8,7 @@ import {
   Modal,
   Form,
   Input,
+  message
 } from 'antd';
 import {
   FormOutlined,
@@ -18,17 +19,20 @@ import {
   HomeOutlined,
   PhoneOutlined,
   MailOutlined,
-  SearchOutlined
+  SearchOutlined,
+  BlockOutlined,
 } from '@ant-design/icons';
-import { 
+import {
   actUpdateTrangThaiUser,
   actRecoverUser,
   actSaveSelectedUser,
-  actUpdateUserInfo } from '../redux/actions/nguoidung';
+  actUpdateUserInfo
+} from '../redux/actions/nguoidung';
 import axios from 'axios';
 import Highlighter from 'react-highlight-words';
 import Swal from 'sweetalert2';
-import {port} from '../config/configAPI';
+import { actLuuTaiKhoan } from '../redux/actions/nguoidung';
+import { port } from '../config/configAPI';
 let md5 = require('md5');
 
 class DanhSachKhachHang extends Component {
@@ -42,6 +46,15 @@ class DanhSachKhachHang extends Component {
     };
 
   }
+  componentDidMount() {
+    axios({
+      method: "GET",
+      url: `http://localhost:${port}/api/taikhoan`
+    }).then(res => {
+      this.props.onSaveDSNguoiDung(res.data);
+    })
+    .catch(error => console.log(error));
+  }
 
   showModal = (user) => {
     this.props.saveSelectedUser(user);
@@ -50,6 +63,9 @@ class DanhSachKhachHang extends Component {
       visible: true,
     })
   };
+
+
+
   //Click OK tren modal
   handleOk = () => {
     this.setState({
@@ -72,6 +88,7 @@ class DanhSachKhachHang extends Component {
     });
   };
 
+
   //Cap nhat thong tin nguoi dung
   onFinish = values => {
     console.log('Received values of form: ', values);
@@ -79,16 +96,14 @@ class DanhSachKhachHang extends Component {
       MaTK: values.MaTK,
       HoTen: values.HoTen,
       SoDienThoai: values.SoDienThoai,
-      DiaChi:values.DiaChi,
-      MatKhau: md5(values.MatKhau)
+      DiaChi: values.DiaChi,
     }
     axios({
-      method:'PUT',
-      url:`http://localhost:${port}/api/taikhoan/capnhatTK/${capNhatUser.MaTK}`,
-      data:capNhatUser
+      method: 'PUT',
+      url: `http://localhost:${port}/api/taikhoan/capnhatTK/${capNhatUser.MaTK}`,
+      data: capNhatUser
     })
-    .then(res=>
-      {
+      .then(res => {
         this.props.updateUserInfo(capNhatUser);
         Swal.fire(
           'Cập Nhật Thành Công !',
@@ -97,14 +112,14 @@ class DanhSachKhachHang extends Component {
         );
       }
       )
-    .catch(err=>console.log(err))
+      .catch(err => console.log(err))
     setTimeout(() => {
       this.setState({
         visible: false,
         confirmLoading: false,
       });
     }, 1000);
-    
+
   };
 
 
@@ -209,8 +224,8 @@ class DanhSachKhachHang extends Component {
           textToHighlight={text.toString()}
         />
       ) : (
-        text
-      ),
+          text
+        ),
   });
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -225,7 +240,9 @@ class DanhSachKhachHang extends Component {
     clearFilters();
     this.setState({ searchText: '' });
   };
+
   
+
 
   columns = [
     {
@@ -263,11 +280,12 @@ class DanhSachKhachHang extends Component {
             <Button
               type="primary"
               danger
-              disabled={record.TrangThai === 0 ? true : false}
+              disabled={record.TrangThai===0?true:false}
               onClick={() => this.showModal(record)}>
               <FormOutlined style={{ fontSize: '20px' }} />
             </Button>
           </Tooltip>
+
           <Tooltip title="Xóa">
             <Button
               disabled={record.TrangThai === 0 ? true : false}
@@ -278,9 +296,10 @@ class DanhSachKhachHang extends Component {
               <CloseOutlined style={{ fontSize: '20px' }} />
             </Button>
           </Tooltip>
+
           {record.TrangThai === 0
             ? <Tooltip title="Phục hồi">
-              <Button 
+              <Button
                 onClick={() => this.recoverUser(record.MaTK)} danger>
                 <RedoOutlined style={{ fontSize: '20px' }} />
               </Button>
@@ -294,16 +313,17 @@ class DanhSachKhachHang extends Component {
   render() {
     let data = this.props.DanhSachKhachHang;
     let userDuocChon = this.props.KhachHangDuocChon;
-    const { visible, confirmLoading } = this.state;
+    const { visible, confirmLoading, visiblePassword } = this.state;
     return (
       <div>
         <Table
           columns={this.columns}
           dataSource={data}
           rowKey={record => record.MaTK}
-          rowClassName={record =>record.TrangThai === 0 ? "disableRow" : (record.isAdmin===1?"admin":"")}
-          
+          rowClassName={record => record.TrangThai === 0 ? "disableRow" : (record.isAdmin === 1 ? "admin" : "")}
+
         />
+
         <Modal
           title="CẬP NHẬT THÔNG TIN NGƯỜI DÙNG"
           visible={visible}
@@ -323,80 +343,71 @@ class DanhSachKhachHang extends Component {
               rules={[{ required: true, message: 'Please input your Username!' }]}
               initialValue={userDuocChon.MaTK}
             >
-              <Input 
-                disabled={true} 
-                size="large" 
-                prefix={<FormOutlined 
-                className="site-form-item-icon" />} 
-                placeholder="Mã Tài Khoản" 
+              <Input
+                disabled={true}
+                size="large"
+                prefix={<FormOutlined
+                  className="site-form-item-icon" />}
+                placeholder="Mã Tài Khoản"
               />
             </Form.Item>
 
             <Form.Item
               name="HoTen"
-              rules={[{ required: true, message: 'Please input your Username!' }]}
+              rules={[{ required: true, message: 'Nhập họ tên!' }]}
               initialValue={userDuocChon.HoTen}
             >
-              <Input 
-                size="large" 
-                prefix={<UserOutlined className="site-form-item-icon" />} 
-                placeholder="Họ Tên" 
+              <Input
+                size="large"
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="Họ Tên"
               />
             </Form.Item>
 
             <Form.Item
               name="Email"
-              rules={[{ required: true, message: 'Please input your Username!' }]}
+              rules={[{ required: true, message: 'Nhập email !' }]}
               initialValue={userDuocChon.Email}
             >
-              <Input  
-                disabled={true} 
-                size="large" 
-                prefix={<MailOutlined className="site-form-item-icon" />} 
-                placeholder="Email" 
+              <Input
+                disabled={true}
+                size="large"
+                prefix={<MailOutlined className="site-form-item-icon" />}
+                placeholder="Email"
               />
             </Form.Item>
-            
+
             <Form.Item
               name="DiaChi"
-              rules={[{ required: true, message: 'Please input your Username!' }]}
+              rules={[{ required: true, message: 'Nhập địa chỉ!' }]}
               initialValue={userDuocChon.DiaChi}
             >
-              <Input 
-                size="large" 
-                prefix={<HomeOutlined className="site-form-item-icon" />} 
-                placeholder="Địa Chỉ" 
+              <Input
+                size="large"
+                prefix={<HomeOutlined className="site-form-item-icon" />}
+                placeholder="Địa Chỉ"
               />
             </Form.Item>
 
             <Form.Item
               name="SoDienThoai"
-              rules={[{ required: true, message: 'Please input your Username!',pattern:'[0-9]{10,11}' }]}
+              rules={[
+                {required: true, message: 'Nhập số điện thoại!'},
+                {message: 'số điện thoại không đúng !',pattern:'[0-9]{10,11}'}
+            ]}
               initialValue={userDuocChon.SDT}
-            >
-              <Input 
-                size="large" 
-                prefix={<PhoneOutlined className="site-form-item-icon" />} 
-                placeholder="Địa Chỉ" 
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="MatKhau"
-              initialValue={userDuocChon.MatKhau}
-              rules={[{ required: true, message: 'Please input your Password!' }]}
             >
               <Input
                 size="large"
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                placeholder="Mật Khẩu"
+                prefix={<PhoneOutlined className="site-form-item-icon" />}
+                placeholder="Địa Chỉ"
               />
             </Form.Item>
-            <Form.Item>
-               <Button block type="danger" htmlType="submit" className="login-form-button">
-                    Cập Nhật
-               </Button>            
-            </Form.Item>
+
+              <Button block type="danger" htmlType="submit" className="login-form-button">
+                Cập Nhật
+               </Button>
+            
           </Form>
         </Modal>
       </div>
@@ -413,6 +424,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    onSaveDSNguoiDung: (danhsachnguoidung) => {
+      dispatch(actLuuTaiKhoan(danhsachnguoidung))
+    },
     updateTrangThaiUser: (MaTK) => {
       dispatch(actUpdateTrangThaiUser(MaTK));
     },
@@ -422,7 +436,7 @@ const mapDispatchToProps = (dispatch) => {
     saveSelectedUser: (user) => {
       dispatch(actSaveSelectedUser(user));
     },
-    updateUserInfo:(user)=>{
+    updateUserInfo: (user) => {
       dispatch(actUpdateUserInfo(user))
     }
   }

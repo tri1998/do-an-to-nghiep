@@ -16,7 +16,7 @@ class sanpham extends PureComponent {
 
     render() {
         let {MaSP,TenSP,Hinh,Gia} = this.props.sanPham;
-        let khuyenMai = this.props.mangKM.find(km=>km.MaSP===MaSP && km.TrangThai===1);
+        let khuyenMai = this.props.mangKM.find(km=>km.MaSP===MaSP);
         let GiaGoc = Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'});
         let GiaKM = khuyenMai!==undefined?(Gia-Gia*(khuyenMai.PhanTram/100)):0;
         return (
@@ -68,7 +68,6 @@ class sanpham extends PureComponent {
 const mapStateToProps=(state)=>{
     return {
         mangKM:state.DSCTKhuyenMai.mangChiTietKhuyenMai,
-        dotKhuyenMai:state.DSCTKhuyenMai.danhSachKM
     }
 }
 

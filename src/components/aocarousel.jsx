@@ -11,6 +11,9 @@ class aocarousel extends Component {
     constructor(props) {
         super(props);
         this.carouselRef=createRef();
+        this.state={
+            soLuong:4
+        }
     }
 
     handlePrev =()=> this.carouselRef.current.prev();
@@ -51,7 +54,7 @@ class aocarousel extends Component {
                     <br />
                     <Row>
                         <Col span={24}>
-                            <Carousel ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
+                            <Carousel responsive={[{breakpoint:600,settings:{slidesToShow:2}}]} ref={this.carouselRef} dots={false} autoplay className="items" slidesToScroll={1} slidesToShow={4} >
                             {
                                 checkAo!==-1?this.loadDSAo():null
                             }

@@ -52,6 +52,7 @@ class ThongTinNguoiDung extends Component {
 
     capNhatMatKhau = (values)=>{
         const password = {
+            MatKhauCu:md5(values.MatKhauCu),
             MatKhauMoi1:md5(values.MatKhauMoi1),
             MatKhauMoi2:md5(values.MatKhauMoi2)
         }
@@ -82,6 +83,10 @@ class ThongTinNguoiDung extends Component {
                 {
                     message.success(res.data.messageSuccess);
                     this.setState({option:1})
+                }
+                if(res.data.messageError)
+                {
+                    message.error(res.data.messageError);
                 }
             })
             .catch(err=>console.log(err));
@@ -160,10 +165,13 @@ class ThongTinNguoiDung extends Component {
                             <Form.Item
                             
                             name="SDT"
-                            rules={[{ required: true, message: 'Please input your Username!' }]}
+                            rules={[
+                                {required: true, message: 'Please input your Username!' },
+                                {message: 'số điện thoại không đúng !',pattern:'[0-9]{10,11}'}
+                            ]}
                             initialValue={user.SDT}
                             >
-                                <Input size="large" style={{width:'100%'}}/>
+                                <Input maxLength={11} size="large" style={{width:'100%'}}/>
                             </Form.Item>
 
                             <Col span={24}>Địa chỉ :</Col>
@@ -209,6 +217,18 @@ class ThongTinNguoiDung extends Component {
                             onFinish={this.capNhatMatKhau}
                         >
 
+                            <Col span={24}>Mật khẩu cũ :</Col>
+                            <Form.Item
+                            name="MatKhauCu"
+                            rules={[
+                                { required: true, message: 'Nhập mật khẩu cũ !' },
+                                {message:'Mật khẩu trên 8 kí tự bao gồm số, chữ hoa, chữ thường !',pattern:'(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'}
+                            ]}
+                            >
+
+                                <Input.Password placeholder="Nhập mật khẩu cũ" size="large" style={{width:'100%'}}/>
+                            </Form.Item>
+
                             <Col span={24}>Mật khẩu mới :</Col>
                             <Form.Item
                             name="MatKhauMoi1"
@@ -233,12 +253,6 @@ class ThongTinNguoiDung extends Component {
                                 <Input.Password  placeholder="Nhập lại mật khẩu mới" size="large" style={{width:'100%'}}/>
                             </Form.Item>
 
-                            
-
-                            
-
-                            
-                            
                                 <Button 
                                 type="primary" 
                                 danger
@@ -252,9 +266,6 @@ class ThongTinNguoiDung extends Component {
                                 
 
                         </Form>
-
-
-
                             <Button
                                 onClick={()=>this.setState({option:1})}
                                 type="primary" 

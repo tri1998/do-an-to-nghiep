@@ -19,23 +19,13 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios'
 import {port} from '../config/configAPI';
-import {connect} from 'react-redux';
-import {
-    actThemChiTietKhuyenMai,
-    actXoaChiTietKhuyenMai,
-    actPhucHoiChiTietKhuyenMai,
-    actCapNhatPhanTramKhuyenMai
-} from '../redux/actions/khuyenmai';
 const { Option } = Select;
-
-
-
 const timViTri = (maSP,mangSP)=>{
     let viTri = mangSP.findIndex(sp=>sp.MaSP===maSP);
     return viTri;
 }
 
-class ChiTietKhuyenMai extends Component {
+export default class ChiTietKhuyenMai extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -166,7 +156,7 @@ class ChiTietKhuyenMai extends Component {
 
         axios({
             method:"GET",
-            url:`http://localhost:${port}/api/khuyenmai/layDSSPChuaKM`
+            url:`http://localhost:${port}/api/khuyenmai/layDSSPChuaKM/${MaKM}`
         })
         .then(res=>this.setState({danhSachSanPhamChuaKM:res.data}))
         .catch(err=>console.log(err))
@@ -239,7 +229,6 @@ class ChiTietKhuyenMai extends Component {
             let capNhatMangKM = [...this.state.DSSPKMTheoDot];
             capNhatMangKM[timViTri(maSP,capNhatMangKM)].TrangThai=0;
             this.setState({DSSPKMTheoDot:capNhatMangKM});
-            this.props.xoaChiTietKM(maSP);
         })
         .catch(err=>console.log(err))
     }
@@ -253,7 +242,6 @@ class ChiTietKhuyenMai extends Component {
             let capNhatMangKM = [...this.state.DSSPKMTheoDot];
             capNhatMangKM[timViTri(maSP,capNhatMangKM)].TrangThai=1;
             this.setState({DSSPKMTheoDot:capNhatMangKM});
-            this.props.phucHoiChiTietKM(maSP);
         })
         .catch(err=>console.log(err))
     }
@@ -279,7 +267,6 @@ class ChiTietKhuyenMai extends Component {
             let capNhatMangKM = [...this.state.DSSPKMTheoDot];
             capNhatMangKM[timViTri(khuyenMai.MaSP,capNhatMangKM)].PhanTram=khuyenMai.PhanTram;
             this.setState({DSSPKMTheoDot:capNhatMangKM});
-            this.props.capNhatPhanTramKhuyenMai(khuyenMai);
             this.success();
 
         })
@@ -417,21 +404,4 @@ class ChiTietKhuyenMai extends Component {
     }
 }
 
-const mapDispatchToProps = (dispatch)=>{
-    return{
-        themChiTietKM:(khuyenMai)=>{
-            dispatch(actThemChiTietKhuyenMai(khuyenMai))
-        },
-        xoaChiTietKM:(maSP)=>{
-            dispatch(actXoaChiTietKhuyenMai(maSP))
-        },
-        phucHoiChiTietKM:(maSP)=>{
-            dispatch(actPhucHoiChiTietKhuyenMai(maSP))
-        },
-        capNhatPhanTramKhuyenMai:(khuyenMai)=>{
-            dispatch(actCapNhatPhanTramKhuyenMai(khuyenMai))
-        }
-    }
-}
 
-export default connect(null,mapDispatchToProps)(ChiTietKhuyenMai);

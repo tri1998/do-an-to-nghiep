@@ -6,9 +6,9 @@ import Added from './HOCs/Added.jsx';
 import User from './template/User.jsx';
 import ThanhToan from './pages/ThanhToan';
 import { BrowserRouter, Route, Switch} from 'react-router-dom';
-import { actLuuTaiKhoan } from './redux/actions/nguoidung';
 import { actLuuMangSP,actLuuMangDanhMucSanPham} from './redux/actions/sanpham';
 import { actLuuMangChiTietKM} from './redux/actions/khuyenmai'
+import moment from 'moment'
 import {port} from './config/configAPI';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -18,13 +18,8 @@ import './App.css';
 class App extends Component {
 
   componentDidMount() {
-    axios({
-      method: "GET",
-      url: `http://localhost:${port}/api/taikhoan`
-    }).then(res => {
-      this.props.onSaveDSNguoiDung(res.data);
-    })
-    .catch(error => console.log(error));
+    let today = moment().format('YYYY-MM-DD');
+    console.log(today);
 
     axios({
       method: "GET",
@@ -44,7 +39,7 @@ class App extends Component {
 
     axios({
       method:'GET',
-      url: `http://localhost:${port}/api/khuyenmai`
+      url: `http://localhost:${port}/api/khuyenmai/laydssanphamKM/${today}`
     }).then(res=>{
       this.props.onSaveChiTietKhuyenMai(res.data);
     })
@@ -76,9 +71,6 @@ class App extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSaveDSNguoiDung: (danhsachnguoidung) => {
-      dispatch(actLuuTaiKhoan(danhsachnguoidung))
-    },
     onSaveDSSanPham: (danhsachsanpham) => {
       dispatch(actLuuMangSP(danhsachsanpham))
     },

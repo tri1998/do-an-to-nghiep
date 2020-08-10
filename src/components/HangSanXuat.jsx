@@ -25,7 +25,7 @@ export default class HangSanXuat extends Component {
         
         const {danhSachHangSX} = this.state;
         return (
-            <Select defaultValue={4} placeholder="Chọn Hãng Sản Xuất !">
+            <Select placeholder="Chọn Hãng Sản Xuất !">
                 {
                     danhSachHangSX.map((hang,index)=>{
                     return <Option key={index} value={hang.MaHang}>{hang.Tenhang}</Option>

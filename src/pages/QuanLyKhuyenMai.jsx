@@ -7,7 +7,8 @@ import {
     Modal,
     Form,
     DatePicker,
-    Input
+    Input,
+    message
 } from 'antd';
 import {
     ReadOutlined,
@@ -16,6 +17,7 @@ import {
 import {connect} from 'react-redux';
 import axios from 'axios';
 import {port} from '../config/configAPI';
+import moment from 'moment';
 import {
     actLuuDanhSachDotKhuyenMai,
     actXoaKhuyenMai,
@@ -78,11 +80,17 @@ class QuanLyKhuyenMai extends Component {
           title: 'Ngày Bắt Đầu',
           dataIndex: 'NgayBD',
           key: 'NgayBD',
+          render:(text,record)=>(
+              moment(record.NgayBD).format('DD-MM-YYYY')
+          )
         },
         {
           title: 'Ngày Kết Thúc',
           dataIndex: 'NgayKT',
           key: 'NgayKT',
+          render:(text,record)=>(
+            moment(record.NgayKT).format('DD-MM-YYYY')
+         )
         },
         {
             title: 'Thao Tác ',
@@ -135,22 +143,44 @@ class QuanLyKhuyenMai extends Component {
     }
 
     themKhuyenMai=(values)=>{
-        let danhSach=this.props.danhSachDotKM;
-        let phanTuCuoi = danhSach.pop();
-        const khuyenMai={
-            MaKM:phanTuCuoi.MaKM+=1,
-            TenDotKM:values.TenKM,
-            NgayBD:this.state.NgayBD,
-            NgayKT:this.state.NgayKT
+        let ngayHienTai = moment().format('YYYY-MM-DD');
+        let ngayBatDau = moment(this.state.NgayBD).format('YYYY-MM-DD');
+        let ngayKetThuc = moment(this.state.NgayKT).format('YYYY-MM-DD');
+        if(ngayBatDau>=ngayHienTai)
+        {
+            if(ngayBatDau<ngayKetThuc)
+            {
+                let danhSach=this.props.danhSachDotKM;
+                let cuoiCung = [...danhSach].pop();
+                const khuyenMai={
+                    MaKM:cuoiCung.MaKM+=1,
+                    TenDotKM:values.TenKM,
+                    NgayBD:ngayBatDau,
+                    NgayKT:ngayKetThuc
+                }
+                console.log(khuyenMai);
+                axios({
+                    method:"POST",
+                    url:`http://localhost:${port}/api/khuyenmai/themKhuyenMai`,
+                    data:khuyenMai
+                })
+                .then(res=>{
+                    message.success('Thêm khuyến mại thành công !');
+                    this.props.themDotKhuyenMai(khuyenMai);
+                    this.setState({visible:false})
+                })
+                .catch(err=>console.log(err));
+            }
+            else
+            {
+                message.warning('Ngày bắt đầu không thể trùng hoặc lớn hơn ngày kết thúc !')
+            }
         }
-        console.log(khuyenMai);
-        axios({
-            method:"POST",
-            url:`http://localhost:${port}/api/khuyenmai/themKhuyenMai`,
-            data:khuyenMai
-        })
-        .then(res=>this.props.themDotKhuyenMai(khuyenMai))
-        .catch(err=>console.log(err));
+        else 
+        {
+            message.warning('Ngày bắt đầu không được nhỏ hơn ngày hiện tại !');
+        }
+        
 
     }
 
@@ -236,6 +266,7 @@ class QuanLyKhuyenMai extends Component {
                     columns={this.columns}
                     dataSource={danhSachDotKM}
                     rowClassName={record=>record.TrangThai===0?"disableRow":null}
+                    rowKey={record=>record.MaKM}
                 />
             </div>
         )

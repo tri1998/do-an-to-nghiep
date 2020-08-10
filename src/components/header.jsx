@@ -40,8 +40,9 @@ class header extends Component {
 
     timKiem=(value)=>{
       //Tao 1 bien de kiem tra gia tri nhap vao cua nguoi dung la chuoi hay so
+      localStorage.removeItem('timkiem');
+      localStorage.setItem('timkiem',JSON.stringify(value));
       let check = kiemTraChuoi(value);
-      console.log(check);
       if(check===false)//truong hop la chuoi thi goi axios tim san pham theo ten
       {
         axios({

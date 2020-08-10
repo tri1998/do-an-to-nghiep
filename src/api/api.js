@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5002;
+const port = 5058;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -31,7 +31,7 @@ app.use(cors());
 
 
 app.get('/api/taikhoan',(req,res)=>{
-    var sql = "SELECT * FROM taikhoan";
+    var sql = "SELECT MaTK,HoTen,Email,SDT,DiaChi,isAdmin,TrangThai FROM taikhoan";
     connection.query(sql,function(err,results){
         if(err) throw err;
         res.json(results)
@@ -101,28 +101,46 @@ ProtectedRoutes.put('/capnhatmatkhau',(req,res)=>{
     let decodetoken = jwt.decode(token);
     let user = decodetoken.user;
     const password = req.body;
-    var sql = `SELECT * FROM taikhoan WHERE MatKhau='${password.MatKhauMoi1}'
-               AND MaTK='${user.MaTK}'`
+
+    var sql = `SELECT * from taikhoan WHERE MaTK='${user.MaTK}' AND MatKhau='${password.MatKhauCu}'`;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
-        if(results.length>0)
+        if(results.length===0)
         {
-            res.json({messageWarrning:'Bạn đã nhập mật khẩu cũ ! Vui lòng nhập mật khẩu mới !'})
+            res.json({
+                messageError:"Mật khẩu cũ không đúng !"
+            })
         }
-        else {
-            var sql = `
-                UPDATE taikhoan SET 
-                MatKhau='${password.MatKhauMoi1}'
-                WHERE MaTK='${user.MaTK}'
-            `;
+        else
+        {
+            var sql = `SELECT * FROM taikhoan WHERE MatKhau='${password.MatKhauMoi1}'
+            AND MaTK='${user.MaTK}'`
             connection.query(sql,(err,results)=>{
                 if(err) throw err;
-                res.json({
-                    messageSuccess:'Cập nhật mật khẩu thành công !'
-                });
+                if(results.length>0)
+                {
+                    res.json({messageWarrning:'Bạn đã nhập mật khẩu cũ ! Vui lòng nhập mật khẩu mới !'})
+                }
+                else {
+                    var sql = `
+                        UPDATE taikhoan SET 
+                        MatKhau='${password.MatKhauMoi1}'
+                        WHERE MaTK='${user.MaTK}'
+                    `;
+                    connection.query(sql,(err,results)=>{
+                        if(err) throw err;
+                        res.json({
+                            messageSuccess:'Cập nhật mật khẩu thành công !'
+                        });
+                    })
+                }
             })
         }
     })
+
+
+
+    
 })
 
 //Them binh luan san pham
@@ -339,32 +357,6 @@ app.put('/api/danhmucsanpham/phuchoidanhmuc/:madm',(req,res)=>{
     })
 })
 
-//API them tai khoan nguoi dung
-app.post('/api/themtaikhoan',(req,res)=>{
-    var sql = "INSERT "
-            + "INTO taikhoan(MaTK,HoTen,Email,SDT,MatKhau,isAdmin,TrangThai)"
-            + "VALUES('"
-            + req.body.MaTK + "','"
-            + req.body.HoTen + "','"
-            + req.body.Email + "','"
-            + req.body.SDT +"','"
-            + req.body.MatKhau + "','"
-            + 0 + "','"
-            + 1 + "')";
-    connection.query(sql,(err,results)=>{
-        if(err) throw err;
-        res.json(results);
-    })
-})
-
-//API xoa tai khoan nguoidung
-app.delete('/api/:id',(req,res)=>{
-    var sql = "DELETE FROM taikhoan WHERE MaTK='"+req.params.id+"'";
-    connection.query(sql,(err,results)=>{
-        if(err) throw err;
-        res.json(results);
-    })
-})
 
 //API set lai TrangThai nguoi dung = 0
 
@@ -397,7 +389,6 @@ app.put('/api/taikhoan/capnhatTK/:id',(req,res)=>{
             + "HoTen='"      +   req.body.HoTen  + "',"
             + "DiaChi='"     +   req.body.DiaChi  + "',"
             + "SDT='"        +   req.body.SoDienThoai  + "',"
-            + "MatKhau='"    +   req.body.MatKhau   + "'"
             + "WHERE MaTK='" +   req.params.id  + "'";
     connection.query(sql,(err,results)=>{
         if(err) throw err;
@@ -447,8 +438,13 @@ app.get('/api/sanpham/layDanhSachAnh/:MaSP',(req,res)=>{
 app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
     let maSanPham = req.params.id;
     let sql = `
-    SELECT chitiet_km.PhanTram from chitiet_km,sanpham 
-    WHERE sanpham.MaSP=chitiet_km.MaSP AND chitiet_km.TrangThai = 1 AND sanpham.MaSP ='${maSanPham}'
+    SELECT chitiet_km.PhanTram 
+    from chitiet_km,sanpham,khuyenmai 
+    WHERE sanpham.MaSP=chitiet_km.MaSP
+    AND khuyenmai.MaKM=chitiet_km.MaKM 
+    AND chitiet_km.TrangThai = 1 
+    AND khuyenmai.TrangThai = 1 
+    AND sanpham.MaSP = '${maSanPham}'
     `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
@@ -486,12 +482,20 @@ app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
                     res.json(results);
             })
         }
+    }) 
+})
+
+//API lay kich thuoc san pham theo ma 
+app.get('/api/sanpham/layKichThuocSanPham/:masp',(req,res)=>{
+    var sql = `
+            SELECT chitiet_sp.MaSP,chitiet_sp.MaKT,kichthuoc.TenKT 
+            FROM kichthuoc,chitiet_sp WHERE chitiet_sp.MaSP='${req.params.masp}' 
+            AND kichthuoc.MaKT=chitiet_sp.MaKT
+            `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
     })
-
-
-
-
-    
 })
 
 //API tim kiem san pham theo ten
@@ -601,7 +605,32 @@ app.put('/api/sanpham/capNhatThongTin/:maSanPham',(req,res)=>{
     })
 })
 
-//---------------------KHUYEN MAI---------------------------//
+
+
+
+
+
+
+
+//--------------------------------------KHUYEN MAI-------------------------------------//
+
+//API lay ma san pham trong dot khuyen mai voi phan tram khuyen mai theo ngay
+app.get('/api/khuyenmai/laydssanphamKM/:today',(req,res)=>{
+    var sql = `
+                SELECT sanpham.MaSP,sanpham.TenSP,khuyenmai.MaKM,chitiet_km.PhanTram 
+                FROM khuyenmai,sanpham,chitiet_km WHERE sanpham.MaSP=chitiet_km.MaSP 
+                AND khuyenmai.MaKM=chitiet_km.MaKM 
+                AND khuyenmai.TrangThai=1 AND chitiet_km.TrangThai=1 
+                AND '${req.params.today}' BETWEEN khuyenmai.NgayBD AND khuyenmai.NgayKT
+              `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+
+
 app.get('/api/khuyenmai',(req,res)=>{
     var sql = "SELECT * FROM chitiet_km";
     connection.query(sql,(err,results)=>{
@@ -671,8 +700,13 @@ app.put('/api/khuyenmai/capNhatChiTiet1/:maSanPham',(req,res)=>{
     })
 })
 //API lay ra danh sach san pham chua duoc khuyen mai
-app.get('/api/khuyenmai/layDSSPChuaKM',(req,res)=>{
-    var sql = "SELECT sanpham.MaSP,sanpham.TenSP FROM sanpham WHERE sanpham.MaSP NOT IN (SELECT MaSP from chitiet_km )";
+app.get('/api/khuyenmai/layDSSPChuaKM/:MaKM',(req,res)=>{
+    var sql = `
+    select MaSP,TenSP from sanpham
+     where MaSP not in 
+     (select MaSP from khuyenmai as km1,(select ct.MaKM,MaSP,NgayBD,NgayKT 
+        from khuyenmai as km2,chitiet_km as ct where km2.MaKM =ct.MaKM) 
+        as tmp where km1.NgayBD between tmp.NgayBD AND tmp.NgayKT AND km1.MaKM='${req.params.MaKM}')`;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results)
@@ -731,12 +765,20 @@ app.get('/api/hoadon/laySoLuongHoaDon',(req,res)=>{
 //API Them hoa hon
 app.post('/api/hoadon/themHoaDon',(req,res)=>{
     let hoaDon = req.body;
-    var sql = `
-                INSERT INTO hoadon(MaHD,HoTen,Email,SDT,DiaChi,ThanhTien,TrangThai_TT,TrangThai_GH,TrangThai)
+    var sql = hoaDon.MaTK!==""?`
+                INSERT INTO hoadon(MaHD,MaTK,HoTen,Email,SDT,DiaChi,ThanhTien,PhuongThucTT,TrangThai_TT,TrangThai_GH,TrangThai)
+                VALUES('${hoaDon.MaHD}','${hoaDon.MaTK}',
+                '${hoaDon.HoTen}','${hoaDon.Email}',
+                '${hoaDon.SDT}','${hoaDon.DiaChi}',
+                '${hoaDon.ThanhTien}','${hoaDon.PhuongThucTT}',0,0,1)`
+                :`
+                INSERT INTO hoadon(MaHD,HoTen,Email,SDT,DiaChi,ThanhTien,PhuongThucTT,TrangThai_TT,TrangThai_GH,TrangThai)
                 VALUES('${hoaDon.MaHD}',
                 '${hoaDon.HoTen}','${hoaDon.Email}',
                 '${hoaDon.SDT}','${hoaDon.DiaChi}',
-                '${hoaDon.ThanhTien}',0,0,0)`;
+                '${hoaDon.ThanhTien}','${hoaDon.PhuongThucTT}',0,0,1)`
+
+
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);
@@ -755,6 +797,140 @@ app.post('/api/hoadon/themCTHD',(req,res)=>{
     })
 })
 
+
+//HOADON
+//API cap nhat trang thai cho san pham
+
+//API lay danh sach hoa don sap xep theo ngay lap
+app.get('/api/hoadon',(req,res)=>{
+    var sql="SELECT * from hoadon order by NgayLapHD";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results)
+    })
+})
+app.put('/api/hoadon/capnhatHD/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai='"
+            + 0 +"'"
+            + "WHERE MaHD='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+//API cap nhat trang thái thanh toan
+
+app.put('/api/hoadon/capnhatTTThanhtoan1/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai_TT='"
+            + 1 +"'"
+            + "WHERE MaHD='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+app.put('/api/hoadon/capnhatTTThanhtoan0/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai_TT='"
+            + 0+"'"
+            + "WHERE MaHD='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+app.put('/api/hoadon/phuchoihoadon/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai='" + 1 + "'"
+            + "WHERE MaHD='" + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if (err) throw err;
+        res.json(results);
+    })
+})
+app.put('/api/hoadon/capnhatTTGiaoHang1/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai_GH='"
+            + 1+"'"
+            + "WHERE MaHD='"
+            + req.params.id + "'";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+app.put('/api/hoadon/capnhatTTGiaoHang2/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai_GH='"
+            + 2+"'"
+            + "WHERE MaHD='"
+            + req.params.id + "'";
+    
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+app.put('/api/hoadon/capnhatTTGiaoHang3/:id',(req,res)=>{
+    var sql = "UPDATE hoadon SET TrangThai_GH='"
+            + 2+"'"
+            + ","
+            + "TrangThai_TT='"
+            + 1+"'"
+            + "WHERE MaHD='"
+            + req.params.id + "'";
+    
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API thong ke
+
+//API lay so luong nguoi dang ky tai khoan 
+app.get('/api/thongke/luotdangky',(req,res)=>{
+    var sql = "SELECT COUNT(MaTK) AS SOLUONG FROM taikhoan WHERE isAdmin=0";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API lay tong so luong hoa don
+app.get('/api/thongke/soluongHD',(req,res)=>{
+    var sql = "SELECT COUNT(MaHD) AS SOLUONG FROM hoadon";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API lay so luong hoa don chua thanh toan
+app.get('/api/thongke/soluongHD1',(req,res)=>{
+    var sql = "SELECT COUNT(MaHD) AS SOLUONG FROM hoadon WHERE TrangThai_TT=0";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API lay so luong hoa don da thanh toan
+app.get('/api/thongke/soluongHD2',(req,res)=>{
+    var sql = "SELECT COUNT(MaHD) AS SOLUONG FROM hoadon WHERE TrangThai_TT=1";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API lay so tong so luot binh luan san pham
+app.get('/api/thongke/soluongBL',(req,res)=>{
+    var sql = "SELECT COUNT(MaBL) AS SOLUONG FROM binhluan";
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
 
 
 

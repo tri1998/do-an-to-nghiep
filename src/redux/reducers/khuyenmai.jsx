@@ -11,11 +11,6 @@ const khuyenMaiReducer=(state=stateDefault,action)=>{
             return {...state}
         }
         case types.LUU_DANH_SACH_DOT_KHUYEN_MAI:{
-            action.danhSachKM=action.danhSachKM.map((km,index)=>{
-                km.NgayBD = km.NgayBD.split("T")[0];
-                km.NgayKT = km.NgayKT.split("T")[0];
-                return km;
-            })
             state.danhSachKM=action.danhSachKM;
             console.log(state.danhSachKM);
             return {...state}
@@ -64,7 +59,9 @@ const khuyenMaiReducer=(state=stateDefault,action)=>{
         }
         case types.THEM_DOT_KHUYEN_MAI:{
             let mangCapNhat = [...state.danhSachKM];
+            console.log(mangCapNhat);
             mangCapNhat.push(action.khuyenMai);
+            console.log(mangCapNhat);
             state.danhSachKM=mangCapNhat;
             return {...state}
         }
