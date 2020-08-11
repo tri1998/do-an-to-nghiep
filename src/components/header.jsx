@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Tooltip} from 'antd';
-import { Row, Col,Avatar, Badge } from 'antd';
+import { Row, Col,Avatar, Badge,Popconfirm } from 'antd';
 import { UserOutlined,
   LoginOutlined,
     SearchOutlined
@@ -69,6 +69,15 @@ class header extends Component {
       })
     }
 
+    confirm=(e)=> {
+      this.props.dangXuat()
+    }
+
+    cancel =(e)=> {
+      console.log(e);
+    }
+
+
     render() {
         let ThongTin = this.props.thongTinNguoiDung;
         let adminLogined = sessionStorage.getItem('admintoken');
@@ -106,10 +115,20 @@ class header extends Component {
                       (<Button type="primary" shape="round" size="large">
                         <Link  to="/dangky"><UserAddOutlined />Đăng ký</Link>
                       </Button>)
-                      :(<Button type="primary" onClick={()=>this.props.dangXuat()
-                        } type="link" shape="round" size="large">
-                      <LogoutOutlined /> Đăng xuất
-                    </Button>)}
+
+                      :(
+                        <Popconfirm
+                        title="Bạn muốn đăng xuất ?"
+                        onConfirm={this.confirm}
+                        onCancel={this.cancel}
+                        okText="Có"
+                        cancelText="Hủy"
+                        >
+                        <Button type="primary" type="link" shape="round" size="large">
+                        <LogoutOutlined /> Đăng xuất
+                          </Button>
+                        </Popconfirm>
+                        )}
                     </Col>
                   </Row>
                   <hr />

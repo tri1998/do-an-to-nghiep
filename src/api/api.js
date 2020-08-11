@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5058;
+const port = 5005;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -788,9 +788,22 @@ app.post('/api/hoadon/themHoaDon',(req,res)=>{
 app.post('/api/hoadon/themCTHD',(req,res)=>{
     let CTHD = req.body;
     var sql = `
-                INSERT INTO chitiet_hd(MaHD,MaSP,SL,Gia)
-                VALUES('${CTHD.MaHD}','${parseInt(CTHD.MaSP)}','${CTHD.SoLuong}','${CTHD.GiaCu}')
+                INSERT INTO chitiet_hd(MaHD,MaSP,MaKT,MaMau,SL,Gia)
+                VALUES('${CTHD.MaHD}','${parseInt(CTHD.MaSP)}', '${CTHD.kichThuoc}', 9 , '${CTHD.SoLuong}','${CTHD.GiaCu}')
               `
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+app.get('/api/chitietHD/layDDCTHD/:MaHD',(req,res)=>{
+    var sql = `
+        SELECT chitiet_hd.MaHD,sanpham.TenSP,kichthuoc.TenKT,chitiet_hd.SL,
+        chitiet_hd.Gia from chitiet_hd,sanpham,kichthuoc 
+        WHERE sanpham.MaSP=chitiet_hd.MaSP AND kichthuoc.MaKT=chitiet_hd.MaKT 
+        AND chitiet_hd.MaHD='${req.params.MaHD}'
+    `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json(results);

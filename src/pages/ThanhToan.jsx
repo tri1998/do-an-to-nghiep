@@ -405,7 +405,13 @@ class ThanhToan extends Component {
                                                         <span className="sanphamthumbnail-soluong">{sanPham.SoLuong}</span>
                                                     </div>
                                                 </Col>
-                                                <Col span={15} style={{paddingTop:20}}>{sanPham.TenSP}</Col>
+                                                <Col span={15} style={{paddingTop:20}}>
+                                                    <h4>{sanPham.TenSP}</h4>
+                                                    {sanPham.kichThuoc!==6
+                                                    ?<h5 style={{color:'#A3A3A3'}}>Size {sanPham.tenKichThuoc}</h5>
+                                                    :<div></div>
+                                                    }
+                                                </Col>
                                                 <Col span={4}  style={{paddingTop:20}}>{sanPham.Gia.toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})}</Col>
                                             </Row>
                                     })

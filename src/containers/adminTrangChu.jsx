@@ -12,7 +12,8 @@ import {
     EyeOutlined,
     PlusSquareOutlined,
     FileDoneOutlined,
-    FileExcelOutlined
+    FileExcelOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import {port} from '../config/configAPI';
 import axios from 'axios';
@@ -77,35 +78,35 @@ export default class adminTrangChu extends Component {
                         <ShoppingCartOutlined 
                             style={{fontSize:'40px',color:'cornflowerblue'}}
                         />
-                        <h1 id="sodonhang" className="solieu">{soLuongHD}</h1>
+                        <h1 id="sodonhang" className="solieu">{soLuongHD===0?<LoadingOutlined/>:soLuongHD}</h1>
                         <h5 className="solieuduoi">Đơn hàng</h5>
                     </Col>
                     <Col xs={{span:24}} className="infoItem"  lg={{span:6}}>
                         <CommentOutlined 
                             style={{fontSize:'40px',color:'#E3B34B'}}
                         />
-                        <h1 id="sobinhluan" className="solieu">{soLuotBL}</h1>
+                        <h1 id="sobinhluan" className="solieu">{soLuotBL===0?<LoadingOutlined/>:soLuotBL}</h1>
                         <h5 className="solieuduoi">Bình luận</h5>
                     </Col>
                     <Col xs={{span:24}} className="infoItem"  lg={{span:6}}>
                         <TeamOutlined 
                             style={{fontSize:'40px',color:'#3DBFAE'}}
                         />
-                        <h1 id="songuoidangky" className="solieu">{soLuongTK}</h1>
+                        <h1 id="songuoidangky" className="solieu">{soLuongTK===0?<LoadingOutlined/>:soLuongTK}</h1>
                         <h5 className="solieuduoi">người đăng ký</h5>
                     </Col>
                     <Col xs={{span:24}} className="infoItem"  lg={{span:6}}>
                         <FileDoneOutlined
                             style={{fontSize:'40px',color:'#ccbbde3'}}
                         />
-                        <h1 id="songuoidangky" className="solieu">{soLuongHD2}</h1>
+                        <h1 id="songuoidangky" className="solieu">{soLuongHD2===0?<LoadingOutlined/>:soLuongHD2}</h1>
                         <h5 className="solieuduoi">Hóa đơn đã thanh toán</h5>
                     </Col>
                     <Col xs={{span:24}} className="infoItem"  lg={{span:6}}>
                         <FileExcelOutlined
                             style={{fontSize:'40px',color:'red'}}
                         />
-                        <h1 id="soluottimkiem" className="solieu">{soLuongHD1}</h1>
+                        <h1 id="soluottimkiem" className="solieu">{soLuongHD1===0?<LoadingOutlined/>:soLuongHD1}</h1>
                         <h5 className="solieuduoi">Hóa đơn chưa thanh toán</h5>
                     </Col>
                 </Row>

@@ -8,7 +8,8 @@ import {
     Carousel,
     notification,
     Spin,
-    Tag
+    Tag,
+    message
 } from 'antd'
 import { 
     ShoppingCartOutlined,
@@ -18,7 +19,6 @@ import {
 } from '@ant-design/icons';
 import SPLienQuan from './sanphamlienquan';
 import BinhLuan from './BinhLuanSanPham';
-import KichThuoc from './KichThuoc';
 import DanhSachAnh from './DanhSachAnhTheoMaSP';
 import { createRef } from 'react';
 import {connect} from 'react-redux';
@@ -31,6 +31,7 @@ import {port} from '../config/configAPI';
 import axios from 'axios';
 import {actXemChiTiet} from '../redux/actions/sanpham';
 import {actLuuMangChiTietKM} from '../redux/actions/khuyenmai'
+import sanpham from './sanpham';
 //destructuring tu component Select cua antd de lay ra component Option
 const { Option } = Select;
 class chitietsanpham extends Component {
@@ -40,22 +41,12 @@ class chitietsanpham extends Component {
         this.state={
             soLuong:1,
             isLoading:false,
-            danhSachKT:[]
+            danhSachKT:[],
+            kichThuoc:6
         }
     }
     componentDidMount(){
         let maSanPham = this.props.match.params.MaSP;
-
-        axios({
-            method:"GET",
-            url:`http://localhost:${port}/api/sanpham/layKichThuocSanPham/${maSanPham}`
-        })
-        .then(res=>{
-            this.setState({danhSachKT:res.data});
-        })
-        .catch(err=>console.log(err));
-
-
         axios({
             method:"GET",
             url:`http://localhost:${port}/api/sanpham/xemChiTietSP/${maSanPham}`
@@ -63,6 +54,15 @@ class chitietsanpham extends Component {
         .then(res=>{
             this.props.xemChiTiet(res.data[0]);
             this.setState({isLoading:!this.state.isLoading});
+        })
+        .catch(err=>console.log(err));
+
+        axios({
+            method:"GET",
+            url:`http://localhost:${port}/api/sanpham/layKichThuocSanPham/${maSanPham}`
+        })
+        .then(res=>{
+            this.setState({danhSachKT:res.data});
         })
         .catch(err=>console.log(err));
 
@@ -93,29 +93,42 @@ class chitietsanpham extends Component {
 
     //Chuc nang them vao nhan vao la 1 object sanPham
     themVaoGio=(sanPham)=>{
-        let viTriSanPham=this.props.danhSachSanPham.findIndex(sp=>sp.MaSP===sanPham.MaSP);
-        let giaKhuyenMai = sanPham.PhanTram===undefined?sanPham.Gia:sanPham.Gia-(sanPham.Gia*sanPham.PhanTram/100);
-        console.log(giaKhuyenMai);
+        let {kichThuoc,danhSachKT} = this.state;
+        let viTriSanPham=this.props.danhSachSanPham.findIndex(sp=>sp.MaSP===sanPham.MaSP && sp.kichThuoc===kichThuoc);
+        let indexKT = danhSachKT.findIndex(kt=>kt.MaKT===kichThuoc)
+        let giaKhuyenMai = sanPham.PhanTram===undefined
+        ?sanPham.Gia
+        :sanPham.Gia-(sanPham.Gia*sanPham.PhanTram/100);
         if(viTriSanPham===-1)
         {
-            sanPham = {...sanPham,SoLuong:this.state.soLuong,GiaCu:giaKhuyenMai}
+            sanPham = {
+                ...sanPham,
+                SoLuong:this.state.soLuong,
+                GiaCu:giaKhuyenMai,
+                kichThuoc:kichThuoc,
+                tenKichThuoc:danhSachKT[indexKT].TenKT
+        }
             sanPham.Gia = giaKhuyenMai * sanPham.SoLuong;
             console.log(sanPham);
             this.props.themVaoGio(sanPham);
         }
         else
         {
-            this.props.themVaoGioDaCoSanPham(sanPham.MaSP,this.state.soLuong);
+            this.props.themVaoGioDaCoSanPham(sanPham.MaSP,this.state.soLuong,kichThuoc);
         }
-
         this.props.history.push('/giohang');
         
     }
 
+    chonKichThuoc=(value)=>{
+        this.setState({
+            kichThuoc:value
+        })
+    }
+
     render() {
-        let {TenSP,Gia,Hinh,MaKT,SL,ThongTinSP,PhanTram,MaSP} = this.props.SPDuocChon;
-        const {danhSachKT} = this.state
-        console.log(Gia);
+        let {TenSP,Gia,Hinh,MaKT,SL,ThongTinSP,PhanTram,MaSP,MaDM} = this.props.SPDuocChon;
+        let {danhSachKT,kichThuoc} = this.state;
         let GiaKM=PhanTram===undefined?0:Gia-(Gia*PhanTram/100);
         return (
             <div>
@@ -150,12 +163,21 @@ class chitietsanpham extends Component {
                                     <span className="fs16">Sản Phẩm: </span>
                                     {SL===0?<span style={{color:'red'}} className="fs16">Hết</span>
                                     :<span className="fs16">Còn {SL} </span>}
-                                    {MaKT===6?null:<Row>
+                                    {MaKT===6 || danhSachKT.length===0?<div></div>:<Row>
                                         <Col span={24}>
-                                            <Select defaultValue={1} style={{width:'100%'}}>
+                                            <Select 
+                                                style={{width:'100%'}}
+                                                onChange={this.chonKichThuoc}
+                                                placeholder="Chọn Size"
+                                            >
                                                 {
                                                     danhSachKT.map((kt,index)=>{
-                                                    return <Option key={index} value={kt.MaKT}>Size {kt.TenKT}</Option>
+                                                    return <Option
+
+                                                            key={index} 
+                                                            value={kt.MaKT}
+                                                            >Size {kt.TenKT}
+                                                           </Option>
                                                     })
                                                 }
                                             </Select>
@@ -192,7 +214,7 @@ class chitietsanpham extends Component {
                                 <Button 
                                     onClick={
                                     ()=>this.state.soLuong>0
-                                    ?this.themVaoGio(this.props.SPDuocChon)
+                                    ?MaDM===3&&kichThuoc===6?message.warning('Bạn chưa chọn size !'):this.themVaoGio(this.props.SPDuocChon)
                                     :this.openNotification()} 
                                     className="btnAddCart" danger type="primary" 
                                     shape="round" 
@@ -280,8 +302,8 @@ const mapDispatchToProps = (dispatch)=>{
         themVaoGio:(sanPham)=>{
             dispatch(actThemVaoGio(sanPham))
         },
-        themVaoGioDaCoSanPham:(maSanPham,soLuong)=>{
-            dispatch(actThemSanPhamDaTonTai(maSanPham,soLuong))
+        themVaoGioDaCoSanPham:(maSanPham,soLuong,kichThuoc)=>{
+            dispatch(actThemSanPhamDaTonTai(maSanPham,soLuong,kichThuoc))
         },
         xemChiTiet:(sanPham)=>{
             dispatch(actXemChiTiet(sanPham))

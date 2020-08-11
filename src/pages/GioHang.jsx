@@ -7,7 +7,8 @@ import {
     Space,
     Row,
     Col,
-    notification
+    notification,
+    Popconfirm
 }from 'antd'
 
 import {
@@ -27,6 +28,7 @@ class GioHang extends Component {
         this.state={
             soLuong:1,
             maSanPham:1,
+            kichThuoc:6
         }
     }
 
@@ -40,20 +42,23 @@ class GioHang extends Component {
         });
     };
 
+    confirm =(MaSP,MaKT)=>{
+        this.props.xoaSanPhamGioHang(MaSP,MaKT);
+    }
+      
+    cancel = (e) => {
+        console.log(e);
+    }
+
 
     handleOnChange=(e)=>{
         this.setState({
             [e.target.name]:parseInt(e.target.value),
         },
         ()=>this.state.soLuong>0
-        ?this.props.capNhatSoLuongSanPham(this.state.maSanPham,this.state.soLuong)
+        ?this.props.capNhatSoLuongSanPham(this.state.maSanPham,this.state.soLuong,this.state.kichThuoc)
         :this.openNotification()
         )
-    }
-
-    //Xoa san pham khoi gio hang
-    xoaSanPham=(maSP)=>{
-        this.props.xoaSanPhamGioHang(maSP);
     }
 
     columns = [
@@ -69,6 +74,12 @@ class GioHang extends Component {
           title: 'Tên sản phẩm',
           dataIndex: 'TenSP',
           key: 'TenSP',
+          render:(text,record)=>(
+              <div className="tenSanPhamGioHang">
+                  <h3>{record.TenSP}</h3>
+                  {record.kichThuoc===6?<div></div>:<h3>Size {record.tenKichThuoc}</h3>}
+              </div>
+          )
         },
         {
           title: 'Số lượng',
@@ -78,20 +89,34 @@ class GioHang extends Component {
               <Space>
                 <Input 
                     name="soLuong"
-                    onMouseOver={()=>this.setState({maSanPham:record.MaSP})}
+                    onMouseOver={()=>this.setState({
+                        maSanPham:record.MaSP,
+                        kichThuoc:record.kichThuoc
+                    })}
                     onChange={this.handleOnChange} 
                     defaultValue={record.SoLuong} 
                     type="number" 
                     min={1} 
                     max={50}
                 />
+
+            <Popconfirm
+                title="Bạn muốn xóa sản phẩm này khỏi giỏ hàng ?"
+                onConfirm={()=>this.confirm(record.MaSP,record.kichThuoc)}
+                onCancel={this.cancel}
+                okText="Có "
+                cancelText="Không"
+            >
+
               <Button 
                 size="small"
-                onClick={()=>this.xoaSanPham(record.MaSP)}
               >
                 <DeleteOutlined />
               </Button>
-              </Space>
+
+            </Popconfirm>
+              
+            </Space>
           )
         },
         {
@@ -173,11 +198,11 @@ const mapStateToProps = (state)=>{
 
 const mapDispatchToProps = (dispatch)=>{
     return{
-        xoaSanPhamGioHang:(maSanPham)=>{
-            dispatch(actXoaSanPham(maSanPham))
+        xoaSanPhamGioHang:(maSanPham,maKichThuoc)=>{
+            dispatch(actXoaSanPham(maSanPham,maKichThuoc))
         },
-        capNhatSoLuongSanPham:(maSanPham,soLuong)=>{
-            dispatch(actCapNhatSoLuongSanPham(maSanPham,soLuong))
+        capNhatSoLuongSanPham:(maSanPham,soLuong,kichThuoc)=>{
+            dispatch(actCapNhatSoLuongSanPham(maSanPham,soLuong,kichThuoc))
         }
     }
 }

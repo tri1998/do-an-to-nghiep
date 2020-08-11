@@ -28,8 +28,9 @@ const gioHangReducer = (state=stateDefault,action)=>{
         }
         case types.XOA_SAN_PHAM:{
             let maSanPham = action.maSanPham;
+            let maKichThuoc = action.maKichThuoc;
             let mangSanPhamCapNhat = [...state.mangSanPham];
-            let viTriXoa = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===maSanPham);
+            let viTriXoa = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===maSanPham && sp.kichThuoc===maKichThuoc);
             let Gia = mangSanPhamCapNhat[viTriXoa].Gia;
             mangSanPhamCapNhat.splice(viTriXoa,1);
             state.mangSanPham=mangSanPhamCapNhat;
@@ -42,7 +43,8 @@ const gioHangReducer = (state=stateDefault,action)=>{
         case types.THEM_VAO_GIO_DA_CO_SAN_PHAM:{
             let mangSanPhamCapNhat=[...state.mangSanPham];
             let soLuong = parseInt(action.soLuong);
-            let viTriSanPhamCanSua = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===action.maSanPham);
+            let kichThuoc = action.kichThuoc
+            let viTriSanPhamCanSua = mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===action.maSanPham && sp.kichThuoc===kichThuoc);
             mangSanPhamCapNhat[viTriSanPhamCanSua].SoLuong +=soLuong;
             mangSanPhamCapNhat[viTriSanPhamCanSua].Gia += mangSanPhamCapNhat[viTriSanPhamCanSua].GiaCu*action.soLuong;
             state.tongTien+=mangSanPhamCapNhat[viTriSanPhamCanSua].GiaCu*action.soLuong;
@@ -53,8 +55,9 @@ const gioHangReducer = (state=stateDefault,action)=>{
         case types.CAP_NHAT_SO_LUONG_SAN_PHAM:{
             let maSanPham = parseInt(action.maSanPham);//parse data nhan tu action tu string -> number de xu ly
             let soLuongMoi = parseInt(action.soLuong);//day la so luong moi khi nguoi dung chon tang giam so luong
+            const kichThuoc = parseInt(action.kichThuoc);
             let mangSanPhamCapNhat = [...state.mangSanPham];
-            let viTriSanPham=mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===maSanPham);//Tim vi tri san pham can chinh sua so luong
+            let viTriSanPham=mangSanPhamCapNhat.findIndex(sp=>sp.MaSP===maSanPham && sp.kichThuoc===kichThuoc);//Tim vi tri san pham can chinh sua so luong
             let soLuongCu=mangSanPhamCapNhat[viTriSanPham].SoLuong;//Tao 1 bien chua so luong cu cua san pham de thao tac
             let soLuongTongTien=0;//Day la so luong de tang giam tong tien
             soLuongMoi>soLuongCu//Neu so luong moi > so luong cu thi soLuongTongTien=soLuongMoi tru cho soLuongCu va nguoc lai

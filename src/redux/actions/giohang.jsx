@@ -7,26 +7,29 @@ export const actThemVaoGio=(sanPham)=>{
     }
 }
 
-export const actXoaSanPham=(maSanPham)=>{
+export const actXoaSanPham=(maSanPham,maKichThuoc)=>{
     return{
         type:types.XOA_SAN_PHAM,
-        maSanPham
+        maSanPham,
+        maKichThuoc
     }
 }
 
-export const actThemSanPhamDaTonTai=(maSanPham,soLuong)=>{
+export const actThemSanPhamDaTonTai=(maSanPham,soLuong,kichThuoc)=>{
     return{
         type:types.THEM_VAO_GIO_DA_CO_SAN_PHAM,
         maSanPham,
-        soLuong
+        soLuong,
+        kichThuoc
     }
 }
 
-export const actCapNhatSoLuongSanPham=(maSanPham,soLuong)=>{
+export const actCapNhatSoLuongSanPham=(maSanPham,soLuong,kichThuoc)=>{
     return{
         type:types.CAP_NHAT_SO_LUONG_SAN_PHAM,
         maSanPham,
-        soLuong
+        soLuong,
+        kichThuoc
     }
 }
 

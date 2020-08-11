@@ -4,12 +4,16 @@ import {
     Table,
     Space,
     Button,
-
+    Modal,
+    Input,
+    Tooltip
 } from 'antd';
 import {
     CloseOutlined,
     RedoOutlined,
     CheckOutlined,
+    SearchOutlined,
+    FileSearchOutlined
 } from '@ant-design/icons';
 import {
     actUpdateTrangThaiHD,
@@ -21,6 +25,8 @@ import {
           actUpdateTrangThaiGH3,
           actLuuMangHD
 } from '../redux/actions/hoadon';
+import ChiTietHoaDon from '../components/ChiTietHoaDon';
+import Highlighter from 'react-highlight-words';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import moment from 'moment'
@@ -31,9 +37,32 @@ class QuanLyHoaDon extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //disabled:false
+            visible: false,
+            MaHD:0,
         };
     }
+
+    showModal = (MaHD) => {
+        console.log(MaHD);
+        this.setState({
+          visible: true,
+          MaHD:MaHD
+        });
+      };
+    
+    handleOk = e => {
+        console.log(e);
+        this.setState({
+          visible: false,
+        });
+      };
+    
+    handleCancel = e => {
+        console.log(e);
+        this.setState({
+          visible: false,
+        });
+    };
 
     componentDidMount() {
         axios({
@@ -230,16 +259,84 @@ class QuanLyHoaDon extends Component {
             }
         })
     }
+
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Input
+              ref={node => {
+                this.searchInput = node;
+              }}
+              placeholder={`Tìm ${dataIndex}`}
+              value={selectedKeys[0]}
+              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+              style={{ width: 188, marginBottom: 8, display: 'block' }}
+            />
+            <Space>
+              <Button
+                type="primary"
+                onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+                icon={<SearchOutlined />}
+                size="small"
+                style={{ width: 90 }}
+              >
+                Search
+              </Button>
+              <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                Reset
+              </Button>
+            </Space>
+          </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+          record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => this.searchInput.select());
+          }
+        },
+        render: text =>
+          this.state.searchedColumn === dataIndex ? (
+            <Highlighter
+              highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+              searchWords={[this.state.searchText]}
+              autoEscape
+              textToHighlight={text.toString()}
+            />
+          ) : (
+            text
+          ),
+      });
+    
+      handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+          searchText: selectedKeys[0],
+          searchedColumn: dataIndex,
+        });
+      };
+    
+      handleReset = clearFilters => {
+        clearFilters();
+        this.setState({ searchText: '' });
+      };
+
+
+
     columns = [
         {
             title: 'Mã hóa đơn',
             dataIndex: 'MaHD',
             key: 'MaHD',
+            ...this.getColumnSearchProps('MaHD')
         },
         {
             title: 'Người mua hàng',
             dataIndex: 'HoTen',
             key: 'HoTen',
+            ...this.getColumnSearchProps('HoTen')
         },
         {
             title: 'Ngày lập HĐ',
@@ -299,7 +396,7 @@ class QuanLyHoaDon extends Component {
             key: 'ThaoTac',
             render: (record) => (
 
-                <div>
+                <Space>
                     <Button
                         disabled={record.TrangThai_TT === 1 ? true : false}
                         hidden={record.TrangThai === 1 ? false : true}
@@ -317,15 +414,32 @@ class QuanLyHoaDon extends Component {
                         </Button>
                         : null}
 
-                </div>
+                    <Tooltip title="Xem hóa đơn">
+                        <Button
+                            type="primary"
+                            onClick={()=>this.showModal(record.MaHD)}
+                        ><FileSearchOutlined /></Button>
+                    </Tooltip>
+                    
+
+                </Space>
             )
         }
     ];
     render() {
         let data = this.props.DanhSachHoaDon;
-
+        const {MaHD} = this.state;
         return (
             <div>
+                <Modal
+                title={`CHI TIẾT HÓA ĐƠN : ${MaHD} `}
+                visible={this.state.visible}
+                onOk={this.handleOk}
+                onCancel={this.handleCancel}
+                destroyOnClose={true}
+                >
+                    <ChiTietHoaDon MaHD={MaHD}></ChiTietHoaDon>
+                </Modal>
 
                 <Table
                     rowClassName={record => record.TrangThai === 0 ? "disableRow" : ""}
