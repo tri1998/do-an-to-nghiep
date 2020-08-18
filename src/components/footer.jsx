@@ -9,7 +9,7 @@ export default class footer extends Component {
         return (
             <div className="footer">
                 <Row gutter={16}>
-                    <Col span={6}>
+                    <Col style={{marginBottom:'10px'}} xs={{span:24}} lg={{span:6}}>
                         <Row>ĐĂNG KÝ NHẬN TIN</Row>
                         <hr></hr>
                         <br/>
@@ -23,12 +23,12 @@ export default class footer extends Component {
                         </Row>
                         
                     </Col>
-                    <Col span={4}>
+                    <Col style={{marginBottom:'10px'}} xs={{span:24}} lg={{span:4}}>
                         <Row>HỖ TRỢ</Row>
                         <hr/>
                         <br/>
                         <Row>
-                            <ul type="list">
+                            <ul style={{width:'100%'}} className="listfooter" type="list">
                                 <li><a>Chính Sách Đổi Trả</a><hr/></li>
                                 <li><a>Chính Sách Bảo Mật</a><hr/></li>
                                 <li><a>Quy Định Bảo Hành</a><hr/></li>
@@ -37,12 +37,12 @@ export default class footer extends Component {
                             </ul>
                         </Row>
                     </Col>
-                    <Col span={6}>
+                    <Col style={{marginBottom:'10px'}} xs={{span:24}} lg={{span:6}} >
                         <Row>GIỚI THIỆU</Row>
                         <hr/>
                         <br/>
-                        <Row>
-                        <ul type="list">
+                        <Row >
+                        <ul className="listfooter" type="list">
                                 <li>TTG Shop - Số 523 Nguyễn Tri Phương - 
                                     Q.10 - Hồ Chí Minh</li>
                                 <li>Email:tructiepgame@gmail.com</li>
@@ -54,9 +54,11 @@ export default class footer extends Component {
                             </ul>
                         </Row>
                     </Col>
-                    <Col span={8}>
+                    <Col style={{marginBottom:'10px'}} xs={{span:24}} lg={{span:8}}>
                         <Row>FACEBOOK</Row>
                         <hr/>
+                        <br/>
+                        <img style={{width:'100%'}} src="https://res.cloudinary.com/dl9fnqrq3/image/upload/v1597684259/facebook_a9rpwi.jpg" alt="facebook"/>
                     </Col>
                 </Row>
 

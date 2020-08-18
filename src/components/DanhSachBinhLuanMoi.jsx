@@ -15,10 +15,9 @@ export default class DanhSachBinhLuanMoi extends Component {
         }
     }
     componentDidMount(){
-        let today = moment().format('YYYY-MM-DD');
         axios({
             method:"GET",
-            url:`http://localhost:${port}/api/binhluan/layDanhSachBinhLuanTheoNgay/${today}`
+            url:`http://localhost:${port}/api/binhluan/layDanhSachBinhLuanTheoNgay`
         })
         .then(res=>{
             console.log(res.data);

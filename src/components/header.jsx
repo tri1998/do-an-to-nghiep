@@ -11,7 +11,7 @@ import { UserOutlined,
     } from '@ant-design/icons';
 import { Input } from 'antd';
 import {Link} from 'react-router-dom';
-import Menu1 from './Menu.jsx';
+import Menu from './Menu.jsx';
 import {connect} from 'react-redux'
 import {actSetUserLogIn,actDangXuatNguoiDung} from '../redux/actions/nguoidung';
 import {actLuuMangSanPhamCanTim} from '../redux/actions/sanpham';
@@ -82,7 +82,7 @@ class header extends Component {
         let ThongTin = this.props.thongTinNguoiDung;
         let adminLogined = sessionStorage.getItem('admintoken');
         return (
-            <Row>
+            <Row style={{borderTop:'2px solid red'}}>
                 <Col style={{textAlign:'center'}} xs={{span:24}} lg={{span:4}}>
                   <Link to="/trangchu">
                     <div className="logo">
@@ -91,9 +91,9 @@ class header extends Component {
                   </Link>
 
                 </Col>
-                <Col span={20}>
+                <Col xs={{span:24}} lg={{span:20}}>
                   <Row>
-                    <Col span={21} style={{textAlign:'right'}}>
+                    <Col xs={{span:18}} lg={{span:21}} style={{textAlign:'right'}}>
                     
                       {ThongTin===null?
                       
@@ -110,7 +110,7 @@ class header extends Component {
                     </Button></Link>)}
                       
                     </Col>
-                    <Col span={3}>
+                    <Col xs={{span:6}} lg={{span:3}}>
                       {ThongTin===null?
                       (<Button type="primary" shape="round" size="large">
                         <Link  to="/dangky"><UserAddOutlined />Đăng ký</Link>
@@ -133,10 +133,10 @@ class header extends Component {
                   </Row>
                   <hr />
                   <Row>
-                    <Col span={21}>
-                      <Menu1></Menu1>
+                    <Col xs={{span:20}} span={21}>
+                      <Menu></Menu>
                     </Col>
-                    <Col span={1}>
+                    <Col xs={{span:2}}  style={{textAlign:'right'}} span={1}>
                       {
                         this.state.status === false ?
                           <Tooltip title="Tìm kiếm">
@@ -147,9 +147,11 @@ class header extends Component {
                           </Tooltip>
                       }
                     </Col>
-                    <Col className="cart" span={2}>
+                    <Col xs={{span:2}} className="cart" span={2}>
                       <Tooltip title="Giỏ hàng">
-                        <Button shape="circle" size="large" icon={<ShoppingCartOutlined />} />
+                        <Link to="/giohang">
+                          <Button shape="circle" size="large" icon={<ShoppingCartOutlined />} />
+                        </Link>
                         <span className="soLuongSP">({this.props.soLuongSPCoTrongGio})</span>
                       </Tooltip>
                     </Col>
@@ -172,7 +174,7 @@ class header extends Component {
 
                       }
                     </Col>
-                    <Col span={2}>
+                    <Col xs={{span:2}} span={2}>
                       { this.state.status === false ?
                           '' :
                       <Button

@@ -8,7 +8,8 @@ import {
     Form,
     DatePicker,
     Input,
-    message
+    message,
+    Popconfirm
 } from 'antd';
 import {
     ReadOutlined,
@@ -102,21 +103,31 @@ class QuanLyKhuyenMai extends Component {
                         <Button
                         disabled={record.TrangThai!==0?false:true}
                         type="primary"
-                        onClick={()=>this.xemChiTiet(record.MaKM)}
+                        onClick={()=>this.xemChiTiet(record.MaKM,record.TenDotKM)}
                         >
                             <ReadOutlined style={{fontSize:20}}/>
                         </Button>
                     </Tooltip>
-                    <Tooltip title="Xóa">
-                        <Button 
+
+                    <Popconfirm
+                        title="Bạn ngưng đợt khuyến mại này ?"
+                        onConfirm={()=>this.confirm(record.MaKM)}
+                        onCancel={this.cancel}
+                        okText="Đồng ý"
+                        cancelText="Hủy"
                         disabled={record.TrangThai!==0?false:true}
-                        type="primary"
-                        danger
-                        onClick={()=>this.xoaKhuyenMai(record.MaKM)}
-                        >
-                            <CloseOutlined style={{fontSize:20}}/>
-                        </Button>
-                    </Tooltip>
+                    >
+                        <Tooltip title="Xóa">
+                            <Button 
+                            disabled={record.TrangThai!==0?false:true}
+                            type="primary"
+                            danger
+                            >
+                                <CloseOutlined style={{fontSize:20}}/>
+                            </Button>
+                        </Tooltip>
+                    </Popconfirm>
+                    
 
                     {record.TrangThai===0?<Tooltip title="phục hồi">
                         <Button 
@@ -193,7 +204,9 @@ class QuanLyKhuyenMai extends Component {
         .catch(err=>console.log(err));
     }
     
-    xemChiTiet=(maKhuyenMai)=>{
+    xemChiTiet=(maKhuyenMai,tenDotKM)=>{
+        sessionStorage.removeItem('tenDotKM');
+        sessionStorage.setItem('tenDotKM',tenDotKM)
         this.props.history.push(`/admin/chitietkhuyenmai/${maKhuyenMai}`)
     }
 
@@ -205,6 +218,21 @@ class QuanLyKhuyenMai extends Component {
         .then(res=>this.props.luuDanhSachDotKM(res.data))
         .catch(err=>console.log(err));
     }
+
+    confirm = (maKhuyenMai) => {
+        sessionStorage.setItem(`${maKhuyenMai}`,false);
+        axios({
+            method:"PUT",
+            url:`http://localhost:${port}/api/khuyenmai/xoaKhuyenMai/${maKhuyenMai}`
+        })
+        .then(res=>this.props.xoaKhuyenMai(maKhuyenMai))
+        .catch(err=>console.log(err));
+    }
+
+    cancel = (e) => {
+        console.log(e);
+    }
+
     render() {
         let danhSachDotKM = this.props.danhSachDotKM;
         return (

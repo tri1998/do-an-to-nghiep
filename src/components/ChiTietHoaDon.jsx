@@ -34,7 +34,7 @@ export default class ChiTietHoaDon extends Component {
           dataIndex: 'TenKT',
           key: 'TenKT',
           render:(record)=>(
-            <span>Size {record}</span>
+            record==='None'?null:<span>Size {record}</span>
           )
         },
         {
@@ -50,6 +50,12 @@ export default class ChiTietHoaDon extends Component {
               (record).toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})
             )
         },
+        {
+          title: 'Thành Tiền',
+          render:(record)=>(
+            (record.Gia*record.SL).toLocaleString('vn-VN', {style : 'currency', currency : 'VND'})
+          )
+      }
         
       ];
 

@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 let config = require('./config');
 const { response } = require('express');
-const port = 5005;
+const port = 5006;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -29,14 +29,6 @@ connection.connect(function(err){
 
 app.use(cors());
 
-
-app.get('/api/taikhoan',(req,res)=>{
-    var sql = "SELECT MaTK,HoTen,Email,SDT,DiaChi,isAdmin,TrangThai FROM taikhoan";
-    connection.query(sql,function(err,results){
-        if(err) throw err;
-        res.json(results)
-    })
-})
 
 const ProtectedRoutes = express.Router();
 app.use('/taikhoan',ProtectedRoutes);
@@ -66,6 +58,7 @@ ProtectedRoutes.use((req,res,next)=>{
     }
 })
 
+//API lay thong tin nguoi dung
 ProtectedRoutes.get('/laythongtinnguoidung',(req,res)=>{
     let token = req.headers['access-token'];
     let decodetoken = jwt.decode(token);
@@ -77,6 +70,7 @@ ProtectedRoutes.get('/laythongtinnguoidung',(req,res)=>{
     })
 })
 
+//API cap nhat thong tin cua nguoi dung
 ProtectedRoutes.put('/capnhatnguoidung',(req,res)=>{
     let token = req.headers['access-token'];
     let decodetoken = jwt.decode(token);
@@ -148,10 +142,11 @@ ProtectedRoutes.post('/thembinhluan',(req,res)=>{
     let token = req.headers['access-token'];
     let decodetoken = jwt.decode(token);
     let user = decodetoken.user;
+    const trangThai = user.MaTK==='TK0'?1:0;
     const binhLuan = req.body;
     var sql = `
                 INSERT INTO binhluan(MaTK,MaSP,NoiDung,ThoiGian,TrangThai)
-                VALUES('${user.MaTK}','${binhLuan.MaSP}','${binhLuan.NoiDung}','${binhLuan.ThoiGian}',1)
+                VALUES('${user.MaTK}','${binhLuan.MaSP}','${binhLuan.NoiDung}','${binhLuan.ThoiGian}','${trangThai}')
               `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
@@ -165,10 +160,11 @@ ProtectedRoutes.post('/themchitietbinhluan',(req,res)=>{
     let token = req.headers['access-token'];
     let decodetoken = jwt.decode(token);
     let user = decodetoken.user;
+    const trangThai=user.MaTK==='TK0'?1:0;
     const binhLuan = req.body;
     var sql = `
                 INSERT INTO chitiet_bl(MaBL,MaTK,NoiDung,ThoiGian,TrangThai)
-                VALUES('${binhLuan.MaBL}','${user.MaTK}','${binhLuan.NoiDung}','${binhLuan.ThoiGian}',1)
+                VALUES('${binhLuan.MaBL}','${user.MaTK}','${binhLuan.NoiDung}','${binhLuan.ThoiGian}','${trangThai}')
                 `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
@@ -226,11 +222,15 @@ app.get('/api/binhluan/layDanhSachCTBinhLuan/:maBinhLuan',(req,res)=>{
 }) 
 
 //API lay danh sach cac binh luan theo ngay hien tai
-app.get('/api/binhluan/layDanhSachBinhLuanTheoNgay/:ngay',(req,res)=>{
+app.get('/api/binhluan/layDanhSachBinhLuanTheoNgay',(req,res)=>{
     var sql = `
-              SELECT binhluan.MaBL,binhluan.MaTK,binhluan.MaSP,taikhoan.HoTen,binhluan.NoiDung
-              ,binhluan.ThoiGian,binhluan.TrangThai FROM binhluan,taikhoan,sanpham
-              WHERE binhluan.MaSP=sanpham.MaSP AND binhluan.MaTK=taikhoan.MaTK AND binhluan.TrangThai=1 AND binhluan.ThoiGian >= '${req.params.ngay}' ORDER BY binhluan.MaBL DESC
+    SELECT binhluan.MaBL,binhluan.MaTK,binhluan.MaSP,taikhoan.HoTen,
+    binhluan.NoiDung,binhluan.ThoiGian,binhluan.TrangThai 
+    FROM binhluan,taikhoan,sanpham 
+    WHERE binhluan.MaSP=sanpham.MaSP 
+    AND binhluan.MaTK=taikhoan.MaTK AND binhluan.TrangThai=1 
+    AND binhluan.ThoiGian >= CURRENT_DATE AND binhluan.ThoiGian < NOW() 
+    ORDER BY binhluan.MaBL DESC
               `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
@@ -238,10 +238,55 @@ app.get('/api/binhluan/layDanhSachBinhLuanTheoNgay/:ngay',(req,res)=>{
     })
 })
 
+//API lay danh sach binh luan co trang thai = 0
+app.get('/api/binhluan/layDSBL0',(req,res)=>{
+    var sql = `
+    SELECT * FROM binhluan WHERE binhluan.TrangThai=0
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
 
+//API duyet binh luan theo ma binh luan 
+app.put('/api/binhluan/duyetBinhLuan/:MaBL',(req,res)=>{
+    var sql = `
+        UPDATE binhluan SET TrangThai=1 WHERE MaBL='${req.params.MaBL}'
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json({
+            messageSuccess:'Đã duyệt bình luận !'
+        })
+    })
+})
+
+//API lay danh sach phan hoi co trang thai = 0
+app.get('/api/binhluan/layDanhSachPhanHoi',(req,res)=>{
+    var sql = `
+    SELECT * FROM chitiet_bl WHERE TrangThai=0
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json(results);
+    })
+})
+
+//API duyet phan hoi theo ma chi tiet binh luan
+app.put('/api/binhluan/duyetPhanHoi/:MaCTBL',(req,res)=>{
+    var sql = `
+        UPDATE chitiet_bl SET TrangThai=1 WHERE MaCTBL='${req.params.MaCTBL}'
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json({
+            messageSuccess:'Đã duyệt phản hồi !'
+        })
+    })
+})
 
 //API Dang Nhap
-
 app.post('/api/dangnhap',(req,res)=>{
     let user = req.body;
     var sql = `SELECT MaTK,HoTen,Email,SDT,DiaChi,isAdmin from taikhoan WHERE Email='${user.Email}' AND MatKhau='${user.Password}' AND TrangThai=1`;
@@ -296,8 +341,29 @@ app.post('/api/dangkytaikhoan',(req,res)=>{
     })
 })
 
+//API xac nhan nguoi dung thay doi mat khau
+app.get('/api/taikhoan/layMatKhau/:email',(req,res)=>{
+    var sql = `
+        SELECT * FROM taikhoan WHERE taikhoan.Email='${req.params.email}'
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        if(results.length===0)
+        {
+            res.json({
+                messageErr:"Email bạn vừa nhập không tồn tại !"
+            })
+        }
+        else {
+            res.json({
+                MaTK:results[0].MaTK
+            })
+        }
+    })
+})
 
-//API tai khoan
+
+//API lay danh sach san pham
 app.get('/api/sanpham',(req,res)=>{
     var sql = "SELECT * FROM sanpham";
     connection.query(sql,(err,results)=>{
@@ -414,13 +480,26 @@ app.put('/api/sanpham/capnhatSP/:id',(req,res)=>{
 app.post('/api/sanpham/themAnhSP',(req,res)=>{
     let anhSP=req.body;
     var sql = `
-              INSERT INTO anhsp_lq(MaSP,HinhAnh,TrangThai)
-              VALUES('${anhSP.MaSP}','${anhSP.HinhAnh}',1)
+              INSERT INTO anhsp_lq(MaSP,HinhAnh)
+              VALUES('${anhSP.MaSP}','${anhSP.HinhAnh}')
     `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;
         res.json({
             message:"Thêm ảnh thành công !"
+        })
+    })
+})
+
+//API xoa anh san pham lien quan
+app.delete('/api/sanpham/xoaAnhSP/:ID',(req,res)=>{
+    var sql = `
+              DELETE from anhsp_lq WHERE ID='${req.params.ID}'
+    `;
+    connection.query(sql,(err,results)=>{
+        if(err) throw err;
+        res.json({
+            message:"Xóa ảnh thành công !"
         })
     })
 })
@@ -443,7 +522,8 @@ app.get('/api/sanpham/xemChiTietSP/:id',(req,res)=>{
     WHERE sanpham.MaSP=chitiet_km.MaSP
     AND khuyenmai.MaKM=chitiet_km.MaKM 
     AND chitiet_km.TrangThai = 1 
-    AND khuyenmai.TrangThai = 1 
+    AND khuyenmai.TrangThai = 1
+    AND NOW() BETWEEN khuyenmai.NgayBD AND khuyenmai.NgayKT
     AND sanpham.MaSP = '${maSanPham}'
     `;
     connection.query(sql,(err,results)=>{
@@ -556,6 +636,7 @@ app.post('/api/sanpham/themSP',(req,res)=>{
 
 })
 
+//API them chi tiet san pham
 app.post('/api/sanpham/themCTSP',(req,res)=>{
     const sanPham = req.body;
     var sql = `INSERT chitiet_sp(MaSP,MaKT,MaMau,SL)
@@ -606,22 +687,16 @@ app.put('/api/sanpham/capNhatThongTin/:maSanPham',(req,res)=>{
 })
 
 
-
-
-
-
-
-
 //--------------------------------------KHUYEN MAI-------------------------------------//
 
 //API lay ma san pham trong dot khuyen mai voi phan tram khuyen mai theo ngay
-app.get('/api/khuyenmai/laydssanphamKM/:today',(req,res)=>{
+app.get('/api/khuyenmai/laydssanphamKM',(req,res)=>{
     var sql = `
                 SELECT sanpham.MaSP,sanpham.TenSP,khuyenmai.MaKM,chitiet_km.PhanTram 
                 FROM khuyenmai,sanpham,chitiet_km WHERE sanpham.MaSP=chitiet_km.MaSP 
                 AND khuyenmai.MaKM=chitiet_km.MaKM 
                 AND khuyenmai.TrangThai=1 AND chitiet_km.TrangThai=1 
-                AND '${req.params.today}' BETWEEN khuyenmai.NgayBD AND khuyenmai.NgayKT
+                AND NOW() BETWEEN khuyenmai.NgayBD AND khuyenmai.NgayKT
               `;
     connection.query(sql,(err,results)=>{
         if(err) throw err;

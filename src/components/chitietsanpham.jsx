@@ -9,7 +9,8 @@ import {
     notification,
     Spin,
     Tag,
-    message
+    message,
+    Skeleton
 } from 'antd'
 import { 
     ShoppingCartOutlined,
@@ -19,7 +20,7 @@ import {
 } from '@ant-design/icons';
 import SPLienQuan from './sanphamlienquan';
 import BinhLuan from './BinhLuanSanPham';
-import DanhSachAnh from './DanhSachAnhTheoMaSP';
+import DanhSachAnh from '../pages/DanhSachAnhClient';
 import { createRef } from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
@@ -130,9 +131,10 @@ class chitietsanpham extends Component {
         let {TenSP,Gia,Hinh,MaKT,SL,ThongTinSP,PhanTram,MaSP,MaDM} = this.props.SPDuocChon;
         let {danhSachKT,kichThuoc} = this.state;
         let GiaKM=PhanTram===undefined?0:Gia-(Gia*PhanTram/100);
+        const admintoken = sessionStorage.getItem('admintoken');
         return (
             <div>
-              {this.state.isLoading===false?<div><Spin/>Loadding...</div>:
+              {this.state.isLoading===false?<Skeleton active/>:
               <Row>
                 <Col xs={{span:24}} lg={{span:18}}>
                     <Row>
@@ -162,7 +164,7 @@ class chitietsanpham extends Component {
                                 <Col span={12}>
                                     <span className="fs16">Sản Phẩm: </span>
                                     {SL===0?<span style={{color:'red'}} className="fs16">Hết</span>
-                                    :<span className="fs16">Còn {SL} </span>}
+                                    :<span className="fs16" style={{color:'red'}}>Còn</span>}
                                     {MaKT===6 || danhSachKT.length===0?<div></div>:<Row>
                                         <Col span={24}>
                                             <Select 
@@ -219,7 +221,7 @@ class chitietsanpham extends Component {
                                     className="btnAddCart" danger type="primary" 
                                     shape="round" 
                                     size="large"
-                                    disabled={SL===0?true:false}
+                                    disabled={SL===0 || admintoken!==null ?true:false}
                                     >
                                         <ShoppingCartOutlined />Thêm Vào Giỏ Hàng
                                     </Button>

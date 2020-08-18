@@ -10,7 +10,15 @@ export const actXemChiTiet=(sp)=>{
 export const actLuuMangSP=(mangSP)=>{
     return{
         type:types.LUU_MANGSP,
-        mangSP
+        mangSP,
+    }
+}
+
+export const actSapXepSanPhamTheoGia=(option,khuyenMai)=>{
+    return{
+        type:types.SAP_XEP_SAN_PHAM_THEO_GIA,
+        option,
+        khuyenMai
     }
 }
 

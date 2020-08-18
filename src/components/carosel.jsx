@@ -5,7 +5,7 @@ export default class carosel extends Component {
     render() {
         return (
                 
-                <Row>
+                <Row style={{borderBottom:'2px solid red'}}>
                     <Col span={24}>
                         <Carousel dots={false} autoplay effect="fade">
                             <div>

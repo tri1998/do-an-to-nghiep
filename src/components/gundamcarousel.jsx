@@ -32,18 +32,18 @@ class gundamcarousel extends Component {
                 <div className="newproduct">
                     
                     <Row>
-                        <Col span={4} className="right">
+                        <Col xs={{span:8}} lg={{span:4}} className="right">
                             <Button onClick={() => console.log(this.laySPChon)} shape="round" size="large">
-                                <Link to='/loaisanpham/gundam'> GUNDAM <RightOutlined /></Link>
+                                GUNDAM <RightOutlined />
                             </Button>
                         </Col>
-                        <Col span={18} className="pdt12"><hr /></Col>
-                        <Col span={1} className="right">
+                        <Col xs={{span:12}} lg={{span:18}}  className="pdt12"><hr style={{width:'100%'}} /></Col>
+                        <Col xs={{span:2}} lg={{span:1}}  className="right">
                             <Tooltip title="Prev" >
                                 <Button onClick={this.handlePrev} shape="circle" size="medium" icon={<LeftOutlined />}></Button>
                             </Tooltip>
                         </Col>
-                        <Col span={1}>
+                        <Col xs={{span:2}} lg={{span:1}} >
                             <Tooltip title="Next">
                                 <Button onClick={this.handleNext} shape="circle" size="medium" icon={<RightOutlined />}></Button>
                             </Tooltip>

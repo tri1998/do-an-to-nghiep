@@ -6,7 +6,8 @@ const stateDefault = {
     sanPhamDuocChon:{},
     sanPhamChonAdmin:{},
     sanPhamVuaXem:localStorage.getItem('sanphamvuaxem'),
-    sanPhamTimKiem:[]
+    sanPhamTimKiem:[],
+    sapXepSanPham:[]
 }
 
 const sanPhamReducer = (state=stateDefault,action)=>{
@@ -20,7 +21,47 @@ const sanPhamReducer = (state=stateDefault,action)=>{
        case types.LUU_MANGSP:
        {
             state.DanhSachSanPham=action.mangSP;
+            state.sapXepSanPham=action.mangSP;
             return {...state}
+       }
+       case types.SAP_XEP_SAN_PHAM_THEO_GIA:
+       {
+           if(action.option===1)
+           {
+               let mangCapNhat = [...state.sapXepSanPham];
+               mangCapNhat=mangCapNhat.sort((sp,spTiepTheo)=>{
+                   let tenSP = sp.TenSP.toLowerCase();
+                   let tenSPTiepTheo=spTiepTheo.TenSP.toLowerCase();
+                   if(tenSP<tenSPTiepTheo)
+                   {
+                       return -1;
+                   }
+                   if(tenSPTiepTheo > tenSP)
+                   {
+                       return 1;
+                   }
+                   return 0;
+               })
+               state.sapXepSanPham=mangCapNhat;
+           }
+           //Sap sep san pham theo theo Gia tang dan
+           if(action.option===2)
+           {
+            let mangCapNhat = [...state.sapXepSanPham];
+            mangCapNhat = mangCapNhat.sort((sp,spKeTiep)=>{
+                return sp.Gia - spKeTiep.Gia;
+            })
+            state.sapXepSanPham = mangCapNhat;
+           }
+           if(action.option===3)
+           {
+            let mangCapNhat = [...state.sapXepSanPham];
+            mangCapNhat = mangCapNhat.sort((sp,spKeTiep)=>{
+                return spKeTiep.Gia - sp.Gia
+            })
+            state.sapXepSanPham = mangCapNhat;
+           }
+           return {...state}
        }
        case types.UPDATE_SANPHAM_TRANGTHAI:{
            let mangSanPhamCapNhat = [...state.DanhSachSanPham];

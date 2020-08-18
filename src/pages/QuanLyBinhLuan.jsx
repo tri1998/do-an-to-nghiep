@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { Tabs,Select, Button,List, Avatar } from 'antd';
-import moment from 'moment';
-import axios from 'axios';
-import {port} from '../config/configAPI';
+import { Tabs,Select, Button} from 'antd';
 import BinhLuan from '../components/BinhLuanSanPham.jsx';
 import DanhSachBinhLuanMoi from '../components/DanhSachBinhLuanMoi';
+import BinhLuanXetDuyet from '../containers/BinhLuanXetDuyet';
+import PhanHoiXetDuyet from '../containers/PhanHoiXetDuyet';
 import {connect} from 'react-redux';
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -14,24 +13,8 @@ class QuanLyBinhLuan extends Component {
     constructor(props){
         super(props);
         this.state={
-            danhSachBinhLuanMoi:[],
             maSanPham:null
         }
-    }
-
-    componentDidMount(){
-        let today = moment().format('YYYY-MM-DD');
-        axios({
-            method:"GET",
-            url:`http://localhost:${port}/api/binhluan/layDanhSachBinhLuanTheoNgay/${today}`
-        })
-        .then(res=>{
-            console.log(res.data);
-            this.setState({
-                danhSachBinhLuanMoi:res.data
-            })
-        })
-        .catch(err=>console.log(err));
     }
 
     handleChange =(value) =>{
@@ -64,6 +47,14 @@ class QuanLyBinhLuan extends Component {
                     </TabPane>
                     <TabPane tab="Bình Luận Trong Ngày" key="2">
                         <DanhSachBinhLuanMoi></DanhSachBinhLuanMoi>
+                    </TabPane>
+
+                    <TabPane tab="Bình Luận Chờ Xét Duyệt" key="3">
+                        <BinhLuanXetDuyet/>
+                    </TabPane>
+
+                    <TabPane tab="Phản Hồi Chờ Xét Duyệt" key="4">
+                        <PhanHoiXetDuyet/>
                     </TabPane>
                     
                 </Tabs>

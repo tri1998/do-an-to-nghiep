@@ -8,7 +8,6 @@ import ThanhToan from './pages/ThanhToan';
 import { BrowserRouter, Route, Switch} from 'react-router-dom';
 import { actLuuMangSP,actLuuMangDanhMucSanPham} from './redux/actions/sanpham';
 import { actLuuMangChiTietKM} from './redux/actions/khuyenmai'
-import moment from 'moment'
 import {port} from './config/configAPI';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -18,14 +17,11 @@ import './App.css';
 class App extends Component {
 
   componentDidMount() {
-    let today = moment().format('YYYY-MM-DD');
-    console.log(today);
-
     axios({
       method: "GET",
       url: `http://localhost:${port}/api/sanpham`
     }).then(res => {
-            this.props.onSaveDSSanPham(res.data);
+            this.props.luuMangSanPham(res.data);
     })
     .catch(error => console.log(error));
 
@@ -33,20 +29,17 @@ class App extends Component {
       method:'GET',
       url: `http://localhost:${port}/api/danhmucsanpham`
     }).then(res=>{
-      this.props.onSaveDSLoaiSanPham(res.data);
+      this.props.luuDanhSachLoai(res.data);
     })
     .catch(error=>console.log(error));
 
     axios({
       method:'GET',
-      url: `http://localhost:${port}/api/khuyenmai/laydssanphamKM/${today}`
+      url: `http://localhost:${port}/api/khuyenmai/laydssanphamKM`
     }).then(res=>{
-      this.props.onSaveChiTietKhuyenMai(res.data);
+      this.props.luuDanhSachKhuyenMai(res.data);
     })
     .catch(error=>console.log(error));
-
-
-
   }
 
 
@@ -71,13 +64,13 @@ class App extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSaveDSSanPham: (danhsachsanpham) => {
+    luuMangSanPham: (danhsachsanpham) => {
       dispatch(actLuuMangSP(danhsachsanpham))
     },
-    onSaveDSLoaiSanPham:(danhsachloaisanpham)=>{
+    luuDanhSachLoai:(danhsachloaisanpham)=>{
       dispatch(actLuuMangDanhMucSanPham(danhsachloaisanpham))
     },
-    onSaveChiTietKhuyenMai:(danhsachkm)=>{
+    luuDanhSachKhuyenMai:(danhsachkm)=>{
       dispatch(actLuuMangChiTietKM(danhsachkm))
     }
   }

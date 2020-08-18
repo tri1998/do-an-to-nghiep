@@ -3,10 +3,18 @@ import {Row,Col,Menu,Button,Select} from 'antd'
 import SanPhamVuaXem from './sanphamvuaxem'
 import All from './tatcasp';
 import SanPham from './sanpham';
+import {actSapXepSanPhamTheoGia} from '../redux/actions/sanpham'
 import {Switch,Route,Link} from 'react-router-dom'
 import {connect} from 'react-redux';
 const {Option} = Select;
 class LoaiSanPham extends Component {
+    constructor(props){
+        super(props);
+        this.state={
+            isSort:false,
+
+        }
+    }
 
     loadSanPhamTheoLoai=()=>{
        return this.props.DanhSachLoai.map((loaiSP,index)=>{
@@ -34,8 +42,8 @@ class LoaiSanPham extends Component {
     }
 
     sapXepSanPham=(value)=>{
-        console.log(`selected ${value}`);
-        console.log(this.props.match.url);
+        value=parseInt(value);
+        this.props.sapXepSanPham(value,this.props.DanhSachKhuyenMai);
     }
 
 
@@ -47,6 +55,7 @@ class LoaiSanPham extends Component {
                         <Button
                             size='large'
                             shape='round'
+                            block
                         >
                             DANH MỤC SẢN PHẨM
                         </Button>
@@ -82,13 +91,10 @@ class LoaiSanPham extends Component {
                             <Col span={8}></Col>
                             <Col span={16}>
                                 <span className="sapxep">Sắp Xếp Theo :</span>
-                                <Select onChange={this.sapXepSanPham} style={{width:170,margin:5}} size="middle" defaultValue="sanphamnoibat">
-                                    <Option value="sanphamnoibat">Đang giảm giá</Option>
-                                    <Option value="giatangdan">Giá: Tăng dần</Option>
-                                    <Option value="giagiamdan">Giá: Giảm dần</Option>
-                                    <Option value="tenaz">Tên: A-Z</Option>
-                                    <Option value="tenza">Tên: Z-A</Option>
-                                    <Option value="banchaynhat">Bán chạy nhất</Option>
+                                <Select onChange={this.sapXepSanPham} style={{width:170,margin:5}} size="middle" defaultValue={1}>
+                                    <Option value={1}>Tên: A-Z</Option>
+                                    <Option value={2}>Giá: Tăng dần</Option>
+                                    <Option value={3}>Giá: Giảm dần</Option>
                                 </Select>
                             </Col>
                         </Row>
@@ -118,8 +124,17 @@ class LoaiSanPham extends Component {
 const mapStateToProps = (state) =>{
     return {
         DanhSachLoai:state.DSSP.DanhSachLoaiSanPham,
-        DanhSachSanPham:state.DSSP.DanhSachSanPham
+        DanhSachSanPham:state.DSSP.sapXepSanPham,
+        DanhSachKhuyenMai:state.DSCTKhuyenMai.mangChiTietKhuyenMai
     }
 }
 
-export default connect(mapStateToProps,null)(LoaiSanPham);
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        sapXepSanPham:(option,khuyenMai)=>{
+            dispatch(actSapXepSanPhamTheoGia(option,khuyenMai))
+        }
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(LoaiSanPham);

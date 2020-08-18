@@ -49,7 +49,7 @@ class all extends Component {
 
 const mapStateToProps = (state) =>{
     return {
-        DanhSachSanPham:state.DSSP.DanhSachSanPham
+        DanhSachSanPham:state.DSSP.sapXepSanPham
     }
 }
 

@@ -276,8 +276,10 @@ export default class ChiTietKhuyenMai extends Component {
 
     render() {
         let {visible,khuyenMaiDuocChon} = this.state;
+        const tenDotKM = JSON.stringify(sessionStorage.getItem('tenDotKM'));
         return (
             <div>
+                    <h1 style={{textAlign:'center',fontSize:'25px',color:'#FF7875'}}>Tên đợt : {tenDotKM.toLocaleUpperCase()}</h1>
                     <Button
                         type="primary"
                         onClick={this.showModal}

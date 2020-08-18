@@ -351,6 +351,7 @@ class QuanLyHoaDon extends Component {
             title: 'Thanh toán',
 
             key: 'TrangThai_TT',
+            ...this.getColumnSearchProps('TrangThai_TT'),
 
             render: (record) => (
                 <div className="temp">

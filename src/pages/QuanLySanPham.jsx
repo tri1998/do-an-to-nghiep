@@ -118,10 +118,7 @@ class QuanLySanPham extends Component {
         url:`http://localhost:${port}/api/sanpham/themAnhSP`,
         data:AnhSP
       })
-      .then(res=>{
-        this.setState({visibleThemAnh:false});
-        message.success(res.data.message);
-      })
+      .then(res=>message.success(res.data.message))
       .catch(err=>console.log(err))
     }
 
@@ -246,6 +243,8 @@ class QuanLySanPham extends Component {
           .catch(error => console.log(error));
     }
 
+
+    //Tim kiem san pham
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
           <div style={{ padding: 8 }}>
@@ -344,18 +343,18 @@ class QuanLySanPham extends Component {
 
                     <Button
                         disabled={record.TrangThai===0?true:false} 
-                        onClick={()=>this.xoaSanPham(record.MaSP)} 
-                        danger 
-                        type="primary">
-                        <CloseOutlined style={{ fontSize: '20px' }} />
-                    </Button>
-
-                    <Button
-                        disabled={record.TrangThai===0?true:false} 
                         onClick={()=>this.showModalThemAnh(record.MaSP,record.Hinh)} 
                         ghost
                         type="primary">
                         <PictureOutlined style={{ fontSize: '20px' }} />
+                    </Button>
+
+                    <Button
+                        disabled={record.TrangThai===0?true:false} 
+                        onClick={()=>this.xoaSanPham(record.MaSP)} 
+                        danger 
+                        type="primary">
+                        <CloseOutlined style={{ fontSize: '20px' }} />
                     </Button>
 
                     {record.TrangThai===0?
